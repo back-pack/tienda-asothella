@@ -37,11 +37,6 @@ class ProductRequest
     private $quantity;
 
     /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $status;
-
-    /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $dispatch;
@@ -113,18 +108,6 @@ class ProductRequest
     public function setCompany(?Company $company): self
     {
         $this->company = $company;
-
-        return $this;
-    }
-
-    public function getStatus(): ?string
-    {
-        return $this->status;
-    }
-
-    public function setStatus(string $status): self
-    {
-        $this->status = $status;
 
         return $this;
     }

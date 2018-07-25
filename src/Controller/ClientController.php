@@ -13,7 +13,7 @@ use App\Entity\Requirement;
 use App\Entity\ProductRequest;
 use App\Entity\Company;
 use App\Entity\RoofTile;
-// use App\Manager\ClientManager;
+use App\Helper\Constant;
 
 class ClientController extends Controller
 {
@@ -95,7 +95,7 @@ class ClientController extends Controller
     }
 
     /**
-     * @Route("/client/request", name="request")
+     * @Route("/client/requirement", name="requirement")
      */
     public function request(Request $request)
     {
@@ -132,7 +132,7 @@ class ClientController extends Controller
                 ->setCreationDate(new \DateTime('today'))
                 ->setCompany($this->getUser())
                 ->setRequirementNumber(uniqid())
-                ->setStatus("To be taken")
+                ->setStatus(Constant::TO_BE_PROCESSED)
                 ;
             
             $em->persist($requirement);
@@ -142,7 +142,7 @@ class ClientController extends Controller
 
             return $this->redirectToRoute('client');
         }
-        return $this->render('client/newRequest.html.twig', [
+        return $this->render('client/newRequirement.html.twig', [
             'form' => $form->createView(),
             // 'prices' => $prices
         ]);

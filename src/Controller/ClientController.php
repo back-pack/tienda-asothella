@@ -119,8 +119,7 @@ class ClientController extends Controller
                 }
                 $cost = $tile->getCost() * $product->getQuantity();
                 $product
-                    ->setCost($cost)
-                    ->setStatus("In process");
+                    ->setCost($cost);
                 if(is_null($product->getRequirement()))
                 {
                     $product->setRequirement($requirement);
@@ -133,6 +132,7 @@ class ClientController extends Controller
                 ->setCreationDate(new \DateTime('today'))
                 ->setCompany($this->getUser())
                 ->setRequirementNumber(uniqid())
+                ->setStatus("To be taken")
                 ;
             
             $em->persist($requirement);

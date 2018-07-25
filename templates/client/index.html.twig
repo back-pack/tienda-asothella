@@ -1,0 +1,85 @@
+{% extends 'base.html.twig' %} {% block title %}Tu tienda Asothella{% endblock %} {% block body %}
+
+<div class="example-wrapper" id="page-wrapper">
+    <div class="container-fluid">
+        {% for message in app.flashes('success') %}
+        <div class="alert alert-success">
+            {{ message }}
+        </div>
+        {% endfor %} {% for message in app.flashes('danger') %}
+        <div class="alert alert-danger">
+            {{ message }}
+        </div>
+        {% endfor %}
+
+        <div class="row">
+            <div class="col-lg-12">
+                <h1 class="page-header">
+                    Pedidos
+                </h1>
+                <h5>Desde acá gestioná tus pedidos.</h5>
+                <h5>Si tenés alguna duda comunicate con nuestros vendedores.</h5>
+            </div>
+
+        </div>
+
+        <ol class="breadcrumb">
+            <li class="active">Pedidos</li>
+            <li>
+                <button type="button" class="btn btn-xs btn-success">
+                    <i class="fa fa-fw fa-plus"></i> Agregar</button>
+            </li>
+        </ol>
+        <div class="row">
+            <!-- <div class="panel panel-success">...</div>
+                <div class="panel panel-info">...</div>
+                <div class="panel panel-warning">...</div>
+                <div class="panel panel-danger">...</div> -->
+            {% for requirement in requirements %}
+            <div class="col-sm-4 col-xs-12">
+                <!--                    BLOQUE PEDIDO -->
+                <div class="panel panel-success ">
+                    <div class="panel-heading">
+                        <p>
+                            <span class="badge pull-right">{{ requirement.creationDate|date('d-m-Y')}}</span>
+                        </p>
+                        <p>
+                            <h3 class="panel-title">Solicitud ID: {{ requirement.requirementNumber}}</h3>
+                        </p>
+                    </div>
+                    <div class="panel-body">
+                        {% for productRequest in requirement.productRequests %}
+                            <span class="label label-success pull-right">{{ productRequest.status }}</span>
+                            <p>Teja tipo: {{ productRequest.type }}. Color: {{ productRequest.colour }}. Cantidad: {{ productRequest.quantity }}</p>
+                            <p>
+                                <small>
+                                    {% switch productRequest.status %}
+                                        {% case "In process" %}
+                                        No se puede modificar dado que el proceso
+                                
+                                {% endswitch %}
+                                </small>
+                            </p>
+                        {% endfor %}
+                    </div>
+                    <div class="panel-footer">
+                        <a type="button" class="btn btn-xs btn-warning" data-toggle="tooltip" data-placement="bottom" title="Modificar">
+                            <i class="fa fa-fw fa-pencil"></i>
+                        </a>
+                        <a type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Borrar">
+                            <i class="fa fa-fw fa-remove"></i>
+                        </a>
+                        
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+<script>
+        $(document).ready(function(){
+            $('[data-toggle="tooltip"]').tooltip();
+        });
+    </script>
+{% endblock %}

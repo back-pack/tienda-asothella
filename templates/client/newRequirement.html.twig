@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %} Nueva compra {% endblock %}
+{% block title %} Nuevo pedido {% endblock %}
 
 {% block body %}
 
@@ -8,7 +8,7 @@
     {{ form_start(form)}}
     <div id="products">
     {% for product in form.productRequests %}
-        <div class="row">
+        <div class="row" id="product{{loop.index-1}}">
             <label>Tipo de teja:</label>{{ form_widget(product.type) }}
             <label>Cantidad:</label>{{ form_widget(product.quantity) }}
             <label>Costo:</label>{{ form_widget(product.cost) }}
@@ -33,24 +33,26 @@
     
     
 </div>
-<div id="index" style="display:none"></div>
+<div id="index" style="display:none">{{ form.productRequests|length -1 }}</div>
 
         
         <script src="{{ asset('js/jquery.colorPicker.js') }}" type="text/javascript"></script>
         <script>
-            var index = 0;
+            var index = document.getElementById("index").innerHTML;
+
             jQuery(document).ready(function($) {
                 $('#product_request_colour').colorPicker();
                 
                 $('#addProduct').click(() => {
                     var divRow = document.createElement('div');
-                    divRow.id = index++;
                     divRow.className = 'row';
-                    
+                    divRow.id = "product" + parseInt(index++);
+
                     divRow.appendChild(createTypeElement(index));
                     divRow.appendChild(createQuantityElement(index));
                     divRow.appendChild(createCostElement(index));
                     divRow.appendChild(createColorElement(index));
+                    divRow.appendChild(createRemoveButton(index));
                     $("#products").append(divRow);
                     
                 })
@@ -95,9 +97,21 @@
                         opt.value = modelSelect.options[i].value;
                         select.add(opt, select[i]);
                     }
-
-
                     return select;
+                }
+
+                function createRemoveButton(index) {
+                    var button = document.createElement('button');
+                    button.setAttribute("onclick", "removeProduct(index)");
+                    button.className = "btn btn-danger";
+                    button.innerHTML = "Quitar"
+
+                    return button;
+                }
+                
+                function removeProduct(index) {
+                    var product = document.getElementById("product"+index);
+                    product.remove();
                 }
 
             });

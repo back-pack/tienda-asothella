@@ -29,7 +29,7 @@ class ClientController extends Controller
         if ($form->isSubmitted() && $form->isValid()) {
             $company
                 ->setCreationDate(new \DateTime('today'))
-                ->setStatus('Pending for approval')
+                ->setStatus(Constant::PENDING_FOR_APPROVAL)
                 ->setActive(false);
             $password = $passwordEncoder->encodePassword($company, $company->getPlainPassword());
             $company->setPassword($password);

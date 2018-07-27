@@ -15,21 +15,22 @@
     <link href="{{ asset('css/maf.css') }}" rel="stylesheet">
     <!-- Custom CSS -->
     <link href="{{ asset('css/sb-admin.css') }}" rel="stylesheet">
-    <link href="{{ asset('css/plugins/morris.css') }}" rel="stylesheet">
     <link href="{{ asset('font-awesome/css/font-awesome.min.css') }}" rel="stylesheet" type="text/css">
     <link rel="stylesheet" href="{{ asset('css/colorPicker.css')}} "> 
     {% endblock %} 
     {% block javascripts %}
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
-        crossorigin="anonymous"></script>
+    <script src="{{asset('js/jquery.js') }} "></script>
+    <script src="{{asset('js/bootstrap.min.js') }}"></script>
+    <!-- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+    crossorigin="anonymous"></script>
     <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
-        crossorigin="anonymous">
-        </script> 
+    crossorigin="anonymous">
+    </script>  -->
     {% endblock %}
 </head>
 
 <body>
-    <div class="wrapper">
+    <div id="wrapper">
         <nav class="navbar navbar-inverse navbar-fixed-top fondopip" role="navigation">
             <div class="navbar-header">
                 <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">

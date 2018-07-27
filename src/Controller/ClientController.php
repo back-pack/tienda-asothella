@@ -49,7 +49,7 @@ class ClientController extends Controller
 
             $mailer->send($message);
 
-            return $this->redirectToRoute('register', [
+            return $this->redirectToRoute('login', [
             ]);
         }
         return $this->render('client/register.html.twig', [

@@ -17,6 +17,19 @@
 	border-bottom: 1px solid #ddd;
 }
 
+.login_header {
+	width: 20em;
+	margin: auto;
+	background-color: rgba(255,255,255,0.1);
+	
+}
+
+.centrar {
+	margin-left: 26px !important; 
+    display:block;
+    margin:auto;
+}	
+
 
 /* Modificar radios que andan para el corcho. Agregar fotos de tejas. */
 .radios .radio-color  {

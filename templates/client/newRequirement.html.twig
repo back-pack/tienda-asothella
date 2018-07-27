@@ -23,7 +23,7 @@
     </div>
     <br>
     <div class="row">
-        <button class="btn btn-success" id="addProduct">Agregar nuevo producto</button>
+        <a class="btn btn-success" id="addProduct">Agregar nuevo producto</a>
     </div>
     <br>
     <div class="row">
@@ -37,13 +37,14 @@
         <script src="{{ asset('js/jquery.colorPicker.js') }}" type="text/javascript"></script>
         <script>
             var index = document.getElementById("index").innerHTML;
-
+            
             jQuery(document).ready(function($) {
                 $('#product_request_colour').colorPicker();
                 
                 $('#addProduct').click(() => {
                     index = parseInt(index++);
                     index = index + 1;
+                    
                     var divRow = document.createElement('div');
                     divRow.className = 'row';
                     divRow.id = "product" + index;
@@ -101,8 +102,8 @@
                 }
 
                 function createRemoveButton(index) {
-                    var button = document.createElement('button');
-                    button.setAttribute("onclick", "removeProduct(index);");
+                    var button = document.createElement('a');
+                    button.setAttribute("onclick", "removeProduct("+index+");");
                     button.className = "btn btn-danger";
                     button.innerHTML = "Quitar"
 

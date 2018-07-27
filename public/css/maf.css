@@ -1,1 +1,34 @@
-.fondopip{background-image:url("../img/storelogoheader.png");background-repeat: no-repeat;}
+.fondopip {
+	background-image:url("../img/storelogoheader.png");
+	background-repeat: no-repeat;
+}
+
+.divisor {
+	padding-bottom: 9px;
+	border-bottom: 1px solid #eee;
+}
+
+.item_tienda {
+	width: 200px;
+	margin-left: auto;
+	margin-right: auto;
+}
+.color_picker {
+	border-bottom: 1px solid #ddd;
+}
+
+
+/* Modificar radios que andan para el corcho. Agregar fotos de tejas. */
+.radios .radio-color  {
+    background-image: url("img/default_store.png");
+    display:inline-block;
+    width:200px;
+    height:200px;
+}
+.radios input[type=radio]{
+    display:none
+}
+
+.radios input[type=radio]:checked + .radio-color{
+    background-color:#ff3d3d50
+}

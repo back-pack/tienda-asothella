@@ -8,7 +8,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\MoneyType;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use App\Entity\RoofTile;
 class ProductRequestType extends AbstractType
@@ -27,7 +27,7 @@ class ProductRequestType extends AbstractType
                 ])
             ->add('cost', TextType::class, ['label' => false, 'attr' => ['readonly' => true]])
             ->add('colour', TextType::class, ['label' => false])
-            ->add('quantity', TextType::class, ['label' => false])
+            ->add('quantity', NumberType::class, ['label' => false])
         ;
     }
 

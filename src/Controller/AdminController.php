@@ -28,20 +28,14 @@ class AdminController extends Controller
             'error' => $error
         ]);
     }
-    /**
-     * @Route("/admin/logout", name="admin_logout")
-     */
-    public function logout()
-    {   
-        return $this->redirectToRoute('admin_login', []);
-    }
 
     /**
-     * @Route("/admin", name="admin")
-     * @Route("/superadmin", name="main")
+     * @Route("/admin", name="admin_index")
+     * @Route("/superadmin", name="superadmin_index")
      */
     public function index()
     {   
+        $this->denyAccessUnlessGranted('ROLE_ADMIN', null, 'Unable to access this page!');
         $requirements = $this->getDoctrine()->getRepository(Requirement::class)->findAll();
         return $this->render('admin/index.html.twig', [
             'requirements' => $requirements
@@ -49,11 +43,11 @@ class AdminController extends Controller
     }
 
     /**
-     * @Route("/admin/new/user", name="admin_new_user")
-     * @Route("/superadmin/new/user", name="main_new_user")
+     * @Route("/superadmin/new/user", name="superadmin_new_user")
      */
     public function newUser(Request $request, UserPasswordEncoderInterface $passwordEncoder)
     {
+        $this->denyAccessUnlessGranted('ROLE_SUPERADMIN', null, 'Unable to access this page!');
         $user = new User();
         $form = $this->createForm(UserType::class, $user);
         $form->handleRequest($request);
@@ -68,7 +62,8 @@ class AdminController extends Controller
             $em->persist($user);
             $em->flush();
 
-            return $this->redirectToRoute('admin', [
+            $this->addFlash('success', 'Usuario creado!');
+            return $this->redirectToRoute('superadmin_index', [
             ]);
         }
 

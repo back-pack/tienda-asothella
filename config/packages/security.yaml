@@ -30,7 +30,7 @@ security:
             provider: in_memory
             http_basic: ~
             anonymous: ~
-            pattern: ^/main
+            pattern: ^/superadmin
             logout:
                 path: main_logout
                 target: admin_login

@@ -8,9 +8,9 @@
     {{ form_start(form, {'attr': {'class': 'form-horizontal', 'novalidate': 'novalidate'}})}}
     <div id="products">
     {% for product in form.productRequests %}
-        <div class="row" id="product{{loop.index-1}}">
+        <div class="row" id="product{{loop.index0}}">
             <label>Tipo de teja:</label>{{ form_widget(product.type) }}
-            <label>Cantidad:</label>{{ form_widget(product.quantity) }}
+            <label>Cantidad:</label>{{ form_widget(product.quantity, {'attr': { 'onchange': 'setCost(0)' }})}}
             <label>Costo:</label>{{ form_widget(product.cost) }}
             <label>Color:</label>{{ form_widget(product.colour) }}
         </div>
@@ -38,11 +38,7 @@
         <script>
             var index = document.getElementById("index").innerHTML;
             var products = document.querySelectorAll('#products div');
-            for(x = 0; x <= products.length; x++) {
-                for(y = 0; y <= products[x].childNodes.length; y++) {
-                    
-                }
-            }
+            
             console.log(products);
 
             jQuery(document).ready(function($) {
@@ -76,7 +72,7 @@
 
                 function createCostElement(index) {
                     var newInput = document.createElement('input');
-                    newInput.setAttribute('required' , 'required');
+                    newInput.setAttribute('required', 'required');
                     newInput.setAttribute('readonly', 'readonly');
                     newInput.id = 'requirement_productRequests_'+index+'_cost';
                     newInput.name = 'requirement[productRequests]['+index+'][cost]';
@@ -89,7 +85,7 @@
                     newInput.setAttribute('required' , 'required');
                     newInput.id = 'requirement_productRequests_'+index+'_quantity';
                     newInput.name = 'requirement[productRequests]['+index+'][quantity]';
-
+                    newInput.setAttribute("onchange", "setCost("+index+");");
                     return newInput;
                 }
 
@@ -97,6 +93,7 @@
                     var select = document.createElement('select');
                     select.name = "requirement[productRequests]["+ index +"][type]";
                     select.id = "requirement_productRequests_"+ index +"_type";
+                    select.setAttribute("onchange", "setCost("+index+")");
 
                     var modelSelect = document.getElementById("requirement_productRequests_0_type");
                     for(var i = 0; i < modelSelect.options.length; i++) {
@@ -122,6 +119,19 @@
                 var product = document.getElementById("product"+index);
                 product.remove();
             }
+            function setCost(index) {
+                var cost = document.getElementById("requirement_productRequests_"+index+"_cost").value;
+                var quantityValue = document.getElementById("requirement_productRequests_"+index+"_quantity").value;
+                var selectedTile = document.getElementById("requirement_productRequests_"+index+"_type").value;
+
+                if(quantityValue == '' || quantityValue == undefined) {
+                    return;
+                }
+                
+                cost = parseInt(quantityValue) * parseFloat(selectedTile);
+            }
+
+            
         </script>
 
 {% endblock %}

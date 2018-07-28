@@ -89,7 +89,7 @@ class ClientController extends Controller
     /**
      * @Route("/client/requirement", name="requirement")
      */
-    public function request(Request $request)
+    public function newRequirement(Request $request)
     {
         $productRequest = new ProductRequest();
         $requirement = new Requirement();

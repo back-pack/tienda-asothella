@@ -10,6 +10,9 @@ use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use App\Entity\User;
 use App\Form\UserType;
 use App\Entity\Requirement;
+use App\Form\RequirementType;
+use App\Entity\ProductRequest;
+use App\Entity\RoofTile;
 
 class AdminController extends Controller
 {
@@ -72,4 +75,57 @@ class AdminController extends Controller
         ]);
     }
 
+    /**
+     * @Route("/admin/new/requirement", name="admin_new_requirement")
+     * @Route("/superadmin/new/requirement", name="superadmin_new_requirement")
+     */
+    public function newRequirement(Request $request)
+    {
+        $productRequest = new ProductRequest();
+        $requirement = new Requirement();
+        $requirement->addProductRequest($productRequest);
+        $form = $this->createForm(RequirementType::class, $requirement, ['company' => true]);
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid())
+        {
+            $em = $this->getDoctrine()->getManager();
+            $finalCost = null;
+            foreach($requirement->getProductRequests() as $product)
+            {
+                $tile = $em->getRepository(RoofTile::class)->findOneBy(['type' => $product->getType()]);
+                if(!$tile)
+                {
+                    $this->addFlash('danger', 'Un error ocurrió con el envío del formulario.');
+                    return $this->redirectToRoute('request');
+                }
+                $cost = $tile->getCost() * $product->getQuantity();
+                $product
+                    ->setCost($cost);
+                if(is_null($product->getRequirement()))
+                {
+                    $product->setRequirement($requirement);
+                }
+                $finalCost += $cost;
+            }
+            
+            $requirement
+                ->setFinalCost($finalCost)
+                ->setCreationDate(new \DateTime('today'))
+                ->setRequirementNumber(uniqid())
+                ->setStatus(Constant::TO_BE_PROCESSED)
+                ;
+            
+            $em->persist($requirement);
+            $em->flush();
+
+            $this->addFlash('success', 'Su solicitud es la numero: RQ'.$requirement->getId().'. En breve procesaremos su solicitud!');
+
+            return $this->redirectToRoute('admin');
+        }
+        return $this->render('client/newRequirement.html.twig', [
+            'form' => $form->createView(),
+            // 'prices' => $prices
+        ]);
+    }
 }

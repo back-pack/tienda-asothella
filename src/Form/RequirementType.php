@@ -8,6 +8,8 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use App\Entity\Company;
 
 class RequirementType extends AbstractType
 {
@@ -24,12 +26,24 @@ class RequirementType extends AbstractType
             ->add('finalCost', TextType::class)
             ->add('save', SubmitType::class, ['label' => 'Comprar' ,'attr' => ['class' => 'btn btn-info']])
             ;
+        if($options['company']) {
+            $builder->add('company', EntityType::class,
+                [
+                    'class' => Company::class,
+                    'choice_value' => 'id',
+                    'choice_label' => 'name',
+                    'expanded' => false,
+                    'multiple' => false,
+                    'label' => false,
+                ]);
+        }
     }
 
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
             'data_class' => Requirement::class,
+            'company' => false,
         ]);
     }
 }

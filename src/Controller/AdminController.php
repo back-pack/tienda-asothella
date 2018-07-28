@@ -50,7 +50,7 @@ class AdminController extends Controller
 
     /**
      * @Route("/admin/new/user", name="admin_new_user")
-     * @Route("/main/new/user", name="main_new_user")
+     * @Route("/superadmin/new/user", name="main_new_user")
      */
     public function newUser(Request $request, UserPasswordEncoderInterface $passwordEncoder)
     {

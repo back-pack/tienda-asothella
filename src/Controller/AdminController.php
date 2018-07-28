@@ -9,6 +9,7 @@ use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use App\Entity\User;
 use App\Form\UserType;
+use App\Entity\Requirement;
 
 class AdminController extends Controller
 {
@@ -17,7 +18,6 @@ class AdminController extends Controller
      */
     public function login(Request $request, AuthenticationUtils $authenticationUtils)
     {   
-        var_dump($this->getUser());
         $error = $authenticationUtils->getLastAuthenticationError();
 
         $lastUsername = $authenticationUtils->getLastUsername();
@@ -33,21 +33,24 @@ class AdminController extends Controller
      */
     public function logout()
     {   
-        var_dump($this->getUser());
         return $this->redirectToRoute('admin_login', []);
     }
 
     /**
      * @Route("/admin", name="admin")
+     * @Route("/superadmin", name="main")
      */
     public function index()
-    {    
+    {   
+        $requirements = $this->getDoctrine()->getRepository(Requirement::class)->findAll();
         return $this->render('admin/index.html.twig', [
+            'requirements' => $requirements
         ]);
     }
 
     /**
      * @Route("/admin/new/user", name="admin_new_user")
+     * @Route("/main/new/user", name="main_new_user")
      */
     public function newUser(Request $request, UserPasswordEncoderInterface $passwordEncoder)
     {

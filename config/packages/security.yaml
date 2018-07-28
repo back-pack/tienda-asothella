@@ -13,7 +13,7 @@ security:
                 users:
                     admin:
                         password: $2y$13$5WULBPImaF78C.a9Wltto.TDmmy20.nySlE0NyrJ48pyKh8ihvXze
-                        roles: 'ROLE_ADMIN'
+                        roles: 'ROLE_SUPERADMIN'
         user_db:
             entity:
                 class: App\Entity\Company
@@ -73,11 +73,12 @@ security:
         - { path: ^/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/admin/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/register, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/superadmin, roles: ROLE_ADMIN }
+        - { path: ^/superadmin, roles: ROLE_SUPERADMIN }
         - { path: ^/admin/*, roles: ROLE_ADMIN }
         - { path: ^/, roles: ROLE_USER }
     
     role_hierarchy:
+        ROLE_SUPERADMIN: [ROLE_ADMIN, ROLE_SALES, ROLE_LOGISTIC, ROLE_USER]
         ROLE_ADMIN: [ROLE_SALES, ROLE_LOGISTIC, ROLE_USER]
         ROLE_SALES: ROLE_USER
         ROLE_LOGISTIC: ROLE_USER

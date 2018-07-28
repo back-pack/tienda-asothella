@@ -73,14 +73,6 @@ class ClientController extends Controller
     }
 
     /**
-     * @Route("/logout", name="logout")
-     */
-    public function logout()
-    {
-        return $this->redirectToRoute('login', []);
-    }
-
-    /**
      * @Route("/client", name="client")
      */
     public function client()

@@ -1,12 +1,55 @@
 {% extends 'base.html.twig' %}
 
-{% block title %} Pagina index{% endblock %}
+{% block title %}Solicitudes{% endblock %}
 
 {% block body %}
 
 <div class="container">
-
-
-
+    {% for message in app.flashes('success') %}
+    <div class="alert alert-success">
+        {{ message }}
+    </div>
+    {% endfor %} {% for message in app.flashes('danger') %}
+    <div class="alert alert-danger">
+        {{ message }}
+    </div>
+    {% endfor %}
+ 
+    <table class="table">
+        <tr>
+            <th>Cliente</th>
+            <th>Solicitud ID</th>
+            <th>Precio final</th>
+            <th>Fecha de pedido</th>
+            <th>Estado</th>
+            <th>Operaciones</th>
+        </tr>
+        {% for requirement in requirements %}
+        <tr>
+            <td>{{ requirement.company.name }}</td>
+            <td>{{ requirement.dispatchNumber }}</td>
+            <td>{{ requirement.final_cost }}</td>
+            <td>{{ requirement.creationDate }}</td>
+            <td>
+                {% if requirement.status == 'To be processed' %}
+                Falta aprobación de administrador
+                {% elseif requirement.status == 'In process' %}
+                En proceso
+                {% elseif requirement.status == 'Finished' %}
+                Finalizada sin entregar
+                {% elseif requirement.status == 'Delivered' %}
+                Entregada
+                {% endif %}
+            </td>
+            <td>
+                {% if requirement.status == 'To be processed' %}
+                <a class="btn btn-warning">Aprobar</a>
+                <a class="btn btn-danger">Eliminar</a>
+                {% endif %}    
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    
 </div>
 {% endblock %}

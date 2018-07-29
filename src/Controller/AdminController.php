@@ -7,12 +7,14 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use App\Entity\User;
 use App\Form\UserType;
 use App\Entity\Requirement;
 use App\Form\RequirementType;
 use App\Entity\ProductRequest;
 use App\Entity\RoofTile;
+use App\Helper\Constant;
 
 class AdminController extends Controller
 {
@@ -79,7 +81,7 @@ class AdminController extends Controller
      * @Route("/admin/new/requirement", name="admin_new_requirement")
      * @Route("/superadmin/new/requirement", name="superadmin_new_requirement")
      */
-    public function newRequirement(Request $request)
+    public function newRequirement(Request $request, AuthorizationCheckerInterface $authChecker)
     {
         $productRequest = new ProductRequest();
         $requirement = new Requirement();
@@ -121,7 +123,10 @@ class AdminController extends Controller
 
             $this->addFlash('success', 'Su solicitud es la numero: RQ'.$requirement->getId().'. En breve procesaremos su solicitud!');
 
-            return $this->redirectToRoute('admin');
+            if ($authChecker->isGranted('ROLE_SUPERADMIN')) {
+                return $this->redirectToRoute('superadmin_index');
+            }
+            return $this->redirectToRoute('admin_index');
         }
         return $this->render('client/newRequirement.html.twig', [
             'form' => $form->createView(),

@@ -27,9 +27,9 @@
         {% for requirement in requirements %}
         <tr>
             <td>{{ requirement.company.name }}</td>
-            <td>{{ requirement.dispatchNumber }}</td>
-            <td>{{ requirement.final_cost }}</td>
-            <td>{{ requirement.creationDate }}</td>
+            <td>RQ{{ requirement.id }}</td>
+            <td>{{ requirement.finalCost }}</td>
+            <td>{{ requirement.creationDate|date('d-m-Y') }}</td>
             <td>
                 {% if requirement.status == 'To be processed' %}
                 Falta aprobación de administrador
@@ -43,8 +43,8 @@
             </td>
             <td>
                 {% if requirement.status == 'To be processed' %}
-                <a class="btn btn-warning">Aprobar</a>
-                <a class="btn btn-danger">Eliminar</a>
+                <a class="btn btn-warning" href="{{ path('superadmin_requirement_approve', {'reqid': requirement.requirementNumber }) }}">Aprobar</a>
+                <a class="btn btn-danger" href="{{ path('superadmin_requirement_delete', {'reqid': requirement.requirementNumber }) }}">Eliminar</a>
                 {% endif %}    
             </td>
         </tr>

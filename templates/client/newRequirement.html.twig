@@ -8,7 +8,7 @@
     {{ form_start(form, {'attr': {'class': 'form-horizontal', 'novalidate': 'novalidate'}})}}
     <div id="products">
     {% if form.company is defined %}
-        {{ form_widget(form.company)}}
+        <label>Empresa: </label>{{ form_widget(form.company)}}
     {% endif %}
     {% for product in form.productRequests %}
         <div class="row" id="product{{loop.index0}}">

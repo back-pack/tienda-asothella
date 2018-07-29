@@ -3,10 +3,13 @@
 namespace App\Helper;
 
 class Constant {
-    const TO_BE_PROCESSED = "To be processed";
-    const IN_PROCESS = "In process";
+    //Solicitudes
+    const TO_BE_APPROVED = "To be approved";
+    const TO_DO = "To do";
+    const IN_PROGRESS = "In progress";
     const FINISHED = "Finished";
-    const DELIVERED = "Entregada";
+    const DELIVERED = "Delivered";
     
+    //Clientes
     const PENDING_FOR_APPROVAL = "Pending for approval";
 }

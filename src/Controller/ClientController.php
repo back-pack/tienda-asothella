@@ -124,7 +124,7 @@ class ClientController extends Controller
                 ->setCreationDate(new \DateTime('today'))
                 ->setCompany($this->getUser())
                 ->setRequirementNumber(uniqid())
-                ->setStatus(Constant::TO_BE_PROCESSED)
+                ->setStatus(Constant::TO_BE_APPROVED)
                 ;
             
             $em->persist($requirement);

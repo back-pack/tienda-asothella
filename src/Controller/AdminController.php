@@ -48,7 +48,7 @@ class AdminController extends Controller
     }
 
     /**
-     * @Route("/superadmin/new/user", name="superadmin_new_user")
+     * @Route("/superadmin/user/new", name="superadmin_user_new")
      */
     public function newUser(Request $request, UserPasswordEncoderInterface $passwordEncoder)
     {
@@ -78,8 +78,8 @@ class AdminController extends Controller
     }
 
     /**
-     * @Route("/admin/new/requirement", name="admin_new_requirement")
-     * @Route("/superadmin/new/requirement", name="superadmin_new_requirement")
+     * @Route("/admin/requirement/new", name="admin_requirement_new")
+     * @Route("/superadmin/requirement/new", name="superadmin_requirement_new")
      */
     public function newRequirement(Request $request, AuthorizationCheckerInterface $authChecker)
     {
@@ -135,18 +135,97 @@ class AdminController extends Controller
     }
 
     /**
-     * @Route("/superadmin/approve/requirement/{reqId}", name="superadmin_approve_requirement")
+     * @Route("/superadmin/requirement/approve/{reqId}", name="superadmin_requirement_approve")
      */
     public function approveRequirement($reqId)
     {
-        
+        $em = $this->getDoctrine()->getManager();
+        $requirement = $em->getRepository(Requirement::class)->findOneBy(['requirementNumber' => $reqId]);
+        if (!$requirement) {
+            throw $this->createNotFoundException('No existe tal requerimiento: '.$reqId);
+        }
+        $requirement->setStatus(Constant::TO_DO);
+        $em->flush();
+
+        return $this->redirectToRoute('superadmin_index');
     }
 
     /**
-     * @Route("/superadmin/delete/requirement/{reqId}", name="superadmin_delete_requirement")
+     * @Route("/superadmin/requirement/delete/{reqId}", name="superadmin_requirement_delete")
      */
     public function deleteRequirement($reqId)
     {
-        
+        $em = $this->getDoctrine()->getManager();
+        $requirement = $em->getRepository(Requirement::class)->findOneBy(['requirementNumber' => $reqId]);
+        if (!$requirement) {
+            throw $this->createNotFoundException('No existe tal requerimiento: '.$reqId);
+        }
+        $em->remove($requirement);
+        $em->flush();
+
+        return $this->redirectToRoute('superadmin_index');
+    }
+
+    /**
+     * @Route("/superadmin/requirement/inprogress/{reqId}", name="superadmin_requirement_inprogress")
+     * @Route("/admin/requirement/inprogress/{reqId}", name="admin_requirement_inprogress")
+     */
+    public function inProgressRequirement($reqId)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $requirement = $em->getRepository(Requirement::class)->findOneBy(['requirementNumber' => $reqId]);
+        if (!$requirement) {
+            throw $this->createNotFoundException('No existe tal requerimiento: '.$reqId);
+        }
+        $requirement->setStatus(Constant::IN_PROGRESS);
+        $em->flush();
+
+        if ($authChecker->isGranted('ROLE_SUPERADMIN')) {
+            return $this->redirectToRoute('superadmin_index');
+        }
+
+        return $this->redirectToRoute('admin_index');
+    }
+
+    /**
+     * @Route("/superadmin/requirement/inprogress/{reqId}", name="superadmin_requirement_finished")
+     * @Route("/admin/requirement/inprogress/{reqId}", name="admin_requirement_finished")
+     */
+    public function finishedRequirement($reqId)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $requirement = $em->getRepository(Requirement::class)->findOneBy(['requirementNumber' => $reqId]);
+        if (!$requirement) {
+            throw $this->createNotFoundException('No existe tal requerimiento: '.$reqId);
+        }
+        $requirement->setStatus(Constant::FINISHED);
+        $em->flush();
+
+        if ($authChecker->isGranted('ROLE_SUPERADMIN')) {
+            return $this->redirectToRoute('superadmin_index');
+        }
+
+        return $this->redirectToRoute('admin_index');
+    }
+
+    /**
+     * @Route("/superadmin/requirement/delivered/{reqId}", name="superadmin_requirement_delivered")
+     * @Route("/admin/requirement/delivered/{reqId}", name="admin_requirement_delivered")
+     */
+    public function deliveredRequirement($reqId)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $requirement = $em->getRepository(Requirement::class)->findOneBy(['requirementNumber' => $reqId]);
+        if (!$requirement) {
+            throw $this->createNotFoundException('No existe tal requerimiento: '.$reqId);
+        }
+        $requirement->setStatus(Constant::DELIVERED);
+        $em->flush();
+
+        if ($authChecker->isGranted('ROLE_SUPERADMIN')) {
+            return $this->redirectToRoute('superadmin_index');
+        }
+
+        return $this->redirectToRoute('admin_index');
     }
 }

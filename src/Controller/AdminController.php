@@ -133,4 +133,20 @@ class AdminController extends Controller
             // 'prices' => $prices
         ]);
     }
+
+    /**
+     * @Route("/superadmin/approve/requirement/{reqId}", name="superadmin_approve_requirement")
+     */
+    public function approveRequirement($reqId)
+    {
+        
+    }
+
+    /**
+     * @Route("/superadmin/delete/requirement/{reqId}", name="superadmin_delete_requirement")
+     */
+    public function deleteRequirement($reqId)
+    {
+        
+    }
 }

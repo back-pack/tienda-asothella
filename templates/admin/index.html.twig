@@ -43,8 +43,8 @@
             </td>
             <td>
                 {% if requirement.status == 'To be processed' %}
-                <a class="btn btn-warning" href="{{ path('superadmin_requirement_approve', {'reqid': requirement.requirementNumber }) }}">Aprobar</a>
-                <a class="btn btn-danger" href="{{ path('superadmin_requirement_delete', {'reqid': requirement.requirementNumber }) }}">Eliminar</a>
+                <a class="btn btn-warning" href="{{ path('superadmin_approve_requirement', {'reqId': requirement.requirementNumber }) }}">Aprobar</a>
+                <a class="btn btn-danger" href="{{ path('superadmin_delete_requirement', {'reqId': requirement.requirementNumber }) }}">Eliminar</a>
                 {% endif %}    
             </td>
         </tr>

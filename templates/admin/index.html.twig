@@ -47,6 +47,7 @@
                 {% if is_granted('ROLE_SUPERADMIN') %}
                     {% if requirement.status == 'To be approved' %}
                         <a class="btn btn-success" href="{{ path('superadmin_requirement_approve', {'reqId': requirement.requirementNumber }) }}">Aprobar</a>
+                        <a class="btn btn-warning" href="{{ path('superadmin_requirement_edit', {'reqId': requirement.requirementNumber }) }}">Editar</a>
                     {% elseif requirement.status == 'To do' %}
                         <a class="btn btn-success" href="{{ path('superadmin_requirement_inprogress', {'reqId': requirement.requirementNumber }) }}">Comenzar</a>
                     {% elseif requirement.status == 'In progress' %}
@@ -54,7 +55,7 @@
                     {% elseif requirement.status == 'Finished' %}
                         <a class="btn btn-success" href="{{ path('superadmin_requirement_delivered', {'reqId': requirement.requirementNumber }) }}">Entregar</a>
                     {% endif %}
-                    <a class="btn btn-danger" href="{{ path('superadmin_delete_requirement', {'reqId': requirement.requirementNumber }) }}">Eliminar</a>
+                    <a class="btn btn-danger" href="{{ path('superadmin_requirement_delete', {'reqId': requirement.requirementNumber }) }}">Eliminar</a>
                 {% elseif is_granted('ROLE_LOGISTIC') %}
                     {% if requirement.status == 'To do' %}
                         <a class="btn btn-success" href="{{ path('admin_requirement_inprogress', {'reqId': requirement.requirementNumber }) }}">Comenzar</a>
@@ -62,6 +63,10 @@
                         <a class="btn btn-success" href="{{ path('admin_requirement_finished', {'reqId': requirement.requirementNumber }) }}">Terminar</a>
                     {% elseif requirement.status == 'Finished' %}
                         <a class="btn btn-success" href="{{ path('admin_requirement_delivered', {'reqId': requirement.requirementNumber }) }}">Entregar</a>
+                    {% endif %}
+                {% elseif is_granted('ROLE_SALES') %}
+                    {% if requirement.status == 'To be approved' %}
+                        <a class="btn btn-warning" href="{{ path('admin_requirement_edit', {'reqId': requirement.requirementNumber }) }}">Editar</a>
                     {% endif %}
                 {% endif %}
             </td>

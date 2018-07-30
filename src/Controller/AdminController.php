@@ -228,4 +228,13 @@ class AdminController extends Controller
 
         return $this->redirectToRoute('admin_index');
     }
+
+    /**
+     * @Route("/superadmin/requirement/edit/{reqId}", name="superadmin_requirement_edit")
+     * @Route("/admin/requirement/edit/{reqId}", name="admin_requirement_edit")
+     */
+    public function editRequirement($reqId)
+    {
+        return $this->redirectToRoute('admin_index');
+    }
 }

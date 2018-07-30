@@ -42,7 +42,7 @@ security:
             form_login:
                 login_path: admin_login
                 check_path: admin_login
-                default_target_path: admin
+                default_target_path: admin_index
             logout:
                 path: admin_logout
                 target: admin_login
@@ -54,7 +54,7 @@ security:
             form_login:
                 login_path: login
                 check_path: login
-                default_target_path: client
+                default_target_path: client_index
             logout:
                 path: logout
                 target: login
@@ -80,5 +80,5 @@ security:
     role_hierarchy:
         ROLE_SUPERADMIN: [ROLE_ADMIN, ROLE_SALES, ROLE_LOGISTIC, ROLE_USER]
         ROLE_ADMIN: [ROLE_SALES, ROLE_LOGISTIC, ROLE_USER]
-        ROLE_SALES: ROLE_USER
-        ROLE_LOGISTIC: ROLE_USER
+        ROLE_SALES: [ROLE_ADMIN, ROLE_USER]
+        ROLE_LOGISTIC: [ROLE_ADMIN, ROLE_USER]

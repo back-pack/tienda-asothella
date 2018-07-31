@@ -48,6 +48,18 @@ class AdminController extends Controller
     }
 
     /**
+     * @Route("/superadmin/user/list", name="superadmin_user_list")
+     */
+    public function listUser()
+    {
+        $this->denyAccessUnlessGranted('ROLE_SUPERADMIN', null, 'Unable to access this page!');
+        $users = $this->getDoctrine()->getRepository(User::class)->findAll();
+        return $this->render('admin/listUser.html.twig', [
+            'users' => $users
+        ]);
+    }
+
+    /**
      * @Route("/superadmin/user/new", name="superadmin_user_new")
      */
     public function newUser(Request $request, UserPasswordEncoderInterface $passwordEncoder)

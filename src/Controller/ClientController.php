@@ -73,7 +73,7 @@ class ClientController extends Controller
     }
 
     /**
-     * @Route("/client", name="client")
+     * @Route("/client", name="client_index")
      */
     public function client()
     {

@@ -90,6 +90,32 @@ class AdminController extends Controller
     }
 
     /**
+     * @Route("/superadmin/user/edit", name="superadmin_user_edit")
+     */
+    public function editUser($userId) 
+    {
+        return $this->redirectToRoute('superadmin_user_list');
+    }
+
+    /**
+     * @Route("/superadmin/user/new", name="superadmin_user_new")
+     */
+    public function deleteUser($userId) 
+    {
+        $em = $this->getDoctrine()->getManager();
+        $user = $em->getRepository(User::class)->find($userId);
+        if (!$user) {
+            $this->addFlash('danger', 'El usuario no existe.');
+            return $this->redirectToRoute('superadmin_user_list', [
+            ]);
+        }
+        $em->remove($user);
+        $em->flush();
+
+        return $this->redirectToRoute('superadmin_user_list');
+    }
+
+    /**
      * @Route("/admin/requirement/new", name="admin_requirement_new")
      * @Route("/superadmin/requirement/new", name="superadmin_requirement_new")
      */

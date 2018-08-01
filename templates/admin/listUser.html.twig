@@ -30,6 +30,8 @@
             <td>{{ user.lastName }}</td>
             <td>{{ user.username }}</td>
             <td>
+                <a class="btn btn-warning" href="{{ path('superadmin_user_edit', {'userId': user.id }) }}">Editar</a>
+                <a class="btn btn-delete" href="{{ path('superadmin_user_delete', {'userId': user.id }) }}">Eliminar</a>
             </td>
 
         </tr>

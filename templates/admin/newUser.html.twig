@@ -6,7 +6,20 @@
 
 <div class="container">
     {{ form_start(form) }}
-    {{ form_widget (form) }}
+    {{ form_widget(form.firstName) }}
+    {{ form_widget(form.lastName) }}
+    {{ form_widget(form.email, {'attr' : {'readonly' : 'readonly'} }) }}
+    {{ form_widget(form.phone) }}
+    {{ form_widget(form.username) }}
+    {{ form_widget(form.role) }}
+    {% if edit is defined %}
+        {{ form_widget(form.plainPassword.first, { 'attr' : { 'value' : '****'} }) }}
+        {{ form_widget(form.plainPassword.second, { 'attr' : { 'value' : '****'} }) }}
+    {% else %}
+        {{ form_widget(form.plainPassword.first) }}
+        {{ form_widget(form.plainPassword.second) }}
+    {% endif %}
+    
     {{ form_end(form) }}
 </div>
 {% endblock %}

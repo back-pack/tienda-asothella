@@ -90,15 +90,48 @@ class AdminController extends Controller
     }
 
     /**
-     * @Route("/superadmin/user/edit", name="superadmin_user_edit")
+     * @Route("/superadmin/user/edit/{userId}", name="superadmin_user_edit")
+     * @Route("/admin/user/edit/{userId}", name="admin_user_edit")
      */
-    public function editUser($userId) 
-    {
-        return $this->redirectToRoute('superadmin_user_list');
+    public function editUser(Request $request, $userId, UserPasswordEncoderInterface $passwordEncoder, AuthorizationCheckerInterface $authChecker) 
+    {   
+        $em = $this->getDoctrine()->getManager();     
+        if($authChecker->isGranted('ROLE_SUPERADMIN')) {
+            $user = $em->getRepository(User::class)->find($userId);    
+        } else {
+            $user = $em->getRepository(User::class)->find($this->getUser()->getId());
+        }
+        $dbPassword = $user->getPassword();
+
+        $form = $this->createForm(UserType::class, $user);
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid()) {
+            if($user->getPlainPassword() !== "****") {
+                $password = $passwordEncoder->encodePassword($user, $user->getPlainPassword());
+                $user->setPassword($password);
+            } else {
+                $user->setPassword($dbPassword);
+            }
+            $em->flush();
+
+            if ($authChecker->isGranted('ROLE_SUPERADMIN')) {
+                $redirectToIndex = $this->redirectToRoute('superadmin_user_list');
+            } else {
+                $redirectToIndex = $this->redirectToRoute('admin_index');
+            }
+            $this->addFlash('success', 'Usuario actualizado!');
+            return $redirectToIndex;
+            
+        }
+        return $this->render('admin/newUser.html.twig', [
+            'form' => $form->createView(),
+            'edit' => true
+        ]);
     }
 
     /**
-     * @Route("/superadmin/user/new", name="superadmin_user_new")
+     * @Route("/superadmin/user/delete/{userId}", name="superadmin_user_delete")
      */
     public function deleteUser($userId) 
     {

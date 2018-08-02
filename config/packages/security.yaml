@@ -32,7 +32,7 @@ security:
             anonymous: ~
             pattern: ^/superadmin
             logout:
-                path: main_logout
+                path: superadmin_logout
                 target: admin_login
         admin_area:
             provider: admin_db
@@ -79,5 +79,5 @@ security:
     
     role_hierarchy:
         ROLE_SUPERADMIN: [ROLE_ADMIN, ROLE_SALES, ROLE_LOGISTIC]
-        ROLE_SALES: [ROLE_ADMIN, ROLE_USER]
-        ROLE_LOGISTIC: [ROLE_ADMIN, ROLE_USER]
+        ROLE_SALES: [ROLE_ADMIN]
+        ROLE_LOGISTIC: [ROLE_ADMIN]

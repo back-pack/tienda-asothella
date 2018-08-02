@@ -5,8 +5,8 @@
 #    path: /
 #    defaults: { _controller: 'App\Controller\DefaultController::index' }
 
-main_logout:
-    path: /main/logout
+superadmin_logout:
+    path: /superadmin/logout
 admin_logout:
     path: /admin/logout
 logout:

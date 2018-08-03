@@ -3,12 +3,21 @@
 {% block title %}Product index{% endblock %}
 
 {% block body %}
+    {% for message in app.flashes('success') %}
+    <div class="alert alert-success">
+        {{ message }}
+    </div>
+    {% endfor %} {% for message in app.flashes('danger') %}
+    <div class="alert alert-danger">
+        {{ message }}
+    </div>
+    {% endfor %}
     <h1>Lista de productos</h1>
 
+    <a class="btn btn-success" href="{{ path('superadmin_product_new') }}">Crear nuevo producto</a>
     <table class="table">
         <thead>
             <tr>
-                <th>Id</th>
                 <th>Name</th>
                 <th>Description</th>
                 <th>Price</th>
@@ -19,23 +28,22 @@
         <tbody>
         {% for product in products %}
             <tr>
-                <td>{{ product.id }}</td>
                 <td>{{ product.name }}</td>
                 <td>{{ product.description }}</td>
                 <td>{{ product.price }}</td>
                 <td>{{ product.isColor ? 'Yes' : 'No' }}</td>
                 <td>
-                    <a href="{{ path('superadmin_product_show', {'id': product.id}) }}">show</a>
-                    <a href="{{ path('superadmin_product_edit', {'id': product.id}) }}">edit</a>
+                    <a class="btn btn-warning" href="{{ path('superadmin_product_edit', {'id': product.id}) }}">Editar</a>
+                    <a class="btn btn-danger" href="{{ path('superadmin_product_delete', {'id': product.id}) }}">Elimina</a>
                 </td>
             </tr>
         {% else %}
             <tr>
-                <td colspan="6">no records found</td>
+                <td colspan="6">No hay registros aún!</td>
             </tr>
         {% endfor %}
         </tbody>
     </table>
 
-    <a href="{{ path('superadmin_product_new') }}">Create new</a>
+    
 {% endblock %}

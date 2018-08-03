@@ -104,6 +104,9 @@ class AdminController extends Controller
         } else {
             $user = $em->getRepository(User::class)->find($this->getUser()->getId());
         }
+        if(!$user) {
+            throw $this->createNotFoundException('No existe tal usuario: '.$userId);
+        }
         $dbPassword = $user->getPassword();
 
         $form = $this->createForm(UserType::class, $user);
@@ -354,33 +357,44 @@ class AdminController extends Controller
     /**
      * @Route("/superadmin/product/edit/{id}", name="superadmin_product_edit", methods="GET|POST")
      */
-    public function edit(Request $request, Product $product)
+    public function editProduct(Request $request, $id)
     {
+        $em = $this->getDoctrine()->getManager();
+        $product = $em->getRepository(Product::class)->find($id);
+
+        if(!$product) {
+            throw $this->createNotFoundException('No existe tal producto: '.$id);
+        }
         $form = $this->createForm(ProductType::class, $product);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
+            $em->flush();
 
-            return $this->redirectToRoute('superadmin_product_index', ['id' => $product->getId()]);
+            $this->addFlash('success', 'El producto fue editado.');
+
+            return $this->redirectToRoute('superadmin_product_index');
         }
 
         return $this->render('admin/product/edit.html.twig', [
-            'product' => $product,
             'form' => $form->createView(),
         ]);
     }
 
     /**
-     * @Route("/superadmin/product/delete/{id}", name="superadmin_product_delete", methods="DELETE")
+     * @Route("/superadmin/product/delete/{id}", name="superadmin_product_delete")
      */
-    public function delete(Request $request, Product $product)
+    public function deleteProduct(Request $request, $id)
     {
-        if ($this->isCsrfTokenValid('delete'.$product->getId(), $request->request->get('_token'))) {
-            $em = $this->getDoctrine()->getManager();
-            $em->remove($product);
-            $em->flush();
+        $em = $this->getDoctrine()->getManager();
+        $product = $em->getRepository(Product::class)->find($id);
+        if(!$product) {
+            throw $this->createNotFoundException('No existe tal producto: '.$id);
         }
+        $em->remove($product);
+        $em->flush();
+
+        $this->addFlash('success', 'El producto fue eliminado.');
 
         return $this->redirectToRoute('superadmin_product_index');
     }

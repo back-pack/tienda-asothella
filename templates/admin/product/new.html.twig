@@ -1,11 +1,17 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}New Product{% endblock %}
+{% block title %}Nuevo Producto{% endblock %}
 
 {% block body %}
-    <h1>Create new Product</h1>
+    <h1>Crear nuevo producto</h1>
 
-    {{ include('admin/product/_form.html.twig') }}
+    {{ form_start(form) }}
+    <label>Nombre: </label>{{ form_widget(form.name) }}
+    <label>Descripcion: </label>{{ form_widget(form.description) }}
+    <label>Precio: </label>{{ form_widget(form.price) }}
+    <label>¿Colores seleccionables?</label> {{ form_widget(form.isColor) }}
+    <button class="btn">{{ button_label|default('Guardar') }}</button>
+    {{ form_end(form) }}
 
     <a href="{{ path('superadmin_product_index') }}">back to list</a>
 {% endblock %}

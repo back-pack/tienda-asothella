@@ -1,13 +1,18 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Edit Product{% endblock %}
+{% block title %}Editar Producto{% endblock %}
 
 {% block body %}
-    <h1>Edit Product</h1>
+    <h1>Editar producto</h1>
 
-    {{ include('product/_form.html.twig', {'button_label': 'Update'}) }}
+    {{ form_start(form) }}
+    <label>Nombre: </label>{{ form_widget(form.name) }}
+    <label>Descripcion: </label>{{ form_widget(form.description) }}
+    <label>Precio: </label>{{ form_widget(form.price) }}
+    <label>¿Colores seleccionables?</label> {{ form_widget(form.isColor) }}
+    <button class="btn">{{ button_label|default('Guardar') }}</button>
+    {{ form_end(form) }}
 
-    <a href="{{ path('superadmin_product_index') }}">back to list</a>
+    <a href="{{ path('superadmin_product_index') }}">Volver a la lista</a>
 
-    {{ include('superadmin/product/_delete_form.html.twig') }}
 {% endblock %}

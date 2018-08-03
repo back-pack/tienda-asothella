@@ -3,7 +3,7 @@
 {% block title %}Product index{% endblock %}
 
 {% block body %}
-    <h1>Product index</h1>
+    <h1>Lista de productos</h1>
 
     <table class="table">
         <thead>
@@ -25,8 +25,8 @@
                 <td>{{ product.price }}</td>
                 <td>{{ product.isColor ? 'Yes' : 'No' }}</td>
                 <td>
-                    <a href="{{ path('product_show', {'id': product.id}) }}">show</a>
-                    <a href="{{ path('product_edit', {'id': product.id}) }}">edit</a>
+                    <a href="{{ path('superadmin_product_show', {'id': product.id}) }}">show</a>
+                    <a href="{{ path('superadmin_product_edit', {'id': product.id}) }}">edit</a>
                 </td>
             </tr>
         {% else %}
@@ -37,5 +37,5 @@
         </tbody>
     </table>
 
-    <a href="{{ path('product_new') }}">Create new</a>
+    <a href="{{ path('superadmin_product_new') }}">Create new</a>
 {% endblock %}

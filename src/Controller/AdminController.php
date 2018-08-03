@@ -12,8 +12,11 @@ use App\Entity\User;
 use App\Form\UserType;
 use App\Entity\Requirement;
 use App\Form\RequirementType;
+use App\Form\ProductType;
 use App\Entity\ProductRequest;
 use App\Entity\RoofTile;
+use App\Entity\Product;
+use App\Repository\ProductRepository;
 use App\Helper\Constant;
 
 class AdminController extends Controller
@@ -307,5 +310,78 @@ class AdminController extends Controller
     public function editRequirement($reqId)
     {
         return $this->redirectToRoute('admin_index');
+    }
+
+    /**
+     * @Route("/superadmin/product", name="superadmin_product_index", methods="GET")
+     */
+    public function productList(ProductRepository $productRepository)
+    {
+        return $this->render('admin/product/index.html.twig', ['products' => $productRepository->findAll()]);
+    }
+
+    /**
+     * @Route("/superadmin/product/new", name="superadmin_product_new", methods="GET|POST")
+     */
+    public function newProduct(Request $request)
+    {
+        $product = new Product();
+        $form = $this->createForm(ProductType::class, $product);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($product);
+            $em->flush();
+
+            return $this->redirectToRoute('superadmin_product_index');
+        }
+
+        return $this->render('admin/product/new.html.twig', [
+            'product' => $product,
+            'form' => $form->createView(),
+        ]);
+    }
+
+    /**
+     * @Route("/superadmin/product/show/{id}", name="superadmin_product_show", methods="GET")
+     */
+    public function show(Product $product)
+    {
+        return $this->render('admin/product/show.html.twig', ['product' => $product]);
+    }
+
+    /**
+     * @Route("/superadmin/product/edit/{id}", name="superadmin_product_edit", methods="GET|POST")
+     */
+    public function edit(Request $request, Product $product)
+    {
+        $form = $this->createForm(ProductType::class, $product);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $this->getDoctrine()->getManager()->flush();
+
+            return $this->redirectToRoute('superadmin_product_index', ['id' => $product->getId()]);
+        }
+
+        return $this->render('admin/product/edit.html.twig', [
+            'product' => $product,
+            'form' => $form->createView(),
+        ]);
+    }
+
+    /**
+     * @Route("/superadmin/product/delete/{id}", name="superadmin_product_delete", methods="DELETE")
+     */
+    public function delete(Request $request, Product $product)
+    {
+        if ($this->isCsrfTokenValid('delete'.$product->getId(), $request->request->get('_token'))) {
+            $em = $this->getDoctrine()->getManager();
+            $em->remove($product);
+            $em->flush();
+        }
+
+        return $this->redirectToRoute('superadmin_product_index');
     }
 }

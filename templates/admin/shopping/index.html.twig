@@ -1,0 +1,57 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Shopping{% endblock %}
+
+{% block body %}
+
+<div class="container">
+    {% for message in app.flashes('success') %}
+    <div class="alert alert-success">
+        {{ message }}
+    </div>
+    {% endfor %} {% for message in app.flashes('danger') %}
+    <div class="alert alert-danger">
+        {{ message }}
+    </div>
+    {% endfor %}
+    <h1>Lista de productos</h1>
+
+    <a class="btn btn-info" href="">Ver carro</a>
+
+    <div class="row">
+        {% for product in products %}
+        <div class="col-sm-10 col-xs-12">
+            <div class="panel panel-success ">
+                <div class="panel-heading">
+                    <h3 class="panel-title">{{ product.name}}</h3>
+                </div>
+                <div class="panel-body">
+                    <p>{{ product.description }}</p>
+                    IMAGEN<img src="" alt="">
+                </div>
+                {% if is_granted('ROLE_SUPERADMIN') %}
+                <div class="panel-footer">
+                    <a type="button" href="{{ path('superadmin_shopping_additem', {'item': product.uid }) }}" class="btn btn-xs btn-success" data-toggle="tooltip" data-placement="bottom" title="Agregar">
+                        <i class="fa fa-fw fa-cross"></i>
+                    </a>
+                    <a type="button" href="{{ path('superadmin_shopping_viewitem', {'item': product.uid }) }}" class="btn btn-xs btn-info" data-toggle="tooltip" data-placement="bottom" title="Ver">
+                        <i class="fa fa-fw fa-eye"></i>
+                    </a>
+                </div>
+                {% else %}
+                <div class="panel-footer">
+                    <a type="button" href="{{ path('admin_shopping_additem', {'item': product.uid }) }}" class="btn btn-xs btn-success" data-toggle="tooltip" data-placement="bottom" title="Agregar">
+                        <i class="fa fa-fw fa-cross"></i>
+                    </a>
+                    <a type="button" href="{{ path('admin_shopping_viewitem', {'item': product.uid }) }}" class="btn btn-xs btn-info" data-toggle="tooltip" data-placement="bottom" title="Ver">
+                        <i class="fa fa-fw fa-eye"></i>
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+ 
+</div>
+{% endblock %}

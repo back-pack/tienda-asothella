@@ -36,6 +36,11 @@ class Product
      */
     private $isColor;
 
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $uid;
+
     public function getId()
     {
         return $this->id;
@@ -85,6 +90,18 @@ class Product
     public function setIsColor(bool $isColor): self
     {
         $this->isColor = $isColor;
+
+        return $this;
+    }
+
+    public function getUid(): ?string
+    {
+        return $this->uid;
+    }
+
+    public function setUid(string $uid): self
+    {
+        $this->uid = $uid;
 
         return $this;
     }

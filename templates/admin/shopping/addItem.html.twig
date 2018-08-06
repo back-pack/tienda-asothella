@@ -1,0 +1,140 @@
+{% extends 'base.html.twig' %}
+
+{% block title %} Agregar item {% endblock %}
+
+{% block body %}
+
+<div class="container">
+    {{ form_start(form, {'attr': {'class': 'form-horizontal', 'novalidate': 'novalidate'}})}}
+    <div id="products">
+    {% if form.company is defined %}
+        <label>Empresa: </label>{{ form_widget(form.company)}}
+    {% endif %}
+    {% for product in form.productRequests %}
+        <div class="row" id="product{{loop.index0}}">
+            <label>Tipo de teja:</label>{{ form_widget(product.type) }}
+            <label>Cantidad:</label>{{ form_widget(product.quantity, {'attr': { 'onchange': 'setCost(0)' }})}}
+            <label>Costo:</label>{{ form_widget(product.cost) }}
+            <label>Color:</label>{{ form_widget(product.colour) }}
+        </div>
+    {% endfor %}    
+    </div>
+    
+    <br>
+    <div class="row">
+        <label>Precio final</label>{{ form_widget(form.finalCost)}}
+    </div>
+    <br>
+    <div class="row">
+        <a class="btn btn-success" id="addProduct">Agregar nuevo producto</a>
+    </div>
+    <br>
+    <div class="row">
+        {{ form_widget(form.save)}}
+    </div>
+    {{ form_end(form)}}
+    
+    
+</div>
+<div id="index" style="display:none">{{ form.productRequests|length -1 }}</div>
+        <script src="{{ asset('js/jquery.colorPicker.js') }}" type="text/javascript"></script>
+        <script>
+            var index = document.getElementById("index").innerHTML;
+            var products = document.querySelectorAll('#products div');
+            
+            console.log(products);
+
+            jQuery(document).ready(function($) {
+                $('#product_request_colour').colorPicker();
+                
+                $('#addProduct').click(() => {
+                    index = parseInt(index);
+                    index = index + 1;
+                    
+                    var divRow = document.createElement('div');
+                    divRow.className = 'row';
+                    divRow.id = "product" + index;
+
+                    divRow.appendChild(createTypeElement(index));
+                    divRow.appendChild(createQuantityElement(index));
+                    divRow.appendChild(createCostElement(index));
+                    divRow.appendChild(createColorElement(index));
+                    divRow.appendChild(createRemoveButton(index));
+                    $("#products").append(divRow);
+                    
+                })
+
+                function createColorElement(index) {
+                    var newInput = document.createElement('input');
+                    newInput.setAttribute('required' , 'required');
+                    newInput.id = 'requirement_productRequests_'+index+'_colour';
+                    newInput.name = 'requirement[productRequests]['+index+'][colour]';
+
+                    return newInput;
+                }
+
+                function createCostElement(index) {
+                    var newInput = document.createElement('input');
+                    newInput.setAttribute('required', 'required');
+                    newInput.setAttribute('readonly', 'readonly');
+                    newInput.id = 'requirement_productRequests_'+index+'_cost';
+                    newInput.name = 'requirement[productRequests]['+index+'][cost]';
+
+                    return newInput;
+                }
+
+                function createQuantityElement(index) {
+                    var newInput = document.createElement('input');
+                    newInput.setAttribute('required' , 'required');
+                    newInput.id = 'requirement_productRequests_'+index+'_quantity';
+                    newInput.name = 'requirement[productRequests]['+index+'][quantity]';
+                    newInput.setAttribute("onchange", "setCost("+index+");");
+                    return newInput;
+                }
+
+                function createTypeElement(index) {
+                    var select = document.createElement('select');
+                    select.name = "requirement[productRequests]["+ index +"][type]";
+                    select.id = "requirement_productRequests_"+ index +"_type";
+                    select.setAttribute("onchange", "setCost("+index+")");
+
+                    var modelSelect = document.getElementById("requirement_productRequests_0_type");
+                    for(var i = 0; i < modelSelect.options.length; i++) {
+                        var opt = document.createElement('option');
+                        opt.text = modelSelect.options[i].text;
+                        opt.value = modelSelect.options[i].value;
+                        select.add(opt, select[i]);
+                    }
+                    return select;
+                }
+
+                function createRemoveButton(index) {
+                    var button = document.createElement('a');
+                    button.setAttribute("onclick", "removeProduct("+index+");");
+                    button.className = "btn btn-danger";
+                    button.innerHTML = "Quitar"
+
+                    return button;
+                }
+                
+            });
+            function removeProduct(index) {
+                var product = document.getElementById("product"+index);
+                product.remove();
+            }
+            function setCost(index) {
+                var cost = document.getElementById("requirement_productRequests_"+index+"_cost").value;
+                var quantityValue = document.getElementById("requirement_productRequests_"+index+"_quantity").value;
+                var selectedTile = document.getElementById("requirement_productRequests_"+index+"_type").value;
+
+                if(quantityValue == '' || quantityValue == undefined) {
+                    return;
+                }
+                
+                cost = parseInt(quantityValue) * parseFloat(selectedTile);
+            }
+
+            
+        </script>
+
+{% endblock %}

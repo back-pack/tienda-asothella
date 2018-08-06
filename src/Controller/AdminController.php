@@ -212,6 +212,39 @@ class AdminController extends Controller
     }
 
     /**
+     * @Route("/admin/shopping/additem/{item}", name="admin_shopping_additem")
+     * @Route("/superadmin/shopping/additem/{item}", name="superadmin_shopping_additem")
+     */
+    public function addItem(Request $request, $item)
+    {
+        $productRequest = new ProductRequest();
+        $form = $this->createForm(ProductRequestType::class, $productRequest);
+        $form->handleRequest($request);
+        if($form->isSubmitted() && $form->isValid()) {
+            
+        }
+        return $this->render('admin/shopping/addItem.html.twig');
+    }
+
+    /**
+     * @Route("/admin/shopping/viewitem/{item}", name="admin_shopping_viewitem")
+     * @Route("/superadmin/shopping/viewitem/{item}", name="superadmin_shopping_viewitem")
+     */
+    public function viewItem(Request $request)
+    {
+        return $this->render('admin/shopping/addItem.html.twig');
+    }
+
+    /**
+     * @Route("/admin/shopping", name="admin_shopping")
+     * @Route("/superadmin/shopping", name="superadmin_shopping")
+     */
+    public function shopping(ProductRepository $productRepository)
+    {
+        return $this->render('admin/shopping/index.html.twig', ['products' => $productRepository->findAll()]);
+    }
+
+    /**
      * @Route("/superadmin/requirement/show/{reqId}", name="superadmin_requirement_show")
      */
     public function showRequirement($reqId)

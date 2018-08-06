@@ -212,6 +212,14 @@ class AdminController extends Controller
     }
 
     /**
+     * @Route("/superadmin/requirement/show/{reqId}", name="superadmin_requirement_show")
+     */
+    public function showRequirement($reqId)
+    {
+        return $this->redirectToRoute('admin_index');
+    }
+
+    /**
      * @Route("/superadmin/requirement/approve/{reqId}", name="superadmin_requirement_approve")
      */
     public function approveRequirement($reqId)

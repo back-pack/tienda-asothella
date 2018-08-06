@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Nuevo usuario{% endblock %}
+{% block title %}Lista de usuarios{% endblock %}
 
 {% block body %}
 
@@ -14,7 +14,9 @@
         {{ message }}
     </div>
     {% endfor %}
+    <h1>Lista de Usuarios</h1>
 
+    <a class="btn btn-success" href="{{ path('superadmin_user_new') }}">Crear nuevo usuario</a>
     <table class="table">
         <tr>
             <th>Rol</th>

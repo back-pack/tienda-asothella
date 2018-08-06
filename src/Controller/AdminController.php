@@ -8,6 +8,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+use Symfony\Component\HttpFoundation\Session\Session;
 use App\Entity\User;
 use App\Form\UserType;
 use App\Entity\Requirement;
@@ -215,13 +216,21 @@ class AdminController extends Controller
      * @Route("/admin/shopping/additem/{item}", name="admin_shopping_additem")
      * @Route("/superadmin/shopping/additem/{item}", name="superadmin_shopping_additem")
      */
-    public function addItem(Request $request, $item)
+    public function addItem(Request $request, $item, Session $cart)
     {
         $productRequest = new ProductRequest();
         $form = $this->createForm(ProductRequestType::class, $productRequest);
         $form->handleRequest($request);
         if($form->isSubmitted() && $form->isValid()) {
             
+            $cart->set('requestId', uniqid());
+            $cart->set('item', $form);
+
+            if ($authChecker->isGranted('ROLE_SUPERADMIN')) {
+                return $this->redirectToRoute('superadmin_shopping');
+            }
+            return $this->redirectToRoute('admin_shopping');
+
         }
         return $this->render('admin/shopping/addItem.html.twig');
     }
@@ -241,7 +250,12 @@ class AdminController extends Controller
      */
     public function shopping(ProductRepository $productRepository)
     {
-        return $this->render('admin/shopping/index.html.twig', ['products' => $productRepository->findAll()]);
+        if(!isset($cart)) {
+            $cart = new Session();
+            $cart->set('id', uniqid());
+        }
+      
+        return $this->render('admin/shopping/index.html.twig', ['products' => $productRepository->findAll(), 'cartId' => $cart->get('id')]);
     }
 
     /**

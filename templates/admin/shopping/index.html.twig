@@ -31,19 +31,19 @@
                 </div>
                 {% if is_granted('ROLE_SUPERADMIN') %}
                 <div class="panel-footer">
-                    <a type="button" href="{{ path('superadmin_shopping_additem', {'item': product.uid }) }}" class="btn btn-xs btn-success" data-toggle="tooltip" data-placement="bottom" title="Agregar">
+                    <a type="button" href="{{ path('superadmin_shopping_additem', {'itemId': product.uid }) }}" class="btn btn-xs btn-success" data-toggle="tooltip" data-placement="bottom" title="Agregar">
                         <i class="fa fa-fw fa-cross"></i>
                     </a>
-                    <a type="button" href="{{ path('superadmin_shopping_viewitem', {'item': product.uid }) }}" class="btn btn-xs btn-info" data-toggle="tooltip" data-placement="bottom" title="Ver">
+                    <a type="button" href="{{ path('superadmin_shopping_viewitem', {'itemId': product.uid }) }}" class="btn btn-xs btn-info" data-toggle="tooltip" data-placement="bottom" title="Ver">
                         <i class="fa fa-fw fa-eye"></i>
                     </a>
                 </div>
                 {% else %}
                 <div class="panel-footer">
-                    <a type="button" href="{{ path('admin_shopping_additem', {'item': product.uid }) }}" class="btn btn-xs btn-success" data-toggle="tooltip" data-placement="bottom" title="Agregar">
+                    <a type="button" href="{{ path('admin_shopping_additem', {'itemId': product.uid }) }}" class="btn btn-xs btn-success" data-toggle="tooltip" data-placement="bottom" title="Agregar">
                         <i class="fa fa-fw fa-cross"></i>
                     </a>
-                    <a type="button" href="{{ path('admin_shopping_viewitem', {'item': product.uid }) }}" class="btn btn-xs btn-info" data-toggle="tooltip" data-placement="bottom" title="Ver">
+                    <a type="button" href="{{ path('admin_shopping_viewitem', {'itemId': product.uid }) }}" class="btn btn-xs btn-info" data-toggle="tooltip" data-placement="bottom" title="Ver">
                         <i class="fa fa-fw fa-eye"></i>
                     </a>
                 </div>

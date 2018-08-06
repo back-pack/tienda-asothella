@@ -216,15 +216,18 @@ class AdminController extends Controller
      * @Route("/admin/shopping/additem/{item}", name="admin_shopping_additem")
      * @Route("/superadmin/shopping/additem/{item}", name="superadmin_shopping_additem")
      */
-    public function addItem(Request $request, $item, Session $cart)
+    public function addItem(Request $request, $itemId, Session $cart)
     {
+        if(null === ($cart->get('id'))) {
+            return $this->redirectToRoute('superadmin_shopping');
+        }
         $productRequest = new ProductRequest();
         $form = $this->createForm(ProductRequestType::class, $productRequest);
         $form->handleRequest($request);
         if($form->isSubmitted() && $form->isValid()) {
             
             $cart->set('requestId', uniqid());
-            $cart->set('item', $form);
+            $cart->set('item', $productRequest);
 
             if ($authChecker->isGranted('ROLE_SUPERADMIN')) {
                 return $this->redirectToRoute('superadmin_shopping');

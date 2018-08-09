@@ -13,8 +13,53 @@
     {% endif %}
         <label>Cantidad:</label>{{ form_widget(form.quantity, {'attr': { 'onchange': 'setCost(0)' }})}}
         <label>Costo:</label>{{ form_widget(form.cost) }}
-    {% if product.isColor is true %}
+    {% if product.isColor %}
         <label>Color:</label>{{ form_widget(form.colour) }}
+        <div class="col-xs-10 col-sm-7">
+            <ul class="nav nav-tabs">
+                <li class="active"><a data-toggle="tab" href="#picker-1" aria-expanded="true">Catalogo</a></li>
+                <li class=""><a data-toggle="tab" href="#picker-2" aria-expanded="false">Custom</a></li>
+                <li class=""><a data-toggle="tab" href="#picker-3" aria-expanded="false">Sin color</a></li>
+            </ul>
+            <div class="color_picker tab-content">
+                <div id="picker-1" class="tab-pane fade active in">
+                    <div class="col-xs-12">
+                        <h5>Estos son los colores de catalogo.Entrega 48hs</h5>
+                    </div>
+                    <div class="col-xs-12">
+                        <div class="cc-selector">
+                            <input id="colonial_std_1" type="radio" name="credit-card" value="colonial_std_1">
+                            <label class="drinkcard-cc colonial_std_1" for="colonial_std_1"><h4 class="color_number">Blanco</h4></label>
+                            <input id="colonial_std_2" type="radio" name="credit-card" value="colonial_std_2">
+                            <label class="drinkcard-cc colonial_std_2" for="colonial_std_2"><h4 class="color_number">Azul YPF</h4></label>
+                            <input id="colonial_std_3" type="radio" name="credit-card" value="colonial_std_3">
+                            <label class="drinkcard-cc colonial_std_3" for="colonial_std_3"><h4 class="color_number">Verde Ingles</h4></label>
+                            <input id="colonial_std_4" type="radio" name="credit-card" value="colonial_std_4">
+                            <label class="drinkcard-cc colonial_std_4" for="colonial_std_4"><h4 class="color_number">Rojo Teja</h4></label>
+                            <input id="colonial_std_5" type="radio" name="credit-card" value="colonial_std_5">
+                            <label class="drinkcard-cc colonial_std_5" for="colonial_std_5"><h4 class="color_number">Negro Semimate</h4></label>
+                            <input id="colonial_std_6" type="radio" name="credit-card" value="colonial_std_6">
+                            <label class="drinkcard-cc colonial_std_6" for="colonial_std_6"><h4 class="color_number">Gris</h4></label>
+                        </div>
+                    </div>
+                </div>
+                <div id="picker-2" class="tab-pane fade">
+                    <div class="row">
+                        <div class="col-xs-2">
+                            <h5>Seleccione su color favorito</h5>
+                            <h5><input type="color"></h5>
+                        </div>
+                        <div class="col-xs-10">
+                            <div class="color_teja_custom h5" style="background-image: linear-gradient(to right, #bd4b03,#bd4b03), url('./img/teja_color_custom.png') "></div>
+                            
+                        </div>
+                    </div>
+                </div>
+                <div id="picker-3" class="tab-pane fade">
+                    <h5>Sin color.</h5>
+                </div>                            
+            </div>
+        </div>
     {% endif %}
     </div>
     

@@ -19,11 +19,6 @@ class ProductRequest
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $type;
-
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
     private $colour;
 
     /**
@@ -56,18 +51,6 @@ class ProductRequest
     public function getId()
     {
         return $this->id;
-    }
-
-    public function getType(): ?string
-    {
-        return $this->type;
-    }
-
-    public function setType(string $type): self
-    {
-        $this->type = $type;
-
-        return $this;
     }
 
     public function getColour(): ?string

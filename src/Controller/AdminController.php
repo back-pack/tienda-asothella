@@ -227,6 +227,7 @@ class AdminController extends Controller
         $form = $this->createForm(ProductRequestType::class, $productRequest);
         $form->handleRequest($request);
         if($form->isSubmitted() && $form->isValid()) {
+            $productRequest->setProduct($product);
             
             $cart->set('requestId', uniqid());
             $cart->set('item', $productRequest);

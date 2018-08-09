@@ -31,17 +31,3 @@
 }	
 
 
-/* Modificar radios que andan para el corcho. Agregar fotos de tejas. */
-.radios .radio-color  {
-    background-image: url("img/default_store.png");
-    display:inline-block;
-    width:200px;
-    height:200px;
-}
-.radios input[type=radio]{
-    display:none
-}
- 
-.radios input[type=radio]:checked + .radio-color{
-    background-color:#ff3d3d50
-}

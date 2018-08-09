@@ -10,13 +10,14 @@ use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\HttpFoundation\Session\Session;
 use App\Entity\User;
-use App\Form\UserType;
 use App\Entity\Requirement;
-use App\Form\RequirementType;
-use App\Form\ProductType;
 use App\Entity\ProductRequest;
 use App\Entity\RoofTile;
 use App\Entity\Product;
+use App\Form\RequirementType;
+use App\Form\ProductType;
+use App\Form\UserType;
+use App\Form\ProductRequestType;
 use App\Repository\ProductRepository;
 use App\Helper\Constant;
 
@@ -213,8 +214,8 @@ class AdminController extends Controller
     }
 
     /**
-     * @Route("/admin/shopping/additem/{item}", name="admin_shopping_additem")
-     * @Route("/superadmin/shopping/additem/{item}", name="superadmin_shopping_additem")
+     * @Route("/admin/shopping/additem/{itemId}", name="admin_shopping_additem")
+     * @Route("/superadmin/shopping/additem/{itemId}", name="superadmin_shopping_additem")
      */
     public function addItem(Request $request, $itemId, Session $cart)
     {
@@ -235,12 +236,14 @@ class AdminController extends Controller
             return $this->redirectToRoute('admin_shopping');
 
         }
-        return $this->render('admin/shopping/addItem.html.twig');
+        return $this->render('admin/shopping/addItem.html.twig', [
+            'form' => $form->createView(),
+        ]);
     }
 
     /**
-     * @Route("/admin/shopping/viewitem/{item}", name="admin_shopping_viewitem")
-     * @Route("/superadmin/shopping/viewitem/{item}", name="superadmin_shopping_viewitem")
+     * @Route("/admin/shopping/viewitem/{itemId}", name="admin_shopping_viewitem")
+     * @Route("/superadmin/shopping/viewitem/{itemId}", name="superadmin_shopping_viewitem")
      */
     public function viewItem(Request $request)
     {

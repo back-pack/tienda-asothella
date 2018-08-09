@@ -7,36 +7,24 @@
 <div class="container">
     {{ form_start(form, {'attr': {'class': 'form-horizontal', 'novalidate': 'novalidate'}})}}
     <div id="products">
-    {% if form.company is defined %}
-        <label>Empresa: </label>{{ form_widget(form.company)}}
-    {% endif %}
-    {% for product in form.productRequests %}
-        <div class="row" id="product{{loop.index0}}">
-            <label>Tipo de teja:</label>{{ form_widget(product.type) }}
-            <label>Cantidad:</label>{{ form_widget(product.quantity, {'attr': { 'onchange': 'setCost(0)' }})}}
-            <label>Costo:</label>{{ form_widget(product.cost) }}
-            <label>Color:</label>{{ form_widget(product.colour) }}
-        </div>
-    {% endfor %}    
+        {% if form.company is defined %}
+            <label>Empresa: </label>{{ form_widget(form.company)}}
+        {% endif %}
+        
+        <label>Tipo de teja:</label>{{ form_widget(form.type) }}
+        <label>Cantidad:</label>{{ form_widget(form.quantity, {'attr': { 'onchange': 'setCost(0)' }})}}
+        <label>Costo:</label>{{ form_widget(form.cost) }}
+        <label>Color:</label>{{ form_widget(form.colour) }}
     </div>
     
     <br>
     <div class="row">
-        <label>Precio final</label>{{ form_widget(form.finalCost)}}
-    </div>
-    <br>
-    <div class="row">
-        <a class="btn btn-success" id="addProduct">Agregar nuevo producto</a>
-    </div>
-    <br>
-    <div class="row">
-        {{ form_widget(form.save)}}
+        <button class="btn">{{ button_label|default('Agregar item') }}</button>
     </div>
     {{ form_end(form)}}
     
     
 </div>
-<div id="index" style="display:none">{{ form.productRequests|length -1 }}</div>
         <script src="{{ asset('js/jquery.colorPicker.js') }}" type="text/javascript"></script>
         <script>
             var index = document.getElementById("index").innerHTML;

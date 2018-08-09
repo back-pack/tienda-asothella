@@ -8,14 +8,14 @@
     {{ form_start(form, {'attr': {'class': 'form-horizontal', 'novalidate': 'novalidate'}})}}
     <h1>{{ product.name }}</h1>
     <div id="products">
-        {% if form.company is defined %}
-            <label>Empresa: </label>{{ form_widget(form.company)}}
-        {% endif %}
-        
-        <label>Tipo de teja:</label>{{ form_widget(form.type) }}
+    {% if form.company is defined %}
+        <label>Empresa: </label>{{ form_widget(form.company)}}
+    {% endif %}
         <label>Cantidad:</label>{{ form_widget(form.quantity, {'attr': { 'onchange': 'setCost(0)' }})}}
         <label>Costo:</label>{{ form_widget(form.cost) }}
+    {% if product.isColor is true %}
         <label>Color:</label>{{ form_widget(form.colour) }}
+    {% endif %}
     </div>
     
     <br>

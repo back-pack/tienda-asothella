@@ -47,6 +47,12 @@ class ProductRequest
      */
     private $requirement;
 
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\Product")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $product;
+
     public function getId()
     {
         return $this->id;
@@ -132,6 +138,18 @@ class ProductRequest
     public function setRequirement(?Requirement $requirement): self
     {
         $this->requirement = $requirement;
+
+        return $this;
+    }
+
+    public function getProduct(): ?Product
+    {
+        return $this->product;
+    }
+
+    public function setProduct(?Product $product): self
+    {
+        $this->product = $product;
 
         return $this;
     }

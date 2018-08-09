@@ -222,6 +222,7 @@ class AdminController extends Controller
         if(null === ($cart->get('id'))) {
             return $this->redirectToRoute('superadmin_shopping');
         }
+        $product = $this->getDoctrine()->getRepository(Product::class)->findOneBy(['uid' => $itemId]);
         $productRequest = new ProductRequest();
         $form = $this->createForm(ProductRequestType::class, $productRequest);
         $form->handleRequest($request);
@@ -238,6 +239,7 @@ class AdminController extends Controller
         }
         return $this->render('admin/shopping/addItem.html.twig', [
             'form' => $form->createView(),
+            'product' => $product
         ]);
     }
 

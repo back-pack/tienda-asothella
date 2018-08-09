@@ -16,15 +16,6 @@ class ProductRequestType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('type', EntityType::class,
-                [
-                    'class' => RoofTile::class,
-                    'choice_value' => 'cost',
-                    'choice_label' => 'type',
-                    'expanded' => false,
-                    'multiple' => false,
-                    'label' => false,
-                ])
             ->add('cost', TextType::class, ['label' => false, 'attr' => ['readonly' => true]])
             ->add('colour', TextType::class, ['label' => false])
             ->add('quantity', NumberType::class, ['label' => false])

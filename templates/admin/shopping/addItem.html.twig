@@ -6,6 +6,7 @@
 
 <div class="container">
     {{ form_start(form, {'attr': {'class': 'form-horizontal', 'novalidate': 'novalidate'}})}}
+    <h1>{{ product.name }}</h1>
     <div id="products">
         {% if form.company is defined %}
             <label>Empresa: </label>{{ form_widget(form.company)}}
@@ -22,7 +23,6 @@
         <button class="btn">{{ button_label|default('Agregar item') }}</button>
     </div>
     {{ form_end(form)}}
-    
     
 </div>
         <script src="{{ asset('js/jquery.colorPicker.js') }}" type="text/javascript"></script>

@@ -217,7 +217,7 @@ class AdminController extends Controller
      * @Route("/admin/shopping/additem/{itemId}", name="admin_shopping_additem")
      * @Route("/superadmin/shopping/additem/{itemId}", name="superadmin_shopping_additem")
      */
-    public function addItem(Request $request, $itemId, Session $cart)
+    public function addItem(Request $request, $itemId, Session $cart, AuthorizationCheckerInterface $authChecker)
     {
         if(null === ($cart->get('id'))) {
             return $this->redirectToRoute('superadmin_shopping');

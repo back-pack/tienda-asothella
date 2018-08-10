@@ -5,13 +5,19 @@
 {% block body %}
 
 <div class="container">
-    {{ form_start(form, {'attr': {'class': 'form-horizontal', 'novalidate': 'novalidate'}})}}
+    {{ form_start(form, {'attr': {'class': 'form-horizontal', 'novalidate': 'novalidate', 'oninput': "cuenta.value=parseFloat(product_request_quantity.value)*parseFloat(input_factor.value)"}})}}
     <h1>{{ product.name }}</h1>
     <div id="products">
     {% if form.company is defined %}
         <label>Empresa: </label>{{ form_widget(form.company)}}
     {% endif %}
-        <label>Cantidad:</label>{{ form_widget(form.quantity, {'attr': { 'onchange': 'setCost(0)' }})}}
+        <label>Cantidad:</label>
+        <div class="input-group">
+            {{ form_widget(form.quantity, {'attr': { 'onchange': 'setCost(0)' }})}}
+            <input style="display: none;" type="number" class="number form-control" id="input_factor" name="input_factor" value="0.52">
+            <div class="input-group-addon"><output style="display: inline;" name="cuenta" for="product_request_quantity input_factor"></output> m2</div>
+        </div>
+        
         <label>Costo:</label>{{ form_widget(form.cost) }}
     {% if product.isColor %}
         <label>Color:</label>{{ form_widget(form.colour) }}
@@ -51,7 +57,6 @@
                         </div>
                         <div class="col-xs-10">
                             <div class="color_teja_custom h5" style="background-image: linear-gradient(to right, #bd4b03,#bd4b03), url('./img/teja_color_custom.png') "></div>
-                            
                         </div>
                     </div>
                 </div>
@@ -62,7 +67,6 @@
         </div>
     {% endif %}
     </div>
-    
     <br>
     <div class="row">
         <button class="btn">{{ button_label|default('Agregar item') }}</button>
@@ -72,102 +76,17 @@
 </div>
         <script src="{{ asset('js/jquery.colorPicker.js') }}" type="text/javascript"></script>
         <script>
-            var index = document.getElementById("index").innerHTML;
-            var products = document.querySelectorAll('#products div');
-            
-            console.log(products);
-
-            jQuery(document).ready(function($) {
-                $('#product_request_colour').colorPicker();
-                
-                $('#addProduct').click(() => {
-                    index = parseInt(index);
-                    index = index + 1;
-                    
-                    var divRow = document.createElement('div');
-                    divRow.className = 'row';
-                    divRow.id = "product" + index;
-
-                    divRow.appendChild(createTypeElement(index));
-                    divRow.appendChild(createQuantityElement(index));
-                    divRow.appendChild(createCostElement(index));
-                    divRow.appendChild(createColorElement(index));
-                    divRow.appendChild(createRemoveButton(index));
-                    $("#products").append(divRow);
-                    
-                })
-
-                function createColorElement(index) {
-                    var newInput = document.createElement('input');
-                    newInput.setAttribute('required' , 'required');
-                    newInput.id = 'requirement_productRequests_'+index+'_colour';
-                    newInput.name = 'requirement[productRequests]['+index+'][colour]';
-
-                    return newInput;
-                }
-
-                function createCostElement(index) {
-                    var newInput = document.createElement('input');
-                    newInput.setAttribute('required', 'required');
-                    newInput.setAttribute('readonly', 'readonly');
-                    newInput.id = 'requirement_productRequests_'+index+'_cost';
-                    newInput.name = 'requirement[productRequests]['+index+'][cost]';
-
-                    return newInput;
-                }
-
-                function createQuantityElement(index) {
-                    var newInput = document.createElement('input');
-                    newInput.setAttribute('required' , 'required');
-                    newInput.id = 'requirement_productRequests_'+index+'_quantity';
-                    newInput.name = 'requirement[productRequests]['+index+'][quantity]';
-                    newInput.setAttribute("onchange", "setCost("+index+");");
-                    return newInput;
-                }
-
-                function createTypeElement(index) {
-                    var select = document.createElement('select');
-                    select.name = "requirement[productRequests]["+ index +"][type]";
-                    select.id = "requirement_productRequests_"+ index +"_type";
-                    select.setAttribute("onchange", "setCost("+index+")");
-
-                    var modelSelect = document.getElementById("requirement_productRequests_0_type");
-                    for(var i = 0; i < modelSelect.options.length; i++) {
-                        var opt = document.createElement('option');
-                        opt.text = modelSelect.options[i].text;
-                        opt.value = modelSelect.options[i].value;
-                        select.add(opt, select[i]);
-                    }
-                    return select;
-                }
-
-                function createRemoveButton(index) {
-                    var button = document.createElement('a');
-                    button.setAttribute("onclick", "removeProduct("+index+");");
-                    button.className = "btn btn-danger";
-                    button.innerHTML = "Quitar"
-
-                    return button;
-                }
-                
-            });
-            function removeProduct(index) {
-                var product = document.getElementById("product"+index);
-                product.remove();
-            }
+            const unitPrice = {{ product.price|json_encode() }};
             function setCost(index) {
-                var cost = document.getElementById("requirement_productRequests_"+index+"_cost").value;
-                var quantityValue = document.getElementById("requirement_productRequests_"+index+"_quantity").value;
-                var selectedTile = document.getElementById("requirement_productRequests_"+index+"_type").value;
+                var quantityValue = document.getElementById("product_request_quantity").value;
 
                 if(quantityValue == '' || quantityValue == undefined) {
                     return;
                 }
                 
-                cost = parseInt(quantityValue) * parseFloat(selectedTile);
+                cost = parseInt(quantityValue) * unitPrice;
+                document.getElementById("product_request_cost").value = cost.toFixed(2);
             }
-
-            
         </script>
 
 {% endblock %}

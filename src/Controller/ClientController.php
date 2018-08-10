@@ -139,4 +139,19 @@ class ClientController extends Controller
             // 'prices' => $prices
         ]);
     }
+
+    /**
+     * @Route("/client/shopping/viewcart", name="client_shopping_viewcart")
+     */
+    public function viewCart()
+    {
+        //TODO
+        $user = $this->getUser();
+        $requirements = $this->getDoctrine()->getRepository(Requirement::class)->findBy(['company' => $this->getUser()->getId()]);
+
+        return $this->render('client/index.html.twig', [
+            'user' => $user->getContactName(),
+            'requirements' => $requirements
+        ]);
+    }
 }

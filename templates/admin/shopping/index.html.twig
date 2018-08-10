@@ -15,8 +15,11 @@
     </div>
     {% endfor %}
     <h1>Lista de productos</h1>
-
-    <a class="btn btn-info" href="{{ cartId }}">Ver carro</a>
+    {% if is_granted('ROLE_SUPERADMIN') %}
+    <a class="btn btn-info" href="{{ path('superadmin_shopping_viewcart') }}">Ver carro</a>
+    {% else %}
+    <a class="btn btn-info" href="{{ path('admin_shopping_viewcart') }}">Ver carro</a>
+    {% endif %}
 
     <div class="row">
         {% for product in products %}
@@ -32,19 +35,13 @@
                 {% if is_granted('ROLE_SUPERADMIN') %}
                 <div class="panel-footer">
                     <a type="button" href="{{ path('superadmin_shopping_additem', {'itemId': product.uid }) }}" class="btn btn-xs btn-success" data-toggle="tooltip" data-placement="bottom" title="Agregar">
-                        <i class="fa fa-fw fa-cross"></i>
-                    </a>
-                    <a type="button" href="{{ path('superadmin_shopping_viewitem', {'itemId': product.uid }) }}" class="btn btn-xs btn-info" data-toggle="tooltip" data-placement="bottom" title="Ver">
-                        <i class="fa fa-fw fa-eye"></i>
+                        <i class="fa fa-fw fa-plus"></i>
                     </a>
                 </div>
                 {% else %}
                 <div class="panel-footer">
                     <a type="button" href="{{ path('admin_shopping_additem', {'itemId': product.uid }) }}" class="btn btn-xs btn-success" data-toggle="tooltip" data-placement="bottom" title="Agregar">
                         <i class="fa fa-fw fa-cross"></i>
-                    </a>
-                    <a type="button" href="{{ path('admin_shopping_viewitem', {'itemId': product.uid }) }}" class="btn btn-xs btn-info" data-toggle="tooltip" data-placement="bottom" title="Ver">
-                        <i class="fa fa-fw fa-eye"></i>
                     </a>
                 </div>
                 {% endif %}

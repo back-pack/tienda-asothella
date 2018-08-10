@@ -93,6 +93,24 @@
                         </li>
                         {% endif %}
                     {% endif %}
+                    {% if app.session.get('items') is not empty %}
+                        {% if is_granted('ROLE_USER') %}
+                            <li class="active">
+                                <a href="{{ path('client_shopping_viewcart') }}"><i class="fa fa-fw fa-shopping-cart"></i> Ver carrito activo</a>
+                            </li>
+                        {% else %}
+                            {% if is_granted('ROLE_SUPERADMIN') %}
+                            <li class="active">
+                                <a href="{{ path('superadmin_shopping_viewcart') }}"><i class="fa fa-fw fa-shopping-cart"></i> Ver carrito activo</a>
+                            </li>
+                            {% else %}
+                            <li class="active">
+                                <a href="{{ path('admin_shopping_viewcart') }}"><i class="fa fa-fw fa-shopping-cart"></i> Ver carrito activo</a>
+                            </li>
+                            {% endif %}
+                        {% endif %}
+                        
+                    {% endif %}
                     
                     
                 </ul>

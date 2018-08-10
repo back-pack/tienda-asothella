@@ -69,7 +69,8 @@
     </div>
     <br>
     <div class="row">
-        <button class="btn">{{ button_label|default('Agregar item') }}</button>
+        <button class="btn btn-success">{{ button_label|default('Agregar item') }}</button>
+        <a class="btn" href="{{path('superadmin_shopping')}}">{{ button_label|default('Cancelar') }}</a>
     </div>
     {{ form_end(form)}}
     

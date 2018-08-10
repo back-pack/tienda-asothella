@@ -219,7 +219,7 @@ class AdminController extends Controller
      */
     public function addItem(Request $request, $itemId, Session $cart, AuthorizationCheckerInterface $authChecker)
     {
-        if(null === ($cart->get('id'))) {
+        if(null === ($cart->getId())) {
             return $this->redirectToRoute('superadmin_shopping');
         }
         $product = $this->getDoctrine()->getRepository(Product::class)->findOneBy(['uid' => $itemId]);
@@ -229,9 +229,16 @@ class AdminController extends Controller
         if($form->isSubmitted() && $form->isValid()) {
             $productRequest->setProduct($product);
             
-            $cart->set('requestId', uniqid());
-            $cart->set('item', $productRequest);
+            if(null !== $cart->get('items')) {
+                foreach($cart->get('items') as $item) {
+                    $cartProducts[uniqid()] = $item;
+                }
+            }
+            $cartProducts[uniqid()] = $productRequest;
+            $cart->set('items', $cartProducts);
 
+            $this->addFlash('success', 'El producto fue agregado al carrito.');
+            
             if ($authChecker->isGranted('ROLE_SUPERADMIN')) {
                 return $this->redirectToRoute('superadmin_shopping');
             }
@@ -245,25 +252,31 @@ class AdminController extends Controller
     }
 
     /**
-     * @Route("/admin/shopping/viewitem/{itemId}", name="admin_shopping_viewitem")
-     * @Route("/superadmin/shopping/viewitem/{itemId}", name="superadmin_shopping_viewitem")
+     * @Route("/admin/shopping/viewCart", name="admin_shopping_viewcart")
+     * @Route("/superadmin/shopping/viewCart", name="superadmin_shopping_viewcart")
      */
-    public function viewItem(Request $request)
+    public function viewCart(Request $request, Session $cart)
     {
-        return $this->render('admin/shopping/addItem.html.twig');
+        if(null === ($cart->getId())) {
+            return $this->redirectToRoute('superadmin_shopping');
+        }
+        $cartProducts = $cart->get('items');
+        return $this->render('admin/shopping/viewCart.html.twig', [
+            'cartProducts' => $cartProducts
+        ]);
     }
 
     /**
      * @Route("/admin/shopping", name="admin_shopping")
      * @Route("/superadmin/shopping", name="superadmin_shopping")
      */
-    public function shopping(ProductRepository $productRepository)
+    public function shopping(ProductRepository $productRepository, Session $cart)
     {
-        if(!isset($cart)) {
+        if(null === $cart->getId()) {
             $cart = new Session();
-            $cart->set('id', uniqid());
+            $cart->start();
+            $cart->setId(uniqid());
         }
-      
         return $this->render('admin/shopping/index.html.twig', ['products' => $productRepository->findAll(), 'cartId' => $cart->get('id')]);
     }
 

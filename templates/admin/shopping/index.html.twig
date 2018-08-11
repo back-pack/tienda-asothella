@@ -15,16 +15,16 @@
     </div>
     {% endfor %}
     <h1>Lista de productos</h1>
-    {% if is_granted('ROLE_SUPERADMIN') %}
+    {% if is_granted('ROLE_SUPERADMIN') and app.session.get('items') is not empty %}
     <a class="btn btn-info" href="{{ path('superadmin_shopping_viewcart') }}">Ver carro</a>
-    {% else %}
+    {% elseif is_granted('ROLE_SALES') and app.session.get('items') is not empty %}
     <a class="btn btn-info" href="{{ path('admin_shopping_viewcart') }}">Ver carro</a>
     {% endif %}
 
     <div class="row">
         {% for product in products %}
         <div class="col-sm-10 col-xs-12">
-            <div class="panel panel-success ">
+            <div class="panel panel-info ">
                 <div class="panel-heading">
                     <h3 class="panel-title">{{ product.name}}</h3>
                 </div>

@@ -315,7 +315,7 @@ class AdminController extends Controller
         if(empty($cartProducts)) {
             $cart->invalidate();
 
-            $this->addFlash('success', 'El carrito fue vaciado.');
+            $this->addFlash('success', 'El carrito fue vaciado');
             
             if($authChecker->isGranted('ROLE_SUPERADMIN')) {
                 return $this->redirectToRoute('superadmin_shopping');
@@ -323,7 +323,7 @@ class AdminController extends Controller
                 return $this->redirectToRoute('admin_shopping');
             }
         }
-
+        $this->addFlash('success', 'El item fue removido del carrito');
         return $this->render('admin/shopping/viewCart.html.twig', [
             'cartProducts' => $cartProducts
         ]);

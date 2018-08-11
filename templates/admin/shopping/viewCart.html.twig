@@ -5,11 +5,11 @@
 {% block body %}
 
 <div class="container">
-
+    <h1>Carrito de compras</h1>
     <a href="{{ path('superadmin_shopping') }}" class="btn btn-info">Seguir comprando</a>
     <br>
     <div class="row">
-        {% for productReq in cartProducts %}
+        {% for key, productReq in cartProducts %}
             <div class="col-sm-10 col-xs-12">
                 <div class="panel panel-success ">
                     <div class="panel-heading">
@@ -24,7 +24,7 @@
                         <p>Precio final: <strong>{{ productReq.cost }}</strong></p>
                     </div>
                     <div class="panel-footer">
-                        <a type="button" class="btn btn-xs btn-warning" data-toggle="tooltip" data-placement="bottom" title="Modificar">
+                        <a type="button" class="btn btn-xs btn-warning" data-toggle="tooltip" data-placement="bottom" title="Modificar" href="{{ path('superadmin_shopping_edititem', {'itemId': key })}}">
                             <i class="fa fa-fw fa-pencil"></i>
                         </a>
                         <a type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Quitar del carrito">

@@ -231,10 +231,10 @@ class AdminController extends Controller
             
             if(null !== $cart->get('items')) {
                 foreach($cart->get('items') as $item) {
-                    $cartProducts[uniqid()] = $item;
+                    $cartProducts[md5(uniqid())] = $item;
                 }
             }
-            $cartProducts[uniqid()] = $productRequest;
+            $cartProducts[md5(uniqid())] = $productRequest;
             $cart->set('items', $cartProducts);
 
             $this->addFlash('success', 'El producto fue agregado al carrito.');
@@ -252,11 +252,27 @@ class AdminController extends Controller
     }
 
     /**
-     * @Route("/admin/shopping/viewCart", name="admin_shopping_viewcart")
-     * @Route("/superadmin/shopping/viewCart", name="superadmin_shopping_viewcart")
+     * @Route("/admin/shopping/viewcart", name="admin_shopping_viewcart")
+     * @Route("/superadmin/shopping/viewcart", name="superadmin_shopping_viewcart")
      */
     public function viewCart(Request $request, Session $cart)
     {
+        if(null === ($cart->getId())) {
+            return $this->redirectToRoute('superadmin_shopping');
+        }
+        $cartProducts = $cart->get('items');
+        return $this->render('admin/shopping/viewCart.html.twig', [
+            'cartProducts' => $cartProducts
+        ]);
+    }
+
+    /**
+     * @Route("/admin/shopping/edititem/{itemId}", name="admin_shopping_edititem")
+     * @Route("/superadmin/shopping/edititem/{itemId}", name="superadmin_shopping_edititem")
+     */
+    public function edititem()
+    {
+        //TODO
         if(null === ($cart->getId())) {
             return $this->redirectToRoute('superadmin_shopping');
         }

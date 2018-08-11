@@ -312,8 +312,11 @@ class AdminController extends Controller
 
         $cart->set('items', $cartProducts);
 
-        if(is_null($cartProducts)) {
+        if(empty($cartProducts)) {
             $cart->invalidate();
+
+            $this->addFlash('success', 'El carrito fue vaciado.');
+            
             if($authChecker->isGranted('ROLE_SUPERADMIN')) {
                 return $this->redirectToRoute('superadmin_shopping');
             } else {
@@ -340,10 +343,16 @@ class AdminController extends Controller
                 return $this->redirectToRoute('admin_shopping');
             }
         }
-        $cartProducts = $cart->get('items');
-        return $this->render('admin/shopping/viewCart.html.twig', [
-            'cartProducts' => $cartProducts
-        ]);
+        $cart->invalidate();
+
+        $this->addFlash('success', 'El carrito fue vaciado.');
+
+        if($authChecker->isGranted('ROLE_SUPERADMIN')) {
+            return $this->redirectToRoute('superadmin_shopping');
+        } else {
+            return $this->redirectToRoute('admin_shopping');
+        }
+        
     }
 
     /**

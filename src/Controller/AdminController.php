@@ -270,7 +270,7 @@ class AdminController extends Controller
      * @Route("/admin/shopping/edititem/{itemId}", name="admin_shopping_edititem")
      * @Route("/superadmin/shopping/edititem/{itemId}", name="superadmin_shopping_edititem")
      */
-    public function edititem()
+    public function edititem(Session $cart)
     {
         //TODO
         if(null === ($cart->getId())) {
@@ -286,7 +286,7 @@ class AdminController extends Controller
      * @Route("/admin/shopping/removeitem/{itemId}", name="admin_shopping_removeitem")
      * @Route("/superadmin/shopping/removeitem/{itemId}", name="superadmin_shopping_removeitem")
      */
-    public function removeitem()
+    public function removeitem(Session $cart)
     {
         //TODO
         if(null === ($cart->getId())) {

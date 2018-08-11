@@ -299,6 +299,22 @@ class AdminController extends Controller
     }
 
     /**
+     * @Route("/admin/shopping/dropcart", name="admin_shopping_dropcart")
+     * @Route("/superadmin/shopping/dropcart", name="superadmin_shopping_dropcart")
+     */
+    public function dropCart(Session $cart)
+    {
+        //TODO
+        if(null === ($cart->getId())) {
+            return $this->redirectToRoute('superadmin_shopping');
+        }
+        $cartProducts = $cart->get('items');
+        return $this->render('admin/shopping/viewCart.html.twig', [
+            'cartProducts' => $cartProducts
+        ]);
+    }
+
+    /**
      * @Route("/admin/shopping", name="admin_shopping")
      * @Route("/superadmin/shopping", name="superadmin_shopping")
      */

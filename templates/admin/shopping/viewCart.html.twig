@@ -6,7 +6,13 @@
 
 <div class="container">
     <h1>Carrito de compras</h1>
+    {% if is_granted('ROLE_SUPERADMIN') %}
     <a href="{{ path('superadmin_shopping') }}" class="btn btn-info">Seguir comprando</a>
+    <a href="{{ path('superadmin_shopping_dropcart') }}" class="btn btn-danger">Vaciar carrito</a>
+    {% else %}
+    <a href="{{ path('admin_shopping') }}" class="btn btn-info">Seguir comprando</a>
+    <a href="{{ path('admin_shopping_dropcart') }}" class="btn btn-danger">Vaciar carrito</a>
+    {% endif %}
     <br>
     <div class="row">
         {% for key, productReq in cartProducts %}

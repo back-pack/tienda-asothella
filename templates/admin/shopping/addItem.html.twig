@@ -70,7 +70,11 @@
     <br>
     <div class="row">
         <button class="btn btn-success">{{ button_label|default('Agregar item') }}</button>
+        {% if is_granted('ROLE_SUPERADMIN') %}
         <a class="btn" href="{{path('superadmin_shopping')}}">{{ button_label|default('Cancelar') }}</a>
+        {% else %}
+        <a class="btn" href="{{path('admin_shopping')}}">{{ button_label|default('Cancelar') }}</a>
+        {% endif %}
     </div>
     {{ form_end(form)}}
     

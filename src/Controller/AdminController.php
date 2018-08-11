@@ -283,6 +283,22 @@ class AdminController extends Controller
     }
 
     /**
+     * @Route("/admin/shopping/removeitem/{itemId}", name="admin_shopping_removeitem")
+     * @Route("/superadmin/shopping/removeitem/{itemId}", name="superadmin_shopping_removeitem")
+     */
+    public function removeitem()
+    {
+        //TODO
+        if(null === ($cart->getId())) {
+            return $this->redirectToRoute('superadmin_shopping');
+        }
+        $cartProducts = $cart->get('items');
+        return $this->render('admin/shopping/viewCart.html.twig', [
+            'cartProducts' => $cartProducts
+        ]);
+    }
+
+    /**
      * @Route("/admin/shopping", name="admin_shopping")
      * @Route("/superadmin/shopping", name="superadmin_shopping")
      */

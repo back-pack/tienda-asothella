@@ -24,12 +24,21 @@
                         <p>Precio final: <strong>{{ productReq.cost }}</strong></p>
                     </div>
                     <div class="panel-footer">
+                        {% if is_granted('ROLE_SUPERADMIN') %}
                         <a type="button" class="btn btn-xs btn-warning" data-toggle="tooltip" data-placement="bottom" title="Modificar" href="{{ path('superadmin_shopping_edititem', {'itemId': key })}}">
                             <i class="fa fa-fw fa-pencil"></i>
                         </a>
-                        <a type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Quitar del carrito">
+                        <a type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Quitar del carrito" href="{{ path('superadmin_shopping_removeitem', {'itemId': key })}}">
                             <i class="fa fa-fw fa-remove"></i>
                         </a>
+                        {% else %}
+                        <a type="button" class="btn btn-xs btn-warning" data-toggle="tooltip" data-placement="bottom" title="Modificar" href="{{ path('admin_shopping_edititem', {'itemId': key })}}">
+                                <i class="fa fa-fw fa-pencil"></i>
+                            </a>
+                            <a type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Quitar del carrito" href="{{ path('admin_shopping_removeitem', {'itemId': key })}}">
+                                <i class="fa fa-fw fa-remove"></i>
+                        </a>
+                        {% endif %}
                     </div>
                 </div>
             </div>

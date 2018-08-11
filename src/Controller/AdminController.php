@@ -220,7 +220,11 @@ class AdminController extends Controller
     public function addItem(Request $request, $itemId, Session $cart, AuthorizationCheckerInterface $authChecker)
     {
         if(null === ($cart->getId())) {
-            return $this->redirectToRoute('superadmin_shopping');
+            if($authChecker->isGranted('ROLE_SUPERADMIN')) {
+                return $this->redirectToRoute('superadmin_shopping');
+            } else {
+                return $this->redirectToRoute('admin_shopping');
+            }
         }
         $product = $this->getDoctrine()->getRepository(Product::class)->findOneBy(['uid' => $itemId]);
         $productRequest = new ProductRequest();
@@ -255,10 +259,14 @@ class AdminController extends Controller
      * @Route("/admin/shopping/viewcart", name="admin_shopping_viewcart")
      * @Route("/superadmin/shopping/viewcart", name="superadmin_shopping_viewcart")
      */
-    public function viewCart(Request $request, Session $cart)
+    public function viewCart(Request $request, Session $cart, AuthorizationCheckerInterface $authChecker)
     {
         if(null === ($cart->getId())) {
-            return $this->redirectToRoute('superadmin_shopping');
+            if($authChecker->isGranted('ROLE_SUPERADMIN')) {
+                return $this->redirectToRoute('superadmin_shopping');
+            } else {
+                return $this->redirectToRoute('admin_shopping');
+            }
         }
         $cartProducts = $cart->get('items');
         return $this->render('admin/shopping/viewCart.html.twig', [
@@ -270,11 +278,15 @@ class AdminController extends Controller
      * @Route("/admin/shopping/edititem/{itemId}", name="admin_shopping_edititem")
      * @Route("/superadmin/shopping/edititem/{itemId}", name="superadmin_shopping_edititem")
      */
-    public function edititem(Session $cart)
+    public function edititem(Session $cart, AuthorizationCheckerInterface $authChecker)
     {
         //TODO
         if(null === ($cart->getId())) {
-            return $this->redirectToRoute('superadmin_shopping');
+            if($authChecker->isGranted('ROLE_SUPERADMIN')) {
+                return $this->redirectToRoute('superadmin_shopping');
+            } else {
+                return $this->redirectToRoute('admin_shopping');
+            }
         }
         $cartProducts = $cart->get('items');
         return $this->render('admin/shopping/viewCart.html.twig', [
@@ -286,13 +298,29 @@ class AdminController extends Controller
      * @Route("/admin/shopping/removeitem/{itemId}", name="admin_shopping_removeitem")
      * @Route("/superadmin/shopping/removeitem/{itemId}", name="superadmin_shopping_removeitem")
      */
-    public function removeitem(Session $cart)
+    public function removeitem(Session $cart, $itemId, AuthorizationCheckerInterface $authChecker)
     {
-        //TODO
         if(null === ($cart->getId())) {
-            return $this->redirectToRoute('superadmin_shopping');
+            if($authChecker->isGranted('ROLE_SUPERADMIN')) {
+                return $this->redirectToRoute('superadmin_shopping');
+            } else {
+                return $this->redirectToRoute('admin_shopping');
+            }
         }
         $cartProducts = $cart->get('items');
+        unset($cartProducts[$itemId]);
+
+        $cart->set('items', $cartProducts);
+
+        if(is_null($cartProducts)) {
+            $cart->invalidate();
+            if($authChecker->isGranted('ROLE_SUPERADMIN')) {
+                return $this->redirectToRoute('superadmin_shopping');
+            } else {
+                return $this->redirectToRoute('admin_shopping');
+            }
+        }
+
         return $this->render('admin/shopping/viewCart.html.twig', [
             'cartProducts' => $cartProducts
         ]);
@@ -302,11 +330,15 @@ class AdminController extends Controller
      * @Route("/admin/shopping/dropcart", name="admin_shopping_dropcart")
      * @Route("/superadmin/shopping/dropcart", name="superadmin_shopping_dropcart")
      */
-    public function dropCart(Session $cart)
+    public function dropCart(Session $cart, AuthorizationCheckerInterface $authChecker)
     {
         //TODO
         if(null === ($cart->getId())) {
-            return $this->redirectToRoute('superadmin_shopping');
+            if($authChecker->isGranted('ROLE_SUPERADMIN')) {
+                return $this->redirectToRoute('superadmin_shopping');
+            } else {
+                return $this->redirectToRoute('admin_shopping');
+            }
         }
         $cartProducts = $cart->get('items');
         return $this->render('admin/shopping/viewCart.html.twig', [

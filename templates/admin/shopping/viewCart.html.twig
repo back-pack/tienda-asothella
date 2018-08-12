@@ -27,6 +27,15 @@
 
 <div class="container">
     <h1>Carrito de compras</h1>
+    {% for message in app.flashes('success') %}
+    <div class="alert alert-success">
+        {{ message }}
+    </div>
+    {% endfor %} {% for message in app.flashes('danger') %}
+    <div class="alert alert-danger">
+        {{ message }}
+    </div>
+    {% endfor %}
     <a href="{{pathToShopping}}" class="btn btn-info">Seguir comprando</a>
     <a href="{{pathToDropCart}}" class="btn btn-danger">Vaciar carrito</a>
     <br>
@@ -58,10 +67,9 @@
             </div>
             {% set totalPrice = totalPrice + productReq.cost %}
         {% endfor %}
-        <div class="row">
-            <div class="info">Costo total: ${{ totalPrice }}</div>
-        </div>
-        
+    </div>
+    <div class="row">
+        <div class="info">Costo total: ${{ totalPrice }}</div>
     </div>
 </div>
         

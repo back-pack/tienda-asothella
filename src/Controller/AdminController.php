@@ -278,7 +278,7 @@ class AdminController extends Controller
      * @Route("/admin/shopping/edititem/{itemId}", name="admin_shopping_edititem")
      * @Route("/superadmin/shopping/edititem/{itemId}", name="superadmin_shopping_edititem")
      */
-    public function edititem(Session $cart, AuthorizationCheckerInterface $authChecker)
+    public function edititem(Session $cart, Request $request, $itemId, AuthorizationCheckerInterface $authChecker)
     {
         //TODO
         if(null === ($cart->getId())) {
@@ -289,8 +289,25 @@ class AdminController extends Controller
             }
         }
         $cartProducts = $cart->get('items');
-        return $this->render('admin/shopping/viewCart.html.twig', [
-            'cartProducts' => $cartProducts
+        $productReq = $cartProducts[$itemId];
+
+        $form = $this->createForm(ProductRequestType::class, $productReq);
+        $form->handleRequest($request);
+        if($form->isSubmitted() && $form->isValid()) {
+            $cartProducts[$itemId] = $productReq;
+            $cart->set('items', $cartProducts);
+
+            $this->addFlash('success', 'El producto fue modificado.');
+            
+            if ($authChecker->isGranted('ROLE_SUPERADMIN')) {
+                return $this->redirectToRoute('superadmin_shopping_viewcart');
+            }
+            return $this->redirectToRoute('admin_shopping_viewcart');
+        }
+        return $this->render('admin/shopping/addItem.html.twig', [
+            'form' => $form->createView(),
+            'edit' => true,
+            'product' => $productReq->getProduct(),
         ]);
     }
 
@@ -335,7 +352,6 @@ class AdminController extends Controller
      */
     public function dropCart(Session $cart, AuthorizationCheckerInterface $authChecker)
     {
-        //TODO
         if(null === ($cart->getId())) {
             if($authChecker->isGranted('ROLE_SUPERADMIN')) {
                 return $this->redirectToRoute('superadmin_shopping');

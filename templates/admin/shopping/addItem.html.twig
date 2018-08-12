@@ -1,6 +1,18 @@
 {% extends 'base.html.twig' %}
 
-{% block title %} Agregar item {% endblock %}
+{% if edit is defined %}
+    {% set editTitle = "Modificar item" %}
+{% else %}
+    {% set editTitle = "Agregar item" %}
+{% endif %}
+
+{% if is_granted('ROLE_SUPERADMIN') %}
+    {% set path = path('superadmin_shopping') %}
+{% else %}
+    {% set path = path('admin_shopping') %}
+{% endif %}
+
+{% block title %} {{editTitle}} {% endblock %}
 
 {% block body %}
 
@@ -69,12 +81,8 @@
     </div>
     <br>
     <div class="row">
-        <button class="btn btn-success">{{ button_label|default('Agregar item') }}</button>
-        {% if is_granted('ROLE_SUPERADMIN') %}
-        <a class="btn" href="{{path('superadmin_shopping')}}">{{ button_label|default('Cancelar') }}</a>
-        {% else %}
-        <a class="btn" href="{{path('admin_shopping')}}">{{ button_label|default('Cancelar') }}</a>
-        {% endif %}
+        <button class="btn btn-success">{{ button_label|default(editTitle) }}</button>
+        <a class="btn" href="{{path}}">{{ button_label|default('Cancelar') }}</a>
     </div>
     {{ form_end(form)}}
     

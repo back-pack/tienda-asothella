@@ -1,21 +1,37 @@
 {% extends 'base.html.twig' %}
 
+{% if is_granted('ROLE_SUPERADMIN') %}
+    {% set pathToShopping = path('superadmin_shopping') %}
+    {% set pathToDropCart = path('superadmin_shopping_dropcart') %}
+    {% set pathToEditItem = 'superadmin_shopping_edititem' %}
+    {% set pathToRemoveItem = 'superadmin_shopping_removeitem' %}
+{% else %}
+    {% if is_granted('ROLE_SALES') %}
+        {% set pathToShopping = path('admin_shopping') %}
+        {% set pathToDropCart = path('admin_shopping_dropcart') %}
+        {% set pathToEditItem = 'admin_shopping_edititem' %}
+        {% set pathToRemoveItem = 'admin_shopping_removeitem' %}
+    {% elseif is_granted('ROLE_USER') %}
+        {% set pathToShopping = path('client_shopping') %}
+        {% set pathToDropCart = path('client_shopping_dropcart') %}
+        {% set pathToEditItem = 'client_shopping_edititem' %}
+        {% set pathToRemoveItem = 'client_shopping_removeitem' %}
+    {% endif %}
+{% endif %}
+
+{% set totalPrice = 0 %}
+
 {% block title %} Ver items {% endblock %}
 
 {% block body %}
 
 <div class="container">
     <h1>Carrito de compras</h1>
-    {% if is_granted('ROLE_SUPERADMIN') %}
-    <a href="{{ path('superadmin_shopping') }}" class="btn btn-info">Seguir comprando</a>
-    <a href="{{ path('superadmin_shopping_dropcart') }}" class="btn btn-danger">Vaciar carrito</a>
-    {% else %}
-    <a href="{{ path('admin_shopping') }}" class="btn btn-info">Seguir comprando</a>
-    <a href="{{ path('admin_shopping_dropcart') }}" class="btn btn-danger">Vaciar carrito</a>
-    {% endif %}
+    <a href="{{pathToShopping}}" class="btn btn-info">Seguir comprando</a>
+    <a href="{{pathToDropCart}}" class="btn btn-danger">Vaciar carrito</a>
     <br>
     <div class="row">
-        {% set totalPrice = 0 %}
+        
         {% for key, productReq in cartProducts %}
             <div class="col-sm-10 col-xs-12">
                 <div class="panel panel-success ">
@@ -31,21 +47,12 @@
                         <p>Precio final: <strong>${{ productReq.cost }}</strong></p>
                     </div>
                     <div class="panel-footer">
-                        {% if is_granted('ROLE_SUPERADMIN') %}
-                        <a type="button" class="btn btn-xs btn-warning" data-toggle="tooltip" data-placement="bottom" title="Modificar" href="{{ path('superadmin_shopping_edititem', {'itemId': key })}}">
+                        <a type="button" class="btn btn-xs btn-warning" data-toggle="tooltip" data-placement="bottom" title="Modificar" href="{{ path(pathToEditItem, {'itemId': key }) }}">
                             <i class="fa fa-fw fa-pencil"></i>
                         </a>
-                        <a type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Quitar del carrito" href="{{ path('superadmin_shopping_removeitem', {'itemId': key })}}">
+                        <a type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Quitar del carrito" href="{{ path(pathToRemoveItem, {'itemId': key }) }}">
                             <i class="fa fa-fw fa-remove"></i>
                         </a>
-                        {% else %}
-                        <a type="button" class="btn btn-xs btn-warning" data-toggle="tooltip" data-placement="bottom" title="Modificar" href="{{ path('admin_shopping_edititem', {'itemId': key })}}">
-                                <i class="fa fa-fw fa-pencil"></i>
-                            </a>
-                            <a type="button" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Quitar del carrito" href="{{ path('admin_shopping_removeitem', {'itemId': key })}}">
-                                <i class="fa fa-fw fa-remove"></i>
-                        </a>
-                        {% endif %}
                     </div>
                 </div>
             </div>

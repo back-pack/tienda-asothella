@@ -28,7 +28,7 @@
                         <p>Descripción: <strong>{{ productReq.product.description }}</strong></p>
                         <p>Color: <strong>{{ productReq.colour }}</strong></p>
                         <p>Cantidad: <strong>{{ productReq.quantity }}</strong></p>
-                        <p>Precio final: <strong>{{ productReq.cost }}</strong></p>
+                        <p>Precio final: <strong>${{ productReq.cost }}</strong></p>
                     </div>
                     <div class="panel-footer">
                         {% if is_granted('ROLE_SUPERADMIN') %}

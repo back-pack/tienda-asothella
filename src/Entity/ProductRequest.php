@@ -43,7 +43,7 @@ class ProductRequest
     private $requirement;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Product")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Product", cascade={"persist"})
      * @ORM\JoinColumn(nullable=false)
      */
     private $product;

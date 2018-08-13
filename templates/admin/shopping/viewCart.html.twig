@@ -5,17 +5,20 @@
     {% set pathToDropCart = path('superadmin_shopping_dropcart') %}
     {% set pathToEditItem = 'superadmin_shopping_edititem' %}
     {% set pathToRemoveItem = 'superadmin_shopping_removeitem' %}
+    {% set pathToNewRequirement = path('superadmin_requirement_new') %}
 {% else %}
     {% if is_granted('ROLE_SALES') %}
         {% set pathToShopping = path('admin_shopping') %}
         {% set pathToDropCart = path('admin_shopping_dropcart') %}
         {% set pathToEditItem = 'admin_shopping_edititem' %}
         {% set pathToRemoveItem = 'admin_shopping_removeitem' %}
+        {% set pathToNewRequirement = path('admin_requirement_new') %}
     {% elseif is_granted('ROLE_USER') %}
         {% set pathToShopping = path('client_shopping') %}
         {% set pathToDropCart = path('client_shopping_dropcart') %}
         {% set pathToEditItem = 'client_shopping_edititem' %}
         {% set pathToRemoveItem = 'client_shopping_removeitem' %}
+        {% set pathToNewRequirement = path('client_requirement_new') %}
     {% endif %}
 {% endif %}
 
@@ -70,6 +73,9 @@
     </div>
     <div class="row">
         <div class="info">Costo total: ${{ totalPrice }}</div>
+    </div>
+    <div class="row">
+        <a class="btn btn-info" href="{{ pathToNewRequirement }}">{{ button_label|default('Realizar compra') }}</a>
     </div>
 </div>
         

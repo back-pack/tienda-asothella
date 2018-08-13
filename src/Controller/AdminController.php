@@ -12,9 +12,8 @@ use Symfony\Component\HttpFoundation\Session\Session;
 use App\Entity\User;
 use App\Entity\Requirement;
 use App\Entity\ProductRequest;
-use App\Entity\RoofTile;
+use App\Entity\Company;
 use App\Entity\Product;
-use App\Form\RequirementType;
 use App\Form\ProductType;
 use App\Form\UserType;
 use App\Form\ProductRequestType;
@@ -160,57 +159,49 @@ class AdminController extends Controller
      * @Route("/admin/requirement/new", name="admin_requirement_new")
      * @Route("/superadmin/requirement/new", name="superadmin_requirement_new")
      */
-    public function newRequirement(Request $request, AuthorizationCheckerInterface $authChecker)
+    public function newRequirement(Session $cart, AuthorizationCheckerInterface $authChecker)
     {
-        $productRequest = new ProductRequest();
-        $requirement = new Requirement();
-        $requirement->addProductRequest($productRequest);
-        $form = $this->createForm(RequirementType::class, $requirement, ['company' => true]);
-        $form->handleRequest($request);
-
-        if($form->isSubmitted() && $form->isValid())
-        {
-            $em = $this->getDoctrine()->getManager();
-            $finalCost = null;
-            foreach($requirement->getProductRequests() as $product)
-            {
-                $tile = $em->getRepository(RoofTile::class)->findOneBy(['type' => $product->getType()]);
-                if(!$tile)
-                {
-                    $this->addFlash('danger', 'Un error ocurrió con el envío del formulario.');
-                    return $this->redirectToRoute('request');
-                }
-                $cost = $tile->getCost() * $product->getQuantity();
-                $product
-                    ->setCost($cost);
-                if(is_null($product->getRequirement()))
-                {
-                    $product->setRequirement($requirement);
-                }
-                $finalCost += $cost;
+        if(null === ($cart->getId())) {
+            if($authChecker->isGranted('ROLE_SUPERADMIN')) {
+                return $this->redirectToRoute('superadmin_shopping');
+            } else {
+                return $this->redirectToRoute('admin_shopping');
             }
-            
-            $requirement
-                ->setFinalCost($finalCost)
-                ->setCreationDate(new \DateTime('today'))
-                ->setRequirementNumber(uniqid())
-                ->setStatus(Constant::TO_BE_PROCESSED)
-                ;
-            
-            $em->persist($requirement);
-            $em->flush();
-
-            $this->addFlash('success', 'Su solicitud es la numero: RQ'.$requirement->getId().'. En breve procesaremos su solicitud!');
-
-            if ($authChecker->isGranted('ROLE_SUPERADMIN')) {
-                return $this->redirectToRoute('superadmin_index');
-            }
-            return $this->redirectToRoute('admin_index');
         }
-        return $this->render('client/newRequirement.html.twig', [
-            'form' => $form->createView(),
-            // 'prices' => $prices
-        ]);
+        
+        $cartItems = $cart->get('items');
+        $em = $this->getDoctrine()->getManager();
+
+        $requirement = new Requirement();
+        
+        $finalCost = null;
+        foreach($cartItems as $item) {
+            $finalCost += $item->getProduct()->getPrice() * $item->getQuantity();
+            $requirement->addProductRequest($item);
+        }
+
+        $company = $em->getRepository(Company::class)->find(1);
+
+        $requirement
+            ->setFinalCost($finalCost)
+            ->setCreationDate(new \DateTime('today'))
+            ->setRequirementNumber(md5(uniqid()))
+            ->setStatus(Constant::TO_BE_APPROVED)
+            //TODO
+            ->setCompany($company)
+            ;
+        
+        $em->persist($requirement);
+        $em->flush();
+
+        $cart->invalidate();
+
+        $this->addFlash('success', 'Su solicitud es la numero: RQ'.$requirement->getId().'. En breve procesaremos su solicitud!');
+
+        if ($authChecker->isGranted('ROLE_SUPERADMIN')) {
+            return $this->redirectToRoute('superadmin_index');
+        }
+        return $this->redirectToRoute('admin_index');
     }
 
     /**

@@ -99,9 +99,9 @@ class Product
         return $this->uid;
     }
 
-    public function setUid(string $uid): self
+    public function setUid(): self
     {
-        $this->uid = $uid;
+        $this->uid = md5(uniqid());
 
         return $this;
     }

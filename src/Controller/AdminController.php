@@ -424,7 +424,7 @@ class AdminController extends Controller
      * @Route("/superadmin/requirement/inprogress/{reqId}", name="superadmin_requirement_inprogress")
      * @Route("/admin/requirement/inprogress/{reqId}", name="admin_requirement_inprogress")
      */
-    public function inProgressRequirement($reqId)
+    public function inProgressRequirement($reqId, AuthorizationCheckerInterface $authChecker)
     {
         $em = $this->getDoctrine()->getManager();
         $requirement = $em->getRepository(Requirement::class)->findOneBy(['requirementNumber' => $reqId]);
@@ -445,7 +445,7 @@ class AdminController extends Controller
      * @Route("/superadmin/requirement/inprogress/{reqId}", name="superadmin_requirement_finished")
      * @Route("/admin/requirement/inprogress/{reqId}", name="admin_requirement_finished")
      */
-    public function finishedRequirement($reqId)
+    public function finishedRequirement($reqId, AuthorizationCheckerInterface $authChecker)
     {
         $em = $this->getDoctrine()->getManager();
         $requirement = $em->getRepository(Requirement::class)->findOneBy(['requirementNumber' => $reqId]);
@@ -466,7 +466,7 @@ class AdminController extends Controller
      * @Route("/superadmin/requirement/delivered/{reqId}", name="superadmin_requirement_delivered")
      * @Route("/admin/requirement/delivered/{reqId}", name="admin_requirement_delivered")
      */
-    public function deliveredRequirement($reqId)
+    public function deliveredRequirement($reqId, AuthorizationCheckerInterface $authChecker)
     {
         $em = $this->getDoctrine()->getManager();
         $requirement = $em->getRepository(Requirement::class)->findOneBy(['requirementNumber' => $reqId]);
@@ -487,7 +487,7 @@ class AdminController extends Controller
      * @Route("/superadmin/requirement/edit/{reqId}", name="superadmin_requirement_edit")
      * @Route("/admin/requirement/edit/{reqId}", name="admin_requirement_edit")
      */
-    public function editRequirement($reqId)
+    public function editRequirement($reqId, AuthorizationCheckerInterface $authChecker)
     {
         return $this->redirectToRoute('admin_index');
     }

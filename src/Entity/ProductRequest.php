@@ -43,7 +43,7 @@ class ProductRequest
     private $requirement;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Product", cascade={"persist"})
+     * @ORM\ManyToOne(targetEntity="App\Entity\Product")
      * @ORM\JoinColumn(nullable=false)
      */
     private $product;
@@ -85,18 +85,6 @@ class ProductRequest
     public function setQuantity(int $quantity): self
     {
         $this->quantity = $quantity;
-
-        return $this;
-    }
-
-    public function getCompany(): ?Company
-    {
-        return $this->company;
-    }
-
-    public function setCompany(?Company $company): self
-    {
-        $this->company = $company;
 
         return $this;
     }

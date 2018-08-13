@@ -171,13 +171,17 @@ class AdminController extends Controller
         
         $cartItems = $cart->get('items');
         $em = $this->getDoctrine()->getManager();
-
-        $requirement = new Requirement();
+        $products = $em->getRepository(Product::class)->findAll();
         
+        $requirement = new Requirement();
         $finalCost = null;
         foreach($cartItems as $item) {
+            $index = array_search($item->getProduct(), $products);
+            $item->setProduct($products[$index]);
+            
             $finalCost += $item->getProduct()->getPrice() * $item->getQuantity();
             $requirement->addProductRequest($item);
+            $em->persist($item);
         }
 
         $company = $em->getRepository(Company::class)->find(1);

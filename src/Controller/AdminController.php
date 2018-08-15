@@ -184,15 +184,13 @@ class AdminController extends Controller
             $em->persist($item);
         }
 
-        $company = $em->getRepository(Company::class)->find(1);
-
         $requirement
             ->setFinalCost($finalCost)
             ->setCreationDate(new \DateTime('today'))
             ->setRequirementNumber(md5(uniqid()))
             ->setStatus(Constant::TO_BE_APPROVED)
             //TODO
-            ->setCompany($company)
+            ->setCompany($cart->get('company'))
             ;
         
         $em->persist($requirement);
@@ -221,6 +219,10 @@ class AdminController extends Controller
                 return $this->redirectToRoute('admin_shopping');
             }
         }
+        $companies = null;
+        if(null === $cart->get('company')) {
+            $companies = $this->getDoctrine()->getRepository(Company::class)->findAll();
+        }
         $product = $this->getDoctrine()->getRepository(Product::class)->findOneBy(['uid' => $itemId]);
         $productRequest = new ProductRequest();
         $form = $this->createForm(ProductRequestType::class, $productRequest);
@@ -235,6 +237,9 @@ class AdminController extends Controller
             }
             $cartProducts[md5(uniqid())] = $productRequest;
             $cart->set('items', $cartProducts);
+            if(null !== ($request->get('company'))) {
+                $cart->set('company', $request->get('company'));
+            }
 
             $this->addFlash('success', 'El producto fue agregado al carrito.');
             
@@ -246,7 +251,8 @@ class AdminController extends Controller
         }
         return $this->render('admin/shopping/addItem.html.twig', [
             'form' => $form->createView(),
-            'product' => $product
+            'product' => $product,
+            'companies' => $companies
         ]);
     }
 
@@ -265,7 +271,8 @@ class AdminController extends Controller
         }
         $cartProducts = $cart->get('items');
         return $this->render('admin/shopping/viewCart.html.twig', [
-            'cartProducts' => $cartProducts
+            'cartProducts' => $cartProducts,
+            'company' => $cart->get('company')
         ]);
     }
 

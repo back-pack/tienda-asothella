@@ -262,7 +262,7 @@ class AdminController extends Controller
             return $this->redirectToRoute('admin_shopping');
 
         }
-        return $this->render('admin/shopping/addItem.html.twig', [
+        return $this->render('shopping/addItem.html.twig', [
             'form' => $form->createView(),
             'product' => $product,
             'companies' => $companies
@@ -285,7 +285,7 @@ class AdminController extends Controller
         $companyId = $cart->get('company');
         $company = $this->getDoctrine()->getRepository(Company::class)->find($companyId);    
         $cartProducts = $cart->get('items');
-        return $this->render('admin/shopping/viewCart.html.twig', [
+        return $this->render('shopping/viewCart.html.twig', [
             'cartProducts' => $cartProducts,
             'company' => $company->getName()
         ]);
@@ -321,7 +321,7 @@ class AdminController extends Controller
             }
             return $this->redirectToRoute('admin_shopping_viewcart');
         }
-        return $this->render('admin/shopping/addItem.html.twig', [
+        return $this->render('shopping/addItem.html.twig', [
             'form' => $form->createView(),
             'edit' => true,
             'product' => $productReq->getProduct(),
@@ -358,7 +358,7 @@ class AdminController extends Controller
             }
         }
         $this->addFlash('success', 'El item fue removido del carrito');
-        return $this->render('admin/shopping/viewCart.html.twig', [
+        return $this->render('shopping/viewCart.html.twig', [
             'cartProducts' => $cartProducts
         ]);
     }

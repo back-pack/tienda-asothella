@@ -32,7 +32,10 @@
             <th>Precio final</th>
             <th>Fecha de pedido</th>
             <th>Estado</th>
+            {% if is_granted('ROLE_SUPERADMIN') or is_granted('ROLE_LOGISTIC') %}
             <th>Operaciones</th>
+            {% endif %}
+            
         </tr>
         {% for requirement in requirements %}
         <tr>
@@ -77,6 +80,7 @@
                 {% elseif is_granted('ROLE_SALES') %}
                     {% if requirement.status == 'To be approved' %}
                         <a class="btn btn-warning" href="{{ path('admin_requirement_edit', {'reqId': requirement.requirementNumber }) }}">Editar</a>
+                        <a class="btn btn-danger" href="{{ path('admin_requirement_delete', {'reqId': requirement.requirementNumber }) }}">Eliminar</a>
                     {% endif %}
                 {% endif %}
             </td>

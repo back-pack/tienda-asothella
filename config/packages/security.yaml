@@ -73,8 +73,9 @@ security:
         - { path: ^/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/admin/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/register, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/superadmin, roles: ROLE_SUPERADMIN }
-        - { path: ^/admin/*, roles: ROLE_ADMIN }
+        - { path: ^/superadmin/*, roles: ROLE_SUPERADMIN }
+        - { path: ^/admin/shopping, roles: ROLE_SALES }
+        - { path: ^/admin, roles: ROLE_ADMIN }
         - { path: ^/, roles: ROLE_USER }
     
     role_hierarchy:

@@ -70,6 +70,7 @@
             </ul>
             {% endif %}
             <!-- Sidebar Menu Items - These collapse to the responsive navigation menu on small screens -->
+            {% if is_granted('IS_AUTHENTICATED_FULLY') %}
             <div class="collapse navbar-collapse navbar-ex1-collapse">
                 <ul class="nav navbar-nav side-nav">
                     {% if is_granted('ROLE_USER') %}
@@ -109,12 +110,10 @@
                             </li>
                             {% endif %}
                         {% endif %}
-                        
                     {% endif %}
-                    
-                    
                 </ul>
             </div>
+            {% endif %}    
             <!-- /.navbar-collapse -->
         </nav>
         <div id="page-wrapper">

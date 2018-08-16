@@ -399,7 +399,7 @@ class AdminController extends Controller
             $cart->start();
             $cart->setId(uniqid());
         }
-        return $this->render('admin/shopping/index.html.twig', ['products' => $productRepository->findAll(), 'cartId' => $cart->get('id')]);
+        return $this->render('shopping/index.html.twig', ['products' => $productRepository->findAll(), 'cartId' => $cart->get('id')]);
     }
 
     /**

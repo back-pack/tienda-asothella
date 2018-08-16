@@ -184,13 +184,15 @@ class AdminController extends Controller
             $em->persist($item);
         }
 
+        $companyId = $cart->get('company');
+        $company = $em->getRepository(Company::class)->find($companyId);
+
         $requirement
             ->setFinalCost($finalCost)
             ->setCreationDate(new \DateTime('today'))
             ->setRequirementNumber(md5(uniqid()))
             ->setStatus(Constant::TO_BE_APPROVED)
-            //TODO
-            ->setCompany($cart->get('company'))
+            ->setCompany($company)
             ;
         
         $em->persist($requirement);
@@ -235,14 +237,25 @@ class AdminController extends Controller
                     $cartProducts[md5(uniqid())] = $item;
                 }
             }
+            
+            if(null !== $request->get('company')) {
+                $company = $this->getDoctrine()->getRepository(Company::class)->findOneBy(['name' => $request->get('company')]);    
+                if(!$company) {
+                    $this->addFlash('danger', 'La empresa no existe. Vuelva a intentarlo nuevamente.');
+                    if ($authChecker->isGranted('ROLE_SUPERADMIN')) {
+                        return $this->redirectToRoute('superadmin_shopping');
+                    }
+                    return $this->redirectToRoute('admin_shopping');
+                }
+                $cart->set('company', $company);
+            }
+            
             $cartProducts[md5(uniqid())] = $productRequest;
             $cart->set('items', $cartProducts);
-            if(null !== ($request->get('company'))) {
-                $cart->set('company', $request->get('company'));
-            }
-
-            $this->addFlash('success', 'El producto fue agregado al carrito.');
             
+            
+            $this->addFlash('success', 'El producto fue agregado al carrito.');
+
             if ($authChecker->isGranted('ROLE_SUPERADMIN')) {
                 return $this->redirectToRoute('superadmin_shopping');
             }
@@ -269,10 +282,12 @@ class AdminController extends Controller
                 return $this->redirectToRoute('admin_shopping');
             }
         }
+        $companyId = $cart->get('company');
+        $company = $this->getDoctrine()->getRepository(Company::class)->find($companyId);    
         $cartProducts = $cart->get('items');
         return $this->render('admin/shopping/viewCart.html.twig', [
             'cartProducts' => $cartProducts,
-            'company' => $cart->get('company')
+            'company' => $company->getName()
         ]);
     }
 

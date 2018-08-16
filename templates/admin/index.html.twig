@@ -16,7 +16,14 @@
     {% endfor %}
     <h1>Lista de pedidos</h1>
 
-    <a class="btn btn-success" href="{{ path('superadmin_shopping') }}">Crear nuevo pedido</a>
+    {% if is_granted('ROLE_SUPERADMIN') %}
+        <a class="btn btn-success" href="{{ path('superadmin_shopping') }}">Crear nuevo pedido</a>
+    {% elseif is_granted('ROLE_SALES') %}
+        <a class="btn btn-success" href="{{ path('admin_shopping') }}">Crear nuevo pedido</a>
+    {% elseif is_granted('ROLE_USER') %}
+        <a class="btn btn-success" href="{{ path('client_shopping') }}">Crear nuevo pedido</a>
+    {% endif %}
+    
  
     <table class="table">
         <tr>

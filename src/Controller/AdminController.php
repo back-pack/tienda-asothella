@@ -427,6 +427,7 @@ class AdminController extends Controller
     }
 
     /**
+     * @Route("/superadmin/requirement/delete/{reqId}", name="admin_requirement_delete")
      * @Route("/superadmin/requirement/delete/{reqId}", name="superadmin_requirement_delete")
      */
     public function deleteRequirement($reqId)

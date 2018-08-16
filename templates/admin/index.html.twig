@@ -32,10 +32,7 @@
             <th>Precio final</th>
             <th>Fecha de pedido</th>
             <th>Estado</th>
-            {% if is_granted('ROLE_SUPERADMIN') or is_granted('ROLE_LOGISTIC') %}
             <th>Operaciones</th>
-            {% endif %}
-            
         </tr>
         {% for requirement in requirements %}
         <tr>

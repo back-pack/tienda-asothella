@@ -464,8 +464,8 @@ class AdminController extends Controller
     }
 
     /**
-     * @Route("/superadmin/requirement/inprogress/{reqId}", name="superadmin_requirement_finished")
-     * @Route("/admin/requirement/inprogress/{reqId}", name="admin_requirement_finished")
+     * @Route("/superadmin/requirement/finish/{reqId}", name="superadmin_requirement_finished")
+     * @Route("/admin/requirement/finish/{reqId}", name="admin_requirement_finished")
      */
     public function finishedRequirement($reqId, AuthorizationCheckerInterface $authChecker)
     {

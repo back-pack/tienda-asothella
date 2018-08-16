@@ -33,7 +33,7 @@ security:
             pattern: ^/superadmin
             logout:
                 path: superadmin_logout
-                target: admin_login
+                target: superadmin_index
         admin_area:
             provider: admin_db
             http_basic: ~

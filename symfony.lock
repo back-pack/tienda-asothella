@@ -254,6 +254,9 @@
     "symfony/validator": {
         "version": "v3.4.12"
     },
+    "symfony/var-dumper": {
+        "version": "v3.4.14"
+    },
     "symfony/yaml": {
         "version": "v3.4.12"
     },

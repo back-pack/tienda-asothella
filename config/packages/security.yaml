@@ -56,8 +56,8 @@ security:
                 check_path: login
                 default_target_path: client_index
             logout:
-                path: logout
-                target: login
+                path: client_logout
+                target: client_login
         
             # activate different ways to authenticate
 

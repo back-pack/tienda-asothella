@@ -17,6 +17,7 @@
 	border-bottom: 1px solid #ddd;
 }
 
+
 .login_header {
 	width: 20em;
 	margin: auto;
@@ -24,32 +25,32 @@
 	
 }
 
-/* Modifs del login */
 .centrar {
 	margin-left: 26px !important; 
     display:block;
     margin:auto;
 }	
 
+
+
 .color_number{
 	color: rgb(255, 255, 255);
 	font-size: 13px !important; 
 }
 
-/* Selector del color standard en producto */
+
 .cc-selector input{
     margin:0;padding:0;
     -webkit-appearance:none;
        -moz-appearance:none;
             appearance:none;
 }
-
-.colonial_std_1{background-image:url("../img/colonial_std_1.png");}
-.colonial_std_2{background-image:url("../img/colonial_std_2.png");}
-.colonial_std_3{background-image:url("../img/colonial_std_3.png");}
-.colonial_std_4{background-image:url("../img/colonial_std_4.png");}
-.colonial_std_5{background-image:url("../img/colonial_std_5.png");}
-.colonial_std_6{background-image:url("../img/colonial_std_6.png");}
+.colonial_std_1{background-image:url("../img/colonial_std_1.jpg");}
+.colonial_std_2{background-image:url("../img/colonial_std_2.jpg");}
+.colonial_std_3{background-image:url("../img/colonial_std_3.jpg");}
+.colonial_std_4{background-image:url("../img/colonial_std_4.jpg");}
+.colonial_std_5{background-image:url("../img/colonial_std_5.jpg");}
+.colonial_std_6{background-image:url("../img/colonial_std_6.jpg");}
 
 .cc-selector input:active +.drinkcard-cc{opacity: .1;}
 .cc-selector input:checked +.drinkcard-cc{
@@ -76,11 +77,10 @@
             filter: brightness(1.2) grayscale(.5) opacity(.9);
 }
 
-
+/* Extras */
 a:visited{color:#888}
 a{color:#444;text-decoration:none;}
 p{margin-bottom:.3em;}
-
 
 .color_teja_custom {
     background-blend-mode: color;
@@ -88,8 +88,6 @@ p{margin-bottom:.3em;}
     width: 150px;
     height: 150px;
 }
-
-/* imagen del carro contento y triste */
 
 .carro_vacio {
     min-height: 400px;
@@ -100,4 +98,20 @@ p{margin-bottom:.3em;}
 
 .carro_lleno {
     background-image:url("../img/carro_lleno.png") !important ; 
+}
+
+footer {
+    min-height: 7em;
+    padding: 0.8em;
+    background-image: linear-gradient(to bottom, rgba(0,0,0,.3), rgba(0,0,0,0)), url("../img/footer_noise.jpg");
+    background-repeat: repeat-x, repeat;
+    background-size: 100px 15px, 140px 140px;
+    color: #606060
+}
+
+.afip {
+    height: 7em;
+    background-image: url("../img/data_rual.jpg");
+    background-repeat: no-repeat; 
+    background-size: contain;
 }

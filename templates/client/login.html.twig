@@ -8,7 +8,6 @@
     {% if error %}
         <div>{{ error.messageKey|trans(error.messageData, 'security') }}</div>
     {% endif %}
-    <div><img class="centrar" src="img/storelogoheader.png"></div>
     <div class="panel panel-info">
         <div class="panel-heading form-group"> <h3 class="panel-title"><strong>Login</strong></h3></div>
         <h5>
@@ -21,6 +20,14 @@
         <div class="panel-footer"><h6 class="text-center">Problemas para loguearse? <A HREF="mailto:info-tejas@tejas-asothella.com?subject=problema Login"><i class="fa fa-envelope"></i></A></h6></div>
     </div>
 </div>
+
+<script>
+    // te vengo a sacar el nav bar ameo
+    $( document ).ready(function(){
+        $('#wrapper').css('padding-left', '0px');
+    });
+
+</script>
 
 
 

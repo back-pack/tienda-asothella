@@ -9,5 +9,5 @@ superadmin_logout:
     path: /superadmin/logout
 admin_logout:
     path: /admin/logout
-logout:
-    path: /logout
+client_logout:
+    path: /client/logout

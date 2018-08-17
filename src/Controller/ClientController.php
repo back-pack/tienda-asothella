@@ -57,7 +57,7 @@ class ClientController extends Controller
         ]);
     }
     /**
-     * @Route("/login", name="login")
+     * @Route("/login", name="client_login")
      */
     public function login(Request $request,AuthenticationUtils $authenticationUtils)
     {

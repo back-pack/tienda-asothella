@@ -8,7 +8,7 @@
     {{ form_start(form) }}
     <label for="">Nombre:</label>{{ form_widget(form.firstName) }}
     <label for="">Apellido:</label>{{ form_widget(form.lastName) }}
-    <label for="">email:</label>{{ form_widget(form.email, {'attr' : {'readonly' : 'readonly'} }) }}
+    <label for="">email:</label>{{ form_widget(form.email) }}
     <label for="">Telefono:</label>{{ form_widget(form.phone) }}
     <label for="">Nombre de usuario</label>{{ form_widget(form.username) }}
     <label for="">Rol:</label>{{ form_widget(form.role) }}

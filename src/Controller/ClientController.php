@@ -78,7 +78,8 @@ class ClientController extends Controller
     public function client()
     {
         $user = $this->getUser();
-        $requirements = $this->getDoctrine()->getRepository(Requirement::class)->findBy(['company' => $this->getUser()->getId()]);
+        //TODO SORTING ASCENDENT
+        $requirements = $this->getDoctrine()->getRepository(Requirement::class)->findBy(['company' => $user->getId()]);
         
         return $this->render('client/index.html.twig', [
             'user' => $user->getContactName(),
@@ -153,5 +154,31 @@ class ClientController extends Controller
             'user' => $user->getContactName(),
             'requirements' => $requirements
         ]);
+    }
+
+    /**
+     * @Route("/client/requirement/edit", name="client_requirement_edit")
+     */
+    public function editRequirement($reqId)
+    {
+        //Terminar esta parte
+        $em = $this->getDoctrine()->getManager();
+        $requirement = $em->getRepository(Requirement::class)->findOneBy(['requirementNumber' => $reqId]);
+
+        if(!$requirement) {
+            $this->addFlash('danger', 'El requerimiento ya no existe');
+            return $this->redirectToRoute('client_index');
+        }
+        
+        $cart = new Session();
+        $cart->setId($requirement->getId());
+        $cart->set('items', $requirement->getProductRequest());
+        return $this->render('admin/shopping/viewCart.html.twig', [
+            'cartProducts' => $cartProducts,
+            'company' => $company->getName()
+        ]);
+        
+
+
     }
 }

@@ -5,20 +5,20 @@
     {% set pathToDropCart = path('superadmin_shopping_dropcart') %}
     {% set pathToEditItem = 'superadmin_shopping_edititem' %}
     {% set pathToRemoveItem = 'superadmin_shopping_removeitem' %}
-    {# {% set pathToNewRequirement = path('superadmin_requirement_new') %} #}
+    {% set pathToNewRequirement = path('superadmin_requirement_new') %}
 {% else %}
     {% if is_granted('ROLE_SALES') %}
         {% set pathToAddItem = 'admin_shopping_additem' %}
         {% set pathToDropCart = path('admin_shopping_dropcart') %}
         {% set pathToEditItem = 'admin_shopping_edititem' %}
         {% set pathToRemoveItem = 'admin_shopping_removeitem' %}
-        {# {% set pathToNewRequirement = path('admin_requirement_new') %} #}
+        {% set pathToNewRequirement = path('admin_requirement_new') %}
     {% elseif is_granted('ROLE_USER') %}
         {% set pathToAddItem = 'client_shopping_additem' %}
         {% set pathToDropCart = path('admin_shopping_dropcart') %}
         {% set pathToEditItem = 'client_shopping_edititem' %}
         {% set pathToRemoveItem = 'client_shopping_removeitem' %}
-        {# {% set pathToNewRequirement = path('client_requirement_new') %} #}
+        {% set pathToNewRequirement = path('client_requirement_new') %}
     {% endif %}
 {% endif %}
 
@@ -57,15 +57,15 @@
         </select>
     </div>
     {% if items is not empty %}
-        {% for item in items %}    
+        {% for key, item in items %}    
         <div class="thumbnail item_tienda ">
             <img src="img/default_store.png" alt="...">
             <div class="caption">
-                <h4 class="divisor">{{ items.name }}</h4>
-                <p>{{ item.description }}</p>
+                <h4 class="divisor">{{ item.product.name }}</h4>
+                <p>{{ item.product.description }}</p>
                 <p>Cantidad: <b>{{ item.quantity }}</b></p>
-                <a href="{{path(pathToEditItem, {'itemId' : item.id})}}" class="btn btn-sm btn-warning"><i class="fa fa-fw fa-pencil"></i></a>
-                <a href="{{path(pathToRemoveItem, {'itemId' : item.id})}}" class="btn btn-sm btn-danger"><i class="fa fa-fw fa-remove"></i></a>
+                <a href="{{path(pathToEditItem, {'itemId' : key})}}" class="btn btn-sm btn-warning"><i class="fa fa-fw fa-pencil"></i></a>
+                <a href="{{path(pathToRemoveItem, {'itemId' : key})}}" class="btn btn-sm btn-danger"><i class="fa fa-fw fa-remove"></i></a>
             </div>
         </div>
         {% endfor %}

@@ -9,46 +9,22 @@
         <div>{{ error.messageKey|trans(error.messageData, 'security') }}</div>
     {% endif %}
     <div class="panel panel-info">
-        <div class="panel-heading form-group"> <h3 class="panel-title"><strong>Login</strong></h3></div>
+        <div class="panel-heading form-group"><h3 class="panel-title"><strong>Login</strong></h3></div>
         <h5>
-            <form action="{{ path('login') }}" method="post">
-            <div class="panel-body"><input type="text" id="username" class="form-control" name="_username" placeholder="Usuario" value="{{ last_username }}"></div>
-            <div class="panel-body"><input type="password" id="password" class="form-control" name="_password" placeholder="Password"></div>
-            <div class="panel-body"><button type="submit" class="btn btn-default pull-right">login</button></div>
+            <form action="{{ path('client_login') }}" method="post">
+                <div class="panel-body"><input type="text" id="username" class="form-control" name="_username" placeholder="Usuario" value="{{ last_username }}"></div>
+                <div class="panel-body"><input type="password" id="password" class="form-control" name="_password" placeholder="Password"></div>
+                <div class="panel-body"><button type="submit" class="btn btn-default pull-right">login</button></div>
             </form>
         </h5>
-        <div class="panel-footer"><h6 class="text-center">Problemas para loguearse? <A HREF="mailto:info-tejas@tejas-asothella.com?subject=problema Login"><i class="fa fa-envelope"></i></A></h6></div>
+        <div class="panel-footer"><h6 class="text-center">Problemas para loguearse? <a HREF="mailto:info-tejas@tejas-asothella.com?subject=problema Login"><i class="fa fa-envelope"></i></a></h6></div>
     </div>
 </div>
-
 <script>
-    // te vengo a sacar el nav bar ameo
     $( document ).ready(function(){
         $('#wrapper').css('padding-left', '0px');
         $('.login_header').fadeIn(1500);
     });
 
 </script>
-
-
-
-
-
-
-{# 
-<div class="container">
-        {% if error %}
-        <div>{{ error.messageKey|trans(error.messageData, 'security') }}</div>
-    {% endif %}
-    
-    <form action="{{ path('login') }}" method="post">
-        <label for="username">Username:</label>
-        <input type="text" id="username" name="_username" value="{{ last_username }}" />
-    
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="_password" />
-    
-        <button type="submit">login</button>
-    </form>
-</div> #}
 {% endblock %}

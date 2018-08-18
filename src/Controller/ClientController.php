@@ -37,17 +37,17 @@ class ClientController extends Controller
             $entityManager->persist($company);
             $entityManager->flush();
 
-            $message = (new \Swift_Message('Bienvenido a Asothella'))
-            ->setFrom('info@asothella.com')
-            ->setTo($company->getEmail())
-            ->setBody(
-                $this->renderView(
-                    'emails\registration.html.twig',
-                    ['contactName' => $company->getContactName()]
-                ), 'text/html'
-            );
+            // $message = (new \Swift_Message('Bienvenido a Asothella'))
+            // ->setFrom('info@asothella.com')
+            // ->setTo($company->getEmail())
+            // ->setBody(
+            //     $this->renderView(
+            //         'emails\registration.html.twig',
+            //         ['contactName' => $company->getContactName()]
+            //     ), 'text/html'
+            // );
 
-            $mailer->send($message);
+            // $mailer->send($message);
 
             return $this->redirectToRoute('client_login', [
             ]);
@@ -59,7 +59,7 @@ class ClientController extends Controller
     /**
      * @Route("/login", name="client_login")
      */
-    public function login(Request $request,AuthenticationUtils $authenticationUtils)
+    public function login(Request $request, AuthenticationUtils $authenticationUtils)
     {
         $error = $authenticationUtils->getLastAuthenticationError();
 

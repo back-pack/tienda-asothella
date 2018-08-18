@@ -223,6 +223,14 @@ class AdminController extends Controller
             }
         }
         $product = $this->getDoctrine()->getRepository(Product::class)->findOneBy(['uid' => $uid]);
+        if(!$product) {
+            $this->addFlash('danger', 'El producto no existe en la tienda.');
+            if($authChecker->isGranted('ROLE_SUPERADMIN')) {
+                return $this->redirectToRoute('superadmin_shopping');
+            } else {
+                return $this->redirectToRoute('admin_shopping');
+            }
+        }
         $productRequest = new ProductRequest();
         $form = $this->createForm(ProductRequestType::class, $productRequest);
         $form->handleRequest($request);
@@ -386,7 +394,10 @@ class AdminController extends Controller
 
         $items = $cart->get('items');
 
-        return $this->render('shopping/index.html.twig', ['companies' => $companyRepository->findAll(), 'products' => $productRepository->findAll(), 'items' => $items]);
+        return $this->render('shopping/index.html.twig', [
+            'companies' => $companyRepository->findAll(), 
+            'products' => $productRepository->findAll(), 
+            'items' => $items]);
     }
 
     /**

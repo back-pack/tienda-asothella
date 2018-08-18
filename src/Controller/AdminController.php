@@ -260,36 +260,12 @@ class AdminController extends Controller
         ]);
     }
 
-    // ELIMINAR VIEW CART
-    /**
-     * @Route("/admin/shopping/viewcart", name="admin_shopping_viewcart")
-     * @Route("/superadmin/shopping/viewcart", name="superadmin_shopping_viewcart")
-     */
-    public function viewCart(Request $request, Session $cart, AuthorizationCheckerInterface $authChecker)
-    {
-        if(null === ($cart->getId())) {
-            if($authChecker->isGranted('ROLE_SUPERADMIN')) {
-                return $this->redirectToRoute('superadmin_shopping');
-            } else {
-                return $this->redirectToRoute('admin_shopping');
-            }
-        }
-        $companyId = $cart->get('company');
-        $company = $this->getDoctrine()->getRepository(Company::class)->find($companyId);    
-        $cartProducts = $cart->get('items');
-        return $this->render('shopping/viewCart.html.twig', [
-            'cartProducts' => $cartProducts,
-            'company' => $company->getName()
-        ]);
-    }
-
     /**
      * @Route("/admin/shopping/edititem/{itemId}", name="admin_shopping_edititem")
      * @Route("/superadmin/shopping/edititem/{itemId}", name="superadmin_shopping_edititem")
      */
     public function edititem(Session $cart, Request $request, $itemId, AuthorizationCheckerInterface $authChecker)
     {
-        //TODO
         if(null === ($cart->getId())) {
             if($authChecker->isGranted('ROLE_SUPERADMIN')) {
                 return $this->redirectToRoute('superadmin_shopping');

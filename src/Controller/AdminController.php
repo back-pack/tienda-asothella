@@ -18,6 +18,7 @@ use App\Form\ProductType;
 use App\Form\UserType;
 use App\Form\ProductRequestType;
 use App\Repository\ProductRepository;
+use App\Repository\CompanyRepository;
 use App\Helper\Constant;
 
 class AdminController extends Controller
@@ -209,10 +210,10 @@ class AdminController extends Controller
     }
 
     /**
-     * @Route("/admin/shopping/additem/{itemId}", name="admin_shopping_additem")
-     * @Route("/superadmin/shopping/additem/{itemId}", name="superadmin_shopping_additem")
+     * @Route("/admin/shopping/additem/{uid}", name="admin_shopping_additem")
+     * @Route("/superadmin/shopping/additem/{uid}", name="superadmin_shopping_additem")
      */
-    public function addItem(Request $request, $itemId, Session $cart, AuthorizationCheckerInterface $authChecker)
+    public function addItem(Request $request, $uid, Session $cart, AuthorizationCheckerInterface $authChecker)
     {
         if(null === ($cart->getId())) {
             if($authChecker->isGranted('ROLE_SUPERADMIN')) {
@@ -221,11 +222,7 @@ class AdminController extends Controller
                 return $this->redirectToRoute('admin_shopping');
             }
         }
-        $companies = null;
-        if(null === $cart->get('company')) {
-            $companies = $this->getDoctrine()->getRepository(Company::class)->findAll();
-        }
-        $product = $this->getDoctrine()->getRepository(Product::class)->findOneBy(['uid' => $itemId]);
+        $product = $this->getDoctrine()->getRepository(Product::class)->findOneBy(['uid' => $uid]);
         $productRequest = new ProductRequest();
         $form = $this->createForm(ProductRequestType::class, $productRequest);
         $form->handleRequest($request);
@@ -238,21 +235,8 @@ class AdminController extends Controller
                 }
             }
             
-            if(null !== $request->get('company')) {
-                $company = $this->getDoctrine()->getRepository(Company::class)->findOneBy(['name' => $request->get('company')]);    
-                if(!$company) {
-                    $this->addFlash('danger', 'La empresa no existe. Vuelva a intentarlo nuevamente.');
-                    if ($authChecker->isGranted('ROLE_SUPERADMIN')) {
-                        return $this->redirectToRoute('superadmin_shopping');
-                    }
-                    return $this->redirectToRoute('admin_shopping');
-                }
-                $cart->set('company', $company);
-            }
-            
             $cartProducts[md5(uniqid())] = $productRequest;
             $cart->set('items', $cartProducts);
-            
             
             $this->addFlash('success', 'El producto fue agregado al carrito.');
 
@@ -265,10 +249,10 @@ class AdminController extends Controller
         return $this->render('shopping/addItem.html.twig', [
             'form' => $form->createView(),
             'product' => $product,
-            'companies' => $companies
         ]);
     }
 
+    // ELIMINAR VIEW CART
     /**
      * @Route("/admin/shopping/viewcart", name="admin_shopping_viewcart")
      * @Route("/superadmin/shopping/viewcart", name="superadmin_shopping_viewcart")
@@ -392,14 +376,17 @@ class AdminController extends Controller
      * @Route("/admin/shopping", name="admin_shopping")
      * @Route("/superadmin/shopping", name="superadmin_shopping")
      */
-    public function shopping(ProductRepository $productRepository, Session $cart)
+    public function shopping(ProductRepository $productRepository, Session $cart, CompanyRepository $companyRepository)
     {
         if(null === $cart->getId()) {
             $cart = new Session();
             $cart->start();
             $cart->setId(uniqid());
         }
-        return $this->render('shopping/index.html.twig', ['products' => $productRepository->findAll(), 'cartId' => $cart->get('id')]);
+
+        $items = $cart->get('items');
+
+        return $this->render('shopping/index.html.twig', ['companies' => $companyRepository->findAll(), 'products' => $productRepository->findAll(), 'items' => $items]);
     }
 
     /**

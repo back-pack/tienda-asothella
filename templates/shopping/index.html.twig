@@ -1,20 +1,24 @@
 {% extends 'base.html.twig' %}
 
-{% set pathToViewCart = '' %}
 {% if is_granted('ROLE_SUPERADMIN') %}
     {% set pathToAddItem = 'superadmin_shopping_additem' %}
-    {% if app.session.get('items') is not empty %}
-        {% set pathToViewCart = path('superadmin_shopping_viewcart') %}
-    {% endif %}
-{% elseif is_granted('ROLE_SALES')%}
-    {% set pathToAddItem = 'admin_shopping_additem' %}
-    {% if app.session.get('items') is not empty %}
-        {% set pathToViewCart = path('admin_shopping_viewcart') %}
-    {% endif %}
-{% elseif is_granted('ROLE_USER') %}
-    {% set pathToAddItem = 'client_shopping_additem' %}
-    {% if app.session.get('items') is not empty %}
-        {% set pathToViewCart = path('client_shopping_viewcart') %}
+    {# {% set pathToDropCart = path('superadmin_shopping_dropcart') %}
+    {% set pathToEditItem = 'superadmin_shopping_edititem' %}
+    {% set pathToRemoveItem = 'superadmin_shopping_removeitem' %}
+    {% set pathToNewRequirement = path('superadmin_requirement_new') %} #}
+{% else %}
+    {% if is_granted('ROLE_SALES') %}
+        {% set pathToAddItem = 'admin_shopping_additem' %}
+        {# {% set pathToDropCart = path('admin_shopping_dropcart') %}
+        {% set pathToEditItem = 'admin_shopping_edititem' %}
+        {% set pathToRemoveItem = 'admin_shopping_removeitem' %}
+        {% set pathToNewRequirement = path('admin_requirement_new') %} #}
+    {% elseif is_granted('ROLE_USER') %}
+        {% set pathToAddItem = 'client_shopping_additem' %}
+        {# {% set pathToDropCart = path('client_shopping_dropcart') %}
+        {% set pathToEditItem = 'client_shopping_edititem' %}
+        {% set pathToRemoveItem = 'client_shopping_removeitem' %}
+        {% set pathToNewRequirement = path('client_requirement_new') %} #}
     {% endif %}
 {% endif %}
 
@@ -34,12 +38,7 @@
     {% endfor %}
     <h1>Lista de productos</h1>
     <br>
-    {% if app.session.get('items') is not empty %}
     <div class="row">
-        <a class="btn btn-info" href="{{pathToViewCart}}">Ver carro</a>
-    </div>
-    {% endif %}
-    {# <div class="row">
         <div class="form-group">
             <label for="company">Empresas:</label>
             <select name="company" id="company">
@@ -48,27 +47,41 @@
             {% endfor %}
             </select>
         </div>
-    </div> #}
+    </div>
     <div class="row">
-        {% for product in products %}
-        <div class="col-sm-10 col-xs-12">
-            <div class="panel panel-info ">
-                <div class="panel-heading">
-                    <h3 class="panel-title">{{ product.name}}</h3>
-                </div>
-                <div class="panel-body">
-                    <p>{{ product.description }}</p>
-                    IMAGEN<img src="" alt="">
-                </div>
-                <div class="panel-footer">
-                    <a type="button" href="{{ path(pathToAddItem, {'itemId': product.uid }) }}" class="btn btn-xs btn-success" data-toggle="tooltip" data-placement="bottom" title="Agregar">
-                        <i class="fa fa-fw fa-plus"></i>
-                    </a>
-                </div>
+        <label for="product">Productos:</label>
+        <select name="product" id="product">
+            {% for product in products %}
+            <option id="{{path(pathToAddItem, {'uid': product.uid})}}">{{product.name}}</option>  
+            {% endfor %}
+        </select>
+    </div>
+    {% if items is not empty %}
+        {% for item in items %}    
+        <div class="thumbnail item_tienda ">
+            <img src="img/default_store.png" alt="...">
+            <div class="caption">
+                <h4 class="divisor">{{ items.name }}</h4>
+                <p>{{ item.description }}</p>
+                <p>Cantidad: <b>{{ item.quantity }}</b></p>
+                <a class="btn btn-sm btn-warning"><i class="fa fa-fw fa-pencil"></i></button>
+                <a class="btn btn-sm btn-danger"><i class="fa fa-fw fa-remove"></i></button>
             </div>
         </div>
         {% endfor %}
+    <div class="row">
+        <a class="btn btn-info" href="{{ pathToNewRequirement }}">{{ button_label|default('Realizar compra') }}</a>
     </div>
- 
+    {% else %}
+        <h1>Todavia no tenés items agregados!</h1>
+    {% endif %}
+    
 </div>
+
+<script>
+    $('#product > option').on('click', () => {
+        var link = $(this).attr('id');
+        //FALTA HACER REDIRECT SEGUN ID DEL SELECT DE PRODUCTOS > OSCAR.
+    });
+</script>
 {% endblock %}

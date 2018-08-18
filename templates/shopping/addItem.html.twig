@@ -20,21 +20,6 @@
     {{ form_start(form, {'attr': {'class': 'form-horizontal', 'novalidate': 'novalidate', 'oninput': "cuenta.value=parseFloat(product_request_quantity.value)*parseFloat(input_factor.value)"}})}}
     <h1>{{ product.name }}</h1>
     <div id="products">
-    {% if app.session.get('company') is empty %}
-        <div class="row">
-            <div class="form-group">
-                <label>Empresa: </label>
-                <select name="company" class="form-control">
-                    <option>Seleccione una empresa</option>
-                {% for company in companies %}
-                    <option id="{{ company.id }}">{{ company.name }}</option>
-                {% endfor %}
-                </select>
-            </div>
-            
-        </div>
-        
-    {% endif %}
     <div class="row">
         <div class="form-group">
             <label>Cantidad:</label>

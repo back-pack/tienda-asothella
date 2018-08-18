@@ -2,23 +2,23 @@
 
 {% if is_granted('ROLE_SUPERADMIN') %}
     {% set pathToAddItem = 'superadmin_shopping_additem' %}
-    {# {% set pathToDropCart = path('superadmin_shopping_dropcart') %}
+    {% set pathToDropCart = path('superadmin_shopping_dropcart') %}
     {% set pathToEditItem = 'superadmin_shopping_edititem' %}
     {% set pathToRemoveItem = 'superadmin_shopping_removeitem' %}
-    {% set pathToNewRequirement = path('superadmin_requirement_new') %} #}
+    {# {% set pathToNewRequirement = path('superadmin_requirement_new') %} #}
 {% else %}
     {% if is_granted('ROLE_SALES') %}
         {% set pathToAddItem = 'admin_shopping_additem' %}
-        {# {% set pathToDropCart = path('admin_shopping_dropcart') %}
+        {% set pathToDropCart = path('admin_shopping_dropcart') %}
         {% set pathToEditItem = 'admin_shopping_edititem' %}
         {% set pathToRemoveItem = 'admin_shopping_removeitem' %}
-        {% set pathToNewRequirement = path('admin_requirement_new') %} #}
+        {# {% set pathToNewRequirement = path('admin_requirement_new') %} #}
     {% elseif is_granted('ROLE_USER') %}
         {% set pathToAddItem = 'client_shopping_additem' %}
-        {# {% set pathToDropCart = path('client_shopping_dropcart') %}
+        {% set pathToDropCart = path('admin_shopping_dropcart') %}
         {% set pathToEditItem = 'client_shopping_edititem' %}
         {% set pathToRemoveItem = 'client_shopping_removeitem' %}
-        {% set pathToNewRequirement = path('client_requirement_new') %} #}
+        {# {% set pathToNewRequirement = path('client_requirement_new') %} #}
     {% endif %}
 {% endif %}
 
@@ -64,13 +64,14 @@
                 <h4 class="divisor">{{ items.name }}</h4>
                 <p>{{ item.description }}</p>
                 <p>Cantidad: <b>{{ item.quantity }}</b></p>
-                <a class="btn btn-sm btn-warning"><i class="fa fa-fw fa-pencil"></i></button>
-                <a class="btn btn-sm btn-danger"><i class="fa fa-fw fa-remove"></i></button>
+                <a href="{{path(pathToEditItem, {'itemId' : item.id})}}" class="btn btn-sm btn-warning"><i class="fa fa-fw fa-pencil"></i></a>
+                <a href="{{path(pathToRemoveItem, {'itemId' : item.id})}}" class="btn btn-sm btn-danger"><i class="fa fa-fw fa-remove"></i></a>
             </div>
         </div>
         {% endfor %}
     <div class="row">
         <a class="btn btn-info" href="{{ pathToNewRequirement }}">{{ button_label|default('Realizar compra') }}</a>
+        <a class="btn btn-daner" href="{{ pathToDropCart }}">{{ button_label|default('Vaciar carrito') }}</a>
     </div>
     {% else %}
         <h1>Todavia no tenés items agregados!</h1>
@@ -79,9 +80,9 @@
 </div>
 
 <script>
-    $('#product > option').on('click', () => {
-        var link = $(this).attr('id');
-        //FALTA HACER REDIRECT SEGUN ID DEL SELECT DE PRODUCTOS > OSCAR.
+    $("#product").change(function() {
+        var link = $(this).children(":selected").attr("id");
+        window.location.replace(link);
     });
 </script>
 {% endblock %}

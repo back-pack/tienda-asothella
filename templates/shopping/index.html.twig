@@ -21,7 +21,7 @@
         {% set pathToNewRequirement = path('client_requirement_new') %}
     {% endif %}
 {% endif %}
-
+{% set totalPrice = 0 %}
 {% block title %}Shopping{% endblock %}
 
 {% block body %}
@@ -40,21 +40,36 @@
     <br>
     <div class="row">
         <div class="form-group">
-            <label for="company">Empresas:</label>
-            <select name="company" id="company">
-            {% for company in companies %}
-                <option id="{{company.id}}">{{company.name}}</option>
-            {% endfor %}
-            </select>
+            <div class="col-xs-12 col-md-1">
+                <label for="company">Empresas:</label>
+            </div>
+            <div class="col-xs-10 col-md-3">
+                <select name="company" id="company" class="form-control">
+                {% for company in companies %}
+                    <option id="{{company.id}}">{{company.name}}</option>
+                {% endfor %}
+                </select>
+            </div>
         </div>
     </div>
     <div class="row">
-        <label for="product">Productos:</label>
-        <select name="product" id="product">
-            {% for product in products %}
-            <option id="{{path(pathToAddItem, {'uid': product.uid})}}">{{product.name}}</option>  
-            {% endfor %}
-        </select>
+        <div class="form-group">
+            <div class="col-xs-12 col-md-1">
+                <label for="product">Productos:</label>
+            </div>
+            <div class="col-xs-10 col-md-4">
+                <select name="product" id="product" class="form-control">
+                    <option>Seleccione un producto</option>
+                    {% for product in products %}
+                    <option id="{{path(pathToAddItem, {'uid': product.uid})}}">{{product.name}}</option>  
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-xs-4 col-md-4 alert alert-info" role="info">
+                <i class="fa fa-info-circle"></i>
+                <small>Seleccione un producto para editar su cantidad, color (si aplica) y agregarlo al pedido.</small>
+            </div>
+        </div>
     </div>
     {% if items is not empty %}
         {% for key, item in items %}    
@@ -64,14 +79,27 @@
                 <h4 class="divisor">{{ item.product.name }}</h4>
                 <p>{{ item.product.description }}</p>
                 <p>Cantidad: <b>{{ item.quantity }}</b></p>
+                {% if item.product.isColor == true %}
+                <p>Color: {{ item.colour }}</p>
+                {% endif %}
                 <a href="{{path(pathToEditItem, {'itemId' : key})}}" class="btn btn-sm btn-warning"><i class="fa fa-fw fa-pencil"></i></a>
                 <a href="{{path(pathToRemoveItem, {'itemId' : key})}}" class="btn btn-sm btn-danger"><i class="fa fa-fw fa-remove"></i></a>
             </div>
         </div>
+        {% set totalPrice = totalPrice + item.cost %}
         {% endfor %}
     <div class="row">
-        <a class="btn btn-info" href="{{ pathToNewRequirement }}">{{ button_label|default('Realizar compra') }}</a>
-        <a class="btn btn-daner" href="{{ pathToDropCart }}">{{ button_label|default('Vaciar carrito') }}</a>
+        <div class="col-xs-12 col-md-2 alert alert-info" role="info">
+            <i class="fa fa-money-bill"></i>
+            <stron>Costo total: ${{ totalPrice }}</strong>
+        </div>
+    </div>
+    <div class="row">
+        <a class="btn btn-info" href="{{ pathToNewRequirement }}">{{ button_label|default('Envía tu pedido!') }}</a>
+        <a class="btn btn-danger" href="{{ pathToDropCart }}">{{ button_label|default('Vaciar carrito') }}</a>
+    </div>
+    <div class="row">
+        <small>Luego de efectuar el pedido, recibirá un mail con tu detalle. Si surge alguna duda, nos comunicaremos con usted vía email o por teléfono.</small>
     </div>
     {% else %}
         <h1>Todavia no tenés items agregados!</h1>

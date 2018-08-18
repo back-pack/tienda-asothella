@@ -309,9 +309,9 @@ class AdminController extends Controller
             $this->addFlash('success', 'El producto fue modificado.');
             
             if ($authChecker->isGranted('ROLE_SUPERADMIN')) {
-                return $this->redirectToRoute('superadmin_shopping_viewcart');
+                return $this->redirectToRoute('superadmin_shopping');
             }
-            return $this->redirectToRoute('admin_shopping_viewcart');
+            return $this->redirectToRoute('admin_shopping');
         }
         return $this->render('shopping/addItem.html.twig', [
             'form' => $form->createView(),
@@ -340,19 +340,15 @@ class AdminController extends Controller
 
         if(empty($cartProducts)) {
             $cart->invalidate();
-
             $this->addFlash('success', 'El carrito fue vaciado');
-            
-            if($authChecker->isGranted('ROLE_SUPERADMIN')) {
-                return $this->redirectToRoute('superadmin_shopping');
-            } else {
-                return $this->redirectToRoute('admin_shopping');
-            }
+        } else {
+            $this->addFlash('success', 'El producto fue removido.');
         }
-        $this->addFlash('success', 'El item fue removido del carrito');
-        return $this->render('shopping/viewCart.html.twig', [
-            'cartProducts' => $cartProducts
-        ]);
+        if($authChecker->isGranted('ROLE_SUPERADMIN')) {
+            return $this->redirectToRoute('superadmin_shopping');
+        } else {
+            return $this->redirectToRoute('admin_shopping');
+        }
     }
 
     /**

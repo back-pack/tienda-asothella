@@ -38,9 +38,7 @@
     {% endfor %}
     <h1>Lista de productos</h1>
     <br>
-    {% if show is not defined %}
     {{ form_start(form, {'attr': {'class': 'form-horizontal'}}) }}
-    {% endif %}
         {% if companies is defined %}
         <div class="row">
             <div class="form-group">
@@ -48,9 +46,7 @@
                     <label for="company">Empresas:</label>
                 </div>
                 <div class="col-xs-10 col-md-3">
-                    {% if show is not defined %}
                     {{ form_widget(form.company, {'attr': {'class': 'form-control'}}) }}
-                    {% endif %}
                 </div>
             </div>
         </div>
@@ -120,9 +116,7 @@
         {% else %}
             <h1>Todavia no tenés items agregados!</h1>
         {% endif %}
-    {% if show is not defined %}
     {{ form_end(form)}}
-    {% endif %}
 </div>
 
 <script>

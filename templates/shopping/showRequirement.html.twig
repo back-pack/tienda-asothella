@@ -1,0 +1,48 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Ver solicitud{% endblock %}
+
+{% block body %}
+
+<div class="container">
+    <h1>Lista de productos</h1>
+    <br>
+        <div class="row">
+            <div class="form-group">
+                <div class="col-xs-12 col-md-1">
+                    <label for="company">Empresa:</label>
+                </div>
+                <div class="col-xs-10 col-md-3">
+                    <strong>{{ requirement.company.name}}</strong>
+                </div>
+            </div>
+        </div>
+            <div class="row">
+                <div class="col-xs-12">
+                    <h4>Items</h4>
+                </div>
+                {% for item in requirement.productRequests %}
+                <div class="col-sm-6 col-md-4">
+                    <div class="thumbnail item_tienda">
+                        <img src="img/default_store.png" alt="...">
+                        <div class="caption">
+                            <h4 class="divisor">{{ item.product.name }}</h4>
+                            <p>{{ item.product.description }}</p>
+                            <p>Cantidad: <b>{{ item.quantity }}</b></p>
+                            {% if item.product.isColor == true %}
+                            <p>Color: {{ item.colour }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>  
+                {% endfor %}  
+            </div>
+            <div class="row">
+                <div class="col-xs-12 col-md-3 alert alert-info" role="info">
+                    <i class="fa fa-money-bill"></i>
+                    <stron>Costo total: ${{ requirement.finalCost }}</strong>
+                </div>
+            </div>
+</div>
+
+{% endblock %}

@@ -15,7 +15,7 @@
         {% set pathToNewRequirement = path('admin_requirement_new') %}
     {% elseif is_granted('ROLE_USER') %}
         {% set pathToAddItem = 'client_shopping_additem' %}
-        {% set pathToDropCart = path('admin_shopping_dropcart') %}
+        {% set pathToDropCart = path('client_shopping_dropcart') %}
         {% set pathToEditItem = 'client_shopping_edititem' %}
         {% set pathToRemoveItem = 'client_shopping_removeitem' %}
         {% set pathToNewRequirement = path('client_requirement_new') %}
@@ -38,6 +38,7 @@
     {% endfor %}
     <h1>Lista de productos</h1>
     <br>
+    {% if companies is defined %}
     <div class="row">
         <div class="form-group">
             <div class="col-xs-12 col-md-1">
@@ -45,13 +46,14 @@
             </div>
             <div class="col-xs-10 col-md-3">
                 <select name="company" id="company" class="form-control">
-                {% for company in companies %}
-                    <option id="{{company.id}}">{{company.name}}</option>
-                {% endfor %}
+                    {% for company in companies %}
+                        <option id="{{company.id}}">{{company.name}}</option>
+                    {% endfor %}
                 </select>
             </div>
         </div>
     </div>
+    {% endif %}
     <div class="row">
         <div class="form-group">
             <div class="col-xs-12 col-md-1">

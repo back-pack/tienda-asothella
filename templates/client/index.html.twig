@@ -1,5 +1,9 @@
 {% extends 'base.html.twig' %} {% block title %}Tu tienda Asothella{% endblock %} {% block body %}
 {# /client #}
+
+{% set pathToEditRequirement = 'client_requirement_edit' %}
+{% set pathToRemoveRequirement = 'client_requirement_remove' %}
+
 {% for message in app.flashes('success') %}
 <div class="alert alert-success">
     {{ message }}
@@ -24,7 +28,7 @@
 <ol class="breadcrumb">
     <li class="active">Pedidos</li>
     <li>
-        <a type="button" class="btn btn-xs btn-success" href="{{ url('requirement') }}">
+        <a type="button" class="btn btn-xs btn-success" href="{{ path('client_shopping') }}">
             <i class="fa fa-fw fa-plus"></i> Agregar</a>
     </li>
 </ol>
@@ -68,12 +72,12 @@
             <div class="panel-footer">
                 {# Terminar esta sección #}
                 {% if requirement.status == 'To be approved' %}
-                    {# <a href="{{ path('client_requirement_edit', {'reqId': requirement.requirementNumber }) }}" class="btn btn-xs btn-warning" data-toggle="tooltip" data-placement="bottom" title="Modificar">
+                    <a href="{{ path(pathToEditRequirement, {'reqId': requirement.requirementNumber }) }}" class="btn btn-xs btn-warning" data-toggle="tooltip" data-placement="bottom" title="Modificar">
                         <i class="fa fa-fw fa-pencil"></i>
                     </a>
-                    <a href="{{ path('client_requirement_delete', {'reqId': requirement.requirementNumber }) }}" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Borrar">
+                    <a href="{{ path(pathToRemoveRequirement, {'reqId': requirement.requirementNumber }) }}" class="btn btn-xs btn-danger" data-toggle="tooltip" data-placement="bottom" title="Borrar">
                         <i class="fa fa-fw fa-remove"></i>
-                    </a> #}
+                    </a>
                 {% endif %}
                 
             </div>

@@ -93,20 +93,53 @@ class ClientController extends Controller
     /**
      * @Route("/client/shopping", name="client_shopping")
      */
-    public function shopping(ProductRepository $productRepository, Session $cart)
+    public function shopping(ProductRepository $productRepository, Session $cart, Request $request)
     {
-        if(null === $cart->getId()) {
-            $cart = new Session();
-            $cart->start();
-            $cart->setId(uniqid());
+        if(null === $cart->get('cart')) {
+            $cart->set('cart', md5(uniqid()));
+        }
+        $items = $cart->get('items');
+        $products = $productRepository->findAll();
+        $requirement = new Requirement();
+        // $requirement->setCompany($this->getUser());
+        $form = $this->createForm(RequirementType::class, $requirement);
+        $form->handleRequest($request);
+        if($form->isSubmitted() && $form->isValid()) {
+            
+            $em = $this->getDoctrine()->getManager();
+            
+            $finalCost = null;
+            foreach($items as $item) {
+                $index = array_search($item->getProduct(), $products);
+                $item->setProduct($products[$index]);
+                
+                $finalCost += $item->getProduct()->getPrice() * $item->getQuantity();
+                $requirement->addProductRequest($item);
+                $em->persist($item);
+            }
+
+            $requirement
+                ->setFinalCost($finalCost)
+                ->setCreationDate(new \DateTime('today'))
+                ->setRequirementNumber($cart->get('cart'))
+                ->setStatus(Constant::TO_BE_APPROVED)
+                ->setCompany($this->getUser());
+                ;
+            
+            $em->persist($requirement);
+            $em->flush();
+
+            $cart->invalidate();
+
+            $this->addFlash('success', 'Su solicitud es la numero: RQ'.$requirement->getId().'. En breve procesaremos su solicitud!');
+
+            return $this->redirectToRoute('client_index');
         }
 
-        $items = $cart->get('items');
-
         return $this->render('shopping/index.html.twig', [
-            'products' => $productRepository->findAll(), 
-            'items' => $items
-            ]);
+            'products' => $products, 
+            'items' => $items,
+            'form' => $form->createView()]);
     }
 
     /**

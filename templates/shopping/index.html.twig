@@ -54,6 +54,10 @@
                 </div>
             </div>
         </div>
+        {% else %}
+        <div style="display: none">
+            {{ form_widget(form.company, {'attr': {'class': 'form-control', 'disabled': 'disabled', 'visibility': 'hidden'}}) }}
+        </div>
         {% endif %}
         {% if products is defined %}
         <div class="row">

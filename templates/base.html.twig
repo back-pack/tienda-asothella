@@ -29,6 +29,26 @@
     {% endblock %}
 </head>
 
+{% if is_granted('ROLE_SUPERADMIN')%}
+    {% set pathToLogout = path('superadmin_logout') %}
+    {% set pathToShopping = 'superadmin_shopping' %}
+    {% set pathToShoppingEdit = 'superadmin_requirement_edit' %}
+    {% set pathToDropCart = path('superadmin_shopping_dropcart') %}
+{% else %}
+    {% set pathToEditProfile = 'admin_user_edit' %}
+    {% if is_granted('ROLE_SALES') or is_granted('ROLE_LOGISTIC') %}
+        {% set pathToShopping = 'admin_shopping' %}
+        {% set pathToLogout = path('admin_logout') %}
+        {% set pathToShoppingEdit = 'admin_requirement_edit' %}
+        {% set pathToDropCart = path('admin_shopping_dropcart') %}
+    {% else %}
+        {% set pathToShopping = 'client_shopping' %}
+        {% set pathToLogout = path('client_logout') %}
+        {% set pathToShoppingEdit = 'client_requirement_edit' %}
+        {% set pathToDropCart = path('client_shopping_dropcart') %}
+    {% endif %}
+{% endif %}
+
 <body>
     <div id="wrapper">
         <nav class="navbar navbar-inverse navbar-fixed-top fondopip" role="navigation">
@@ -49,22 +69,18 @@
                         <b class="caret"></b>
                     </a>
                     <ul class="dropdown-menu">
-                        {% if is_granted('ROLE_ADMIN') %}
-                            {% if is_granted('ROLE_SUPERADMIN')%}
-                            <li>
-                                <a href="{{ path('superadmin_logout') }}"><i class="fa fa-fw fa-power-off"></i>Salir</a>
-                            </li>   
-                            {% else %}
-                            <li>
-                                <a href="{{ path('admin_user_edit', { 'userId': '*' }) }}"><i class="fa fa-fw fa-gear"></i>Editar perfil</a>
-                            </li>
-                            <li>
-                                <a href="{{ path('admin_logout') }}"><i class="fa fa-fw fa-power-off"></i>Salir</a>
-                            </li>
-                            {% endif %}
+                        {% if is_granted('ROLE_SUPERADMIN')%}
+                        <li>
+                            <a href="{{ pathToLogout }}"><i class="fa fa-fw fa-power-off"></i>Salir</a>
+                        </li>   
+                        {% else %}
+                        <li>
+                            <a href="{{ path(pathToEditProfile, { 'userId': '*' }) }}"><i class="fa fa-fw fa-gear"></i>Editar perfil</a>
+                        </li>
+                        <li>
+                            <a href="{{ pathToLogout }}"><i class="fa fa-fw fa-power-off"></i>Salir</a>
+                        </li>
                         {% endif %}
-                        
-                        
                     </ul>
                 </li>
             </ul>
@@ -83,10 +99,10 @@
                             <a href="{{ path('superadmin_index') }}"><i class="fa fa-fw fa-shopping-cart"></i> Pedidos</a>
                         </li>
                         <li class="active">
-                            <a href="{{ path('superadmin_user_list') }}"><i class="fa fa-fw fa-shopping-cart"></i> Usuarios</a>
+                            <a href="{{ path('superadmin_user_list') }}"><i class="fa fa-users"></i> Usuarios</a>
                         </li>
                         <li class="active">
-                                <a href="{{ path('superadmin_product_index') }}"><i class="fa fa-fw fa-shopping-cart"></i> Productos</a>
+                                <a href="{{ path('superadmin_product_index') }}"><i class="fa fa-square"></i> Productos</a>
                             </li>
                         {% else %}
                         <li class="active">
@@ -94,26 +110,17 @@
                         </li>
                         {% endif %}
                     {% endif %}
-                    {% if app.session.get('items') is not empty %}
-                        {% if is_granted('ROLE_USER') %}
-                            <li class="active">
-                                <a href="{{ path('client_shopping_viewcart') }}"><i class="fa fa-fw fa-shopping-cart"></i> Ver carrito activo</a>
-                            </li>
-                        {% else %}
-                            {% if is_granted('ROLE_SUPERADMIN') %}
-                            <li class="active">
-                                <a href="{{ path('superadmin_shopping_viewcart') }}"><i class="fa fa-fw fa-shopping-cart"></i> Ver carrito activo</a>
-                            </li>
-                            {% else %}
-                            <li class="active">
-                                <a href="{{ path('admin_shopping_viewcart') }}"><i class="fa fa-fw fa-shopping-cart"></i> Ver carrito activo</a>
-                            </li>
-                            {% endif %}
-                        {% endif %}
+                    {% if app.session.get('items') is not empty and (app.request.get('_route') != pathToShopping or app.request.get('_route') != pathToShoppingEdit) %}
+                        <li class="active">
+                            <a href="{{ path(pathToShopping) }}"><i class="fa fa-shopping-cart"></i> Ver solicitud pendiente!</a>
+                        </li>
+                        <li class="active">
+                            <a href="{{ pathToDropCart }}"><i class="fa fa-cart-arrow-down"></i> Descartar solicitud pendiente</a>
+                        </li>
                     {% endif %}
                 </ul>
             </div>
-            {% endif %}    
+            {% endif %}
             <!-- /.navbar-collapse -->
         </nav>
         <div id="page-wrapper">

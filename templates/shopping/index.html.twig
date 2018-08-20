@@ -1,23 +1,27 @@
 {% extends 'base.html.twig' %}
 
-{% set pathToViewCart = '' %}
 {% if is_granted('ROLE_SUPERADMIN') %}
     {% set pathToAddItem = 'superadmin_shopping_additem' %}
-    {% if app.session.get('items') is not empty %}
-        {% set pathToViewCart = path('superadmin_shopping_viewcart') %}
-    {% endif %}
-{% elseif is_granted('ROLE_SALES')%}
-    {% set pathToAddItem = 'admin_shopping_additem' %}
-    {% if app.session.get('items') is not empty %}
-        {% set pathToViewCart = path('admin_shopping_viewcart') %}
-    {% endif %}
-{% elseif is_granted('ROLE_USER') %}
-    {% set pathToAddItem = 'client_shopping_additem' %}
-    {% if app.session.get('items') is not empty %}
-        {% set pathToViewCart = path('client_shopping_viewcart') %}
+    {% set pathToDropCart = path('superadmin_shopping_dropcart') %}
+    {% set pathToEditItem = 'superadmin_shopping_edititem' %}
+    {% set pathToRemoveItem = 'superadmin_shopping_removeitem' %}
+    {% set pathToNewRequirement = path('superadmin_shopping') %}
+{% else %}
+    {% if is_granted('ROLE_SALES') %}
+        {% set pathToAddItem = 'admin_shopping_additem' %}
+        {% set pathToDropCart = path('admin_shopping_dropcart') %}
+        {% set pathToEditItem = 'admin_shopping_edititem' %}
+        {% set pathToRemoveItem = 'admin_shopping_removeitem' %}
+        {% set pathToNewRequirement = path('admin_shopping') %}
+    {% elseif is_granted('ROLE_USER') %}
+        {% set pathToAddItem = 'client_shopping_additem' %}
+        {% set pathToDropCart = path('client_shopping_dropcart') %}
+        {% set pathToEditItem = 'client_shopping_edititem' %}
+        {% set pathToRemoveItem = 'client_shopping_removeitem' %}
+        {% set pathToNewRequirement = path('client_shopping') %}
     {% endif %}
 {% endif %}
-
+{% set totalPrice = 0 %}
 {% block title %}Shopping{% endblock %}
 
 {% block body %}
@@ -32,43 +36,101 @@
         {{ message }}
     </div>
     {% endfor %}
-    <h1>Lista de productos</h1>
-    <br>
-    {% if app.session.get('items') is not empty %}
-    <div class="row">
-        <a class="btn btn-info" href="{{pathToViewCart}}">Ver carro</a>
-    </div>
+    {% if app.session.get('edit') is not empty %}
+    <h1>Edición de solicitud: RQ{{id}}</h1>
+    {% else %}
+    <h1>Nueva solicitud</h1>
     {% endif %}
-    {# <div class="row">
-        <div class="form-group">
-            <label for="company">Empresas:</label>
-            <select name="company" id="company">
-            {% for company in companies %}
-                <option id="{{company.id}}">{{company.name}}</option>
-            {% endfor %}
-            </select>
-        </div>
-    </div> #}
-    <div class="row">
-        {% for product in products %}
-        <div class="col-sm-10 col-xs-12">
-            <div class="panel panel-info ">
-                <div class="panel-heading">
-                    <h3 class="panel-title">{{ product.name}}</h3>
+    <br>
+    {{ form_start(form, {'attr': {'class': 'form-horizontal'}}) }}
+        {% if companies is defined %}
+        <div class="row">
+            <div class="form-group">
+                <div class="col-xs-12 col-md-1">
+                    <label for="company">Empresas:</label>
                 </div>
-                <div class="panel-body">
-                    <p>{{ product.description }}</p>
-                    IMAGEN<img src="" alt="">
-                </div>
-                <div class="panel-footer">
-                    <a type="button" href="{{ path(pathToAddItem, {'itemId': product.uid }) }}" class="btn btn-xs btn-success" data-toggle="tooltip" data-placement="bottom" title="Agregar">
-                        <i class="fa fa-fw fa-plus"></i>
-                    </a>
+                <div class="col-xs-10 col-md-3">
+                    {{ form_widget(form.company, {'attr': {'class': 'form-control'}}) }}
                 </div>
             </div>
         </div>
-        {% endfor %}
-    </div>
- 
+        {% else %}
+        <div style="display: none">
+            {{ form_widget(form.company, {'attr': {'class': 'form-control', 'disabled': 'disabled', 'visibility': 'hidden'}}) }}
+        </div>
+        {% endif %}
+        {% if products is defined %}
+        <div class="row">
+            <div class="form-group">
+                <div class="col-xs-12 col-md-1">
+                    <label for="product">Productos:</label>
+                </div>
+                <div class="col-xs-10 col-md-4">
+                    <select name="product" id="product" class="form-control">
+                        <option>Seleccione un producto</option>
+                        {% for product in products %}
+                        <option id="{{path(pathToAddItem, {'uid': product.uid})}}">{{product.name}}</option>  
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-xs-4 col-md-4 alert alert-info" role="info">
+                    <i class="fa fa-info-circle"></i>
+                    <small>Seleccione un producto para editar su cantidad, color (si aplica) y agregarlo al pedido.</small>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        {% if items is not empty %}
+            <div class="row">
+                <div class="col-xs-12">
+                    <h4>Items</h4>
+                </div>
+                {% for key, item in items %}
+                <div class="col-sm-6 col-md-4">
+                    <div class="thumbnail item_tienda">
+                        <img src="img/default_store.png" alt="...">
+                        <div class="caption">
+                            <h4 class="divisor">{{ item.product.name }}</h4>
+                            <p>{{ item.product.description }}</p>
+                            <p>Cantidad: <b>{{ item.quantity }}</b></p>
+                            {% if item.product.isColor == true %}
+                            <p>Color: {{ item.colour }}</p>
+                            {% endif %}
+                            {% if show is not defined %}
+                                <a href="{{path(pathToEditItem, {'itemId' : key})}}" class="btn btn-sm btn-warning"><i class="fa fa-fw fa-pencil"></i></a>
+                                <a href="{{path(pathToRemoveItem, {'itemId' : key})}}" class="btn btn-sm btn-danger"><i class="fa fa-fw fa-remove"></i></a>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% set totalPrice = totalPrice + item.cost %}
+                </div>    
+                {% endfor %}
+            </div>
+            <div class="row">
+                <div class="col-xs-12 col-md-3 alert alert-info" role="info">
+                    <i class="fa fa-money-bill"></i>
+                    <stron>Costo total: ${{ totalPrice }}</strong>
+                </div>
+            </div>
+            {% if show is not defined %}
+            <div class="row">
+                <button type="submit" class="btn btn-info">{{ button_label|default('Envía tu pedido!') }}</button>
+                <a class="btn btn-danger" href="{{ pathToDropCart }}">{{ button_label|default('Cancelar') }}</a>
+            </div>
+            <div class="row">
+                <small>Luego de efectuar el pedido, recibirá un mail con tu detalle. Si surge alguna duda, nos comunicaremos con usted vía email o por teléfono.</small>
+            </div>
+            {% endif %}
+        {% else %}
+            <h1>Todavia no tenés items agregados!</h1>
+        {% endif %}
+    {{ form_end(form)}}
 </div>
+
+<script>
+    $("#product").change(function() {
+        var link = $(this).children(":selected").attr("id");
+        window.location.replace(link);
+    });
+</script>
 {% endblock %}

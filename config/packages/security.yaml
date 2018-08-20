@@ -52,8 +52,8 @@ security:
             pattern: ^/
             anonymous: ~
             form_login:
-                login_path: login
-                check_path: login
+                login_path: client_login
+                check_path: client_login
                 default_target_path: client_index
             logout:
                 path: client_logout

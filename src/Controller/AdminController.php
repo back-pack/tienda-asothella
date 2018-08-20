@@ -17,8 +17,12 @@ use App\Entity\Product;
 use App\Form\ProductType;
 use App\Form\UserType;
 use App\Form\ProductRequestType;
+use App\Form\RequirementType;
 use App\Repository\ProductRepository;
+use App\Repository\CompanyRepository;
+use App\Repository\RequirementRepository;
 use App\Helper\Constant;
+use Doctrine\Common\Collections\ArrayCollection;
 
 class AdminController extends Controller
 {
@@ -156,106 +160,54 @@ class AdminController extends Controller
     }
 
     /**
-     * @Route("/admin/requirement/new", name="admin_requirement_new")
-     * @Route("/superadmin/requirement/new", name="superadmin_requirement_new")
+     * @Route("/admin/shopping/additem/{uid}", name="admin_shopping_additem")
+     * @Route("/superadmin/shopping/additem/{uid}", name="superadmin_shopping_additem")
      */
-    public function newRequirement(Session $cart, AuthorizationCheckerInterface $authChecker)
+    public function addItem(Request $request, $uid, Session $cart, AuthorizationCheckerInterface $authChecker)
     {
-        if(null === ($cart->getId())) {
+        if(null === $cart->get('cart')) {
             if($authChecker->isGranted('ROLE_SUPERADMIN')) {
                 return $this->redirectToRoute('superadmin_shopping');
             } else {
                 return $this->redirectToRoute('admin_shopping');
             }
         }
-        
-        $cartItems = $cart->get('items');
-        $em = $this->getDoctrine()->getManager();
-        $products = $em->getRepository(Product::class)->findAll();
-        
-        $requirement = new Requirement();
-        $finalCost = null;
-        foreach($cartItems as $item) {
-            $index = array_search($item->getProduct(), $products);
-            $item->setProduct($products[$index]);
-            
-            $finalCost += $item->getProduct()->getPrice() * $item->getQuantity();
-            $requirement->addProductRequest($item);
-            $em->persist($item);
-        }
-
-        $companyId = $cart->get('company');
-        $company = $em->getRepository(Company::class)->find($companyId);
-
-        $requirement
-            ->setFinalCost($finalCost)
-            ->setCreationDate(new \DateTime('today'))
-            ->setRequirementNumber(md5(uniqid()))
-            ->setStatus(Constant::TO_BE_APPROVED)
-            ->setCompany($company)
-            ;
-        
-        $em->persist($requirement);
-        $em->flush();
-
-        $cart->invalidate();
-
-        $this->addFlash('success', 'Su solicitud es la numero: RQ'.$requirement->getId().'. En breve procesaremos su solicitud!');
-
-        if ($authChecker->isGranted('ROLE_SUPERADMIN')) {
-            return $this->redirectToRoute('superadmin_index');
-        }
-        return $this->redirectToRoute('admin_index');
-    }
-
-    /**
-     * @Route("/admin/shopping/additem/{itemId}", name="admin_shopping_additem")
-     * @Route("/superadmin/shopping/additem/{itemId}", name="superadmin_shopping_additem")
-     */
-    public function addItem(Request $request, $itemId, Session $cart, AuthorizationCheckerInterface $authChecker)
-    {
-        if(null === ($cart->getId())) {
+        $product = $this->getDoctrine()->getRepository(Product::class)->findOneBy(['uid' => $uid]);
+        if(!$product) {
+            $this->addFlash('danger', 'El producto no existe en la tienda.');
             if($authChecker->isGranted('ROLE_SUPERADMIN')) {
                 return $this->redirectToRoute('superadmin_shopping');
             } else {
                 return $this->redirectToRoute('admin_shopping');
             }
         }
-        $companies = null;
-        if(null === $cart->get('company')) {
-            $companies = $this->getDoctrine()->getRepository(Company::class)->findAll();
-        }
-        $product = $this->getDoctrine()->getRepository(Product::class)->findOneBy(['uid' => $itemId]);
         $productRequest = new ProductRequest();
         $form = $this->createForm(ProductRequestType::class, $productRequest);
         $form->handleRequest($request);
         if($form->isSubmitted() && $form->isValid()) {
             $productRequest->setProduct($product);
             
-            if(null !== $cart->get('items')) {
-                foreach($cart->get('items') as $item) {
-                    $cartProducts[md5(uniqid())] = $item;
-                }
-            }
-            
-            if(null !== $request->get('company')) {
-                $company = $this->getDoctrine()->getRepository(Company::class)->findOneBy(['name' => $request->get('company')]);    
-                if(!$company) {
-                    $this->addFlash('danger', 'La empresa no existe. Vuelva a intentarlo nuevamente.');
-                    if ($authChecker->isGranted('ROLE_SUPERADMIN')) {
-                        return $this->redirectToRoute('superadmin_shopping');
+            if(null === $cart->get('edit')) {
+                if(null !== $cart->get('items')) {
+                    foreach($cart->get('items') as $item) {
+                        $cartProducts[md5(uniqid())] = $item;
                     }
-                    return $this->redirectToRoute('admin_shopping');
                 }
-                $cart->set('company', $company);
+            } else {
+                $cartProducts = $cart->get('items');
             }
             
             $cartProducts[md5(uniqid())] = $productRequest;
             $cart->set('items', $cartProducts);
             
-            
             $this->addFlash('success', 'El producto fue agregado al carrito.');
 
+            if($cart->get('edit') === true) {
+                if ($authChecker->isGranted('ROLE_SUPERADMIN')) {
+                    return $this->redirectToRoute('superadmin_requirement_edit', ['reqId' => $cart->get('cart')]);
+                }
+                return $this->redirectToRoute('admin_shopping', ['reqId' => $cart->get('cart')]);
+            } 
             if ($authChecker->isGranted('ROLE_SUPERADMIN')) {
                 return $this->redirectToRoute('superadmin_shopping');
             }
@@ -265,29 +217,6 @@ class AdminController extends Controller
         return $this->render('shopping/addItem.html.twig', [
             'form' => $form->createView(),
             'product' => $product,
-            'companies' => $companies
-        ]);
-    }
-
-    /**
-     * @Route("/admin/shopping/viewcart", name="admin_shopping_viewcart")
-     * @Route("/superadmin/shopping/viewcart", name="superadmin_shopping_viewcart")
-     */
-    public function viewCart(Request $request, Session $cart, AuthorizationCheckerInterface $authChecker)
-    {
-        if(null === ($cart->getId())) {
-            if($authChecker->isGranted('ROLE_SUPERADMIN')) {
-                return $this->redirectToRoute('superadmin_shopping');
-            } else {
-                return $this->redirectToRoute('admin_shopping');
-            }
-        }
-        $companyId = $cart->get('company');
-        $company = $this->getDoctrine()->getRepository(Company::class)->find($companyId);    
-        $cartProducts = $cart->get('items');
-        return $this->render('shopping/viewCart.html.twig', [
-            'cartProducts' => $cartProducts,
-            'company' => $company->getName()
         ]);
     }
 
@@ -297,8 +226,7 @@ class AdminController extends Controller
      */
     public function edititem(Session $cart, Request $request, $itemId, AuthorizationCheckerInterface $authChecker)
     {
-        //TODO
-        if(null === ($cart->getId())) {
+        if(null === ($cart->get('cart'))) {
             if($authChecker->isGranted('ROLE_SUPERADMIN')) {
                 return $this->redirectToRoute('superadmin_shopping');
             } else {
@@ -307,7 +235,7 @@ class AdminController extends Controller
         }
         $cartProducts = $cart->get('items');
         $productReq = $cartProducts[$itemId];
-
+        
         $form = $this->createForm(ProductRequestType::class, $productReq);
         $form->handleRequest($request);
         if($form->isSubmitted() && $form->isValid()) {
@@ -316,10 +244,16 @@ class AdminController extends Controller
 
             $this->addFlash('success', 'El producto fue modificado.');
             
+            if($cart->get('edit') === true) {
+                if ($authChecker->isGranted('ROLE_SUPERADMIN')) {
+                    return $this->redirectToRoute('superadmin_requirement_edit', ['reqId' => $cart->get('cart')]);
+                }
+                return $this->redirectToRoute('admin_shopping', ['reqId' => $cart->get('cart')]);
+            } 
             if ($authChecker->isGranted('ROLE_SUPERADMIN')) {
-                return $this->redirectToRoute('superadmin_shopping_viewcart');
+                return $this->redirectToRoute('superadmin_shopping');
             }
-            return $this->redirectToRoute('admin_shopping_viewcart');
+            return $this->redirectToRoute('admin_shopping');
         }
         return $this->render('shopping/addItem.html.twig', [
             'form' => $form->createView(),
@@ -334,7 +268,7 @@ class AdminController extends Controller
      */
     public function removeitem(Session $cart, $itemId, AuthorizationCheckerInterface $authChecker)
     {
-        if(null === ($cart->getId())) {
+        if(null === ($cart->get('cart'))) {
             if($authChecker->isGranted('ROLE_SUPERADMIN')) {
                 return $this->redirectToRoute('superadmin_shopping');
             } else {
@@ -348,19 +282,20 @@ class AdminController extends Controller
 
         if(empty($cartProducts)) {
             $cart->invalidate();
-
             $this->addFlash('success', 'El carrito fue vaciado');
-            
-            if($authChecker->isGranted('ROLE_SUPERADMIN')) {
-                return $this->redirectToRoute('superadmin_shopping');
-            } else {
-                return $this->redirectToRoute('admin_shopping');
-            }
+        } else {
+            $this->addFlash('success', 'El producto fue removido.');
         }
-        $this->addFlash('success', 'El item fue removido del carrito');
-        return $this->render('shopping/viewCart.html.twig', [
-            'cartProducts' => $cartProducts
-        ]);
+        if($cart->get('edit') === true) {
+            if ($authChecker->isGranted('ROLE_SUPERADMIN')) {
+                return $this->redirectToRoute('superadmin_requirement_edit', ['reqId' => $cart->get('cart')]);
+            }
+            return $this->redirectToRoute('admin_shopping', ['reqId' => $cart->get('cart')]);
+        } 
+        if ($authChecker->isGranted('ROLE_SUPERADMIN')) {
+            return $this->redirectToRoute('superadmin_shopping');
+        }
+        return $this->redirectToRoute('admin_shopping');
     }
 
     /**
@@ -369,7 +304,8 @@ class AdminController extends Controller
      */
     public function dropCart(Session $cart, AuthorizationCheckerInterface $authChecker)
     {
-        if(null === ($cart->getId())) {
+        if(null === ($cart->get('cart'))) {
+            $this->addFlash('danger', 'No existe una solicitud activa.');
             if($authChecker->isGranted('ROLE_SUPERADMIN')) {
                 return $this->redirectToRoute('superadmin_shopping');
             } else {
@@ -378,12 +314,10 @@ class AdminController extends Controller
         }
         $cart->invalidate();
 
-        $this->addFlash('success', 'El carrito fue vaciado.');
-
         if($authChecker->isGranted('ROLE_SUPERADMIN')) {
-            return $this->redirectToRoute('superadmin_shopping');
+            return $this->redirectToRoute('superadmin_index');
         } else {
-            return $this->redirectToRoute('admin_shopping');
+            return $this->redirectToRoute('admin_index');
         }
         
     }
@@ -392,22 +326,74 @@ class AdminController extends Controller
      * @Route("/admin/shopping", name="admin_shopping")
      * @Route("/superadmin/shopping", name="superadmin_shopping")
      */
-    public function shopping(ProductRepository $productRepository, Session $cart)
+    public function shopping(Request $request, AuthorizationCheckerInterface $authChecker, ProductRepository $productRepository, Session $cart, CompanyRepository $companyRepository)
     {
-        if(null === $cart->getId()) {
-            $cart = new Session();
-            $cart->start();
-            $cart->setId(uniqid());
+        if(null === $cart->get('cart')) {
+            $cart->set('cart', md5(uniqid()));
         }
-        return $this->render('shopping/index.html.twig', ['products' => $productRepository->findAll(), 'cartId' => $cart->get('id')]);
+        $items = $cart->get('items');
+        $products = $productRepository->findAll();
+        $requirement = new Requirement();
+        $form = $this->createForm(RequirementType::class, $requirement);
+        $form->handleRequest($request);
+        if($form->isSubmitted() && $form->isValid()) {
+            
+            $em = $this->getDoctrine()->getManager();
+            
+            $finalCost = null;
+            foreach($items as $item) {
+                $index = array_search($item->getProduct(), $products);
+                $item->setProduct($products[$index]);
+                
+                $finalCost += $item->getProduct()->getPrice() * $item->getQuantity();
+                $requirement->addProductRequest($item);
+                $em->persist($item);
+            }
+
+            $requirement
+                ->setFinalCost($finalCost)
+                ->setCreationDate(new \DateTime('today'))
+                ->setRequirementNumber($cart->get('cart'))
+                ->setStatus(Constant::TO_BE_APPROVED)
+                ;
+            
+            $em->persist($requirement);
+            $em->flush();
+
+            $cart->invalidate();
+
+            $this->addFlash('success', 'Su solicitud es la numero: RQ'.$requirement->getId().'. En breve procesaremos su solicitud!');
+
+            if ($authChecker->isGranted('ROLE_SUPERADMIN')) {
+                return $this->redirectToRoute('superadmin_index');
+            }
+            return $this->redirectToRoute('admin_index');
+        }
+
+        return $this->render('shopping/index.html.twig', [
+            'companies' => true, 
+            'products' => $products, 
+            'items' => $items,
+            'form' => $form->createView()]);
     }
 
     /**
      * @Route("/superadmin/requirement/show/{reqId}", name="superadmin_requirement_show")
+     * @Route("/admin/requirement/show/{reqId}", name="admin_requirement_show")
      */
-    public function showRequirement($reqId)
+    public function showRequirement($reqId, RequirementRepository $requirementRepository, AuthorizationCheckerInterface $authChecker)
     {
-        return $this->redirectToRoute('admin_index');
+        $requirement = $requirementRepository->findOneBy(['requirementNumber' => $reqId]);
+        if(!$requirement) {
+            $this->addFlash('danger', 'No existe tal solicitud.');
+            if($authChecker->isGranted('ROLE_SUPERADMIN')) {
+                return $this->redirectToRoute('superadmin_index');
+            } else {
+                return $this->redirectToRoute('admin_index');
+            }
+        }
+        return $this->render('shopping/showRequirement.html.twig', [
+            'requirement' => $requirement]);
     }
 
     /**
@@ -430,7 +416,7 @@ class AdminController extends Controller
      * @Route("/admin/requirement/delete/{reqId}", name="admin_requirement_delete")
      * @Route("/superadmin/requirement/delete/{reqId}", name="superadmin_requirement_delete")
      */
-    public function deleteRequirement($reqId, AuthorizationCheckerInterface $authChecker)
+    public function deleteRequirement($reqId, AuthorizationCheckerInterface $authChecker, Session $cart)
     {
         $em = $this->getDoctrine()->getManager();
         $requirement = $em->getRepository(Requirement::class)->findOneBy(['requirementNumber' => $reqId]);
@@ -439,11 +425,11 @@ class AdminController extends Controller
         }
         $em->remove($requirement);
         $em->flush();
-
+        $cart->invalidate();
         if($authChecker->isGranted('ROLE_SUPERADMIN')) {
-            return $this->redirectToRoute('superadmin_shopping');
+            return $this->redirectToRoute('superadmin_index');
         } else {
-            return $this->redirectToRoute('admin_shopping');
+            return $this->redirectToRoute('admin_index');
         }
     }
 
@@ -514,9 +500,93 @@ class AdminController extends Controller
      * @Route("/superadmin/requirement/edit/{reqId}", name="superadmin_requirement_edit")
      * @Route("/admin/requirement/edit/{reqId}", name="admin_requirement_edit")
      */
-    public function editRequirement($reqId, AuthorizationCheckerInterface $authChecker)
+    public function editRequirement($reqId, Session $cart, ProductRepository $productRepository, Request $request, AuthorizationCheckerInterface $authChecker, RequirementRepository $requirementRepository)
     {
-        return $this->redirectToRoute('admin_index');
+        $requirement = $requirementRepository->findOneBy(['requirementNumber' => $reqId]);
+        if(!$requirement) {
+            $this->addFlash('danger', 'No existe tal solicitud.');
+            if($authChecker->isGranted('ROLE_SUPERADMIN')) {
+                return $this->redirectToRoute('superadmin_index');
+            } else {
+                return $this->redirectToRoute('admin_index');
+            }
+        }
+
+        $items = $requirement->getProductRequests();
+        if(null === $cart->get('items')) {
+            $cart->set('cart', $requirement->getRequirementNumber());
+            $cart->set('items', $items);
+        } else {
+            $items = $cart->get('items');
+        }
+        if(null === $cart->get('edit')) {
+            $cart->set('edit', true);
+        }
+        $products = $productRepository->findAll();
+
+        $form = $this->createForm(RequirementType::class, $requirement);
+        $form->handleRequest($request);
+        if($form->isSubmitted() && $form->isValid()) {
+            $em = $this->getDoctrine()->getManager();
+            $finalCost = 0;
+            foreach($items as $cp) {
+                $finalCost += $cp->getProduct()->getPrice() * $cp->getQuantity();
+            }
+
+            $originalProducts = new ArrayCollection();
+            $editProducts = new ArrayCollection();
+
+            foreach($requirement->getProductRequests() as $pr) {
+                $originalProducts->add($pr);
+            }
+            foreach($items as $item) {
+                $editProducts->add($item);
+            }
+            dump($requirement->getProductRequests());
+            dump($items);
+            $productRequestsToAdd = array_udiff($editProducts->toArray(), $originalProducts->toArray(),
+                function ($obj_a, $obj_b) {
+                    return $obj_a->getId() - $obj_b->getId();
+                }
+            );
+            foreach($productRequestsToAdd as $pr) {
+                $index = array_search($cp->getProduct(), $products);
+                $pr->setProduct($products[$index]);
+                $requirement->addProductRequest($pr);
+                $em->persist($pr);
+            }
+
+            $productRequestsToRemove = array_udiff($originalProducts->toArray(), $editProducts->toArray(),
+            function ($obj_a, $obj_b) {
+                    return $obj_a->getId() - $obj_b->getId();
+                }
+            );
+
+            foreach($productRequestsToRemove as $pr) {
+                $requirement->removeProductRequest($pr);
+            }
+
+            $requirement->setFinalCost($finalCost);
+            $em->persist($requirement);
+            // die();
+            $em->flush();
+            $cart->invalidate();
+            $this->addFlash('success', 'Su solicitud ha sido actualizada.');
+            if($authChecker->isGranted('ROLE_SUPERADMIN')) {
+                return $this->redirectToRoute('superadmin_index');
+            } else {
+                return $this->redirectToRoute('admin_index');
+            }
+        }
+        
+        return $this->render('shopping/index.html.twig', [
+            'form' => $form->createView(),
+            'items' => $items,
+            'companies' => true,
+            'products' => $products, 
+            'id' => $requirement->getId()
+            ]);
+        
     }
 
     /**

@@ -314,8 +314,6 @@ class AdminController extends Controller
         }
         $cart->invalidate();
 
-        $this->addFlash('success', 'El carrito fue vaciado.');
-
         if($authChecker->isGranted('ROLE_SUPERADMIN')) {
             return $this->redirectToRoute('superadmin_index');
         } else {

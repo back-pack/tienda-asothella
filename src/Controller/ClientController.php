@@ -206,8 +206,6 @@ class ClientController extends Controller
         }
         $cart->invalidate();
 
-        $this->addFlash('success', 'El carrito fue vaciado.');
-
         return $this->redirectToRoute('client_shopping');
         
     }

@@ -36,7 +36,11 @@
         {{ message }}
     </div>
     {% endfor %}
-    <h1>Lista de productos</h1>
+    {% if app.session.get('edit') is not empty %}
+    <h1>Edición de solicitud: RQ{{id}}</h1>
+    {% else %}
+    <h1>Nueva solicitud</h1>
+    {% endif %}
     <br>
     {{ form_start(form, {'attr': {'class': 'form-horizontal'}}) }}
         {% if companies is defined %}
@@ -107,7 +111,7 @@
             {% if show is not defined %}
             <div class="row">
                 <button type="submit" class="btn btn-info">{{ button_label|default('Envía tu pedido!') }}</button>
-                <a class="btn btn-danger" href="{{ pathToDropCart }}">{{ button_label|default('Vaciar carrito') }}</a>
+                <a class="btn btn-danger" href="{{ pathToDropCart }}">{{ button_label|default('Cancelar') }}</a>
             </div>
             <div class="row">
                 <small>Luego de efectuar el pedido, recibirá un mail con tu detalle. Si surge alguna duda, nos comunicaremos con usted vía email o por teléfono.</small>

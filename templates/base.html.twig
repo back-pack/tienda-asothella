@@ -32,14 +32,20 @@
 {% if is_granted('ROLE_SUPERADMIN')%}
     {% set pathToLogout = path('superadmin_logout') %}
     {% set pathToShopping = 'superadmin_shopping' %}
+    {% set pathToShoppingEdit = 'superadmin_requirement_edit' %}
+    {% set pathToDropCart = path('superadmin_shopping_dropcart') %}
 {% else %}
     {% set pathToEditProfile = 'admin_user_edit' %}
     {% if is_granted('ROLE_SALES') or is_granted('ROLE_LOGISTIC') %}
         {% set pathToShopping = 'admin_shopping' %}
         {% set pathToLogout = path('admin_logout') %}
+        {% set pathToShoppingEdit = 'admin_requirement_edit' %}
+        {% set pathToDropCart = path('admin_shopping_dropcart') %}
     {% else %}
         {% set pathToShopping = 'client_shopping' %}
         {% set pathToLogout = path('client_logout') %}
+        {% set pathToShoppingEdit = 'client_requirement_edit' %}
+        {% set pathToDropCart = path('client_shopping_dropcart') %}
     {% endif %}
 {% endif %}
 
@@ -104,9 +110,12 @@
                         </li>
                         {% endif %}
                     {% endif %}
-                    {% if app.session.get('items') is not empty and app.request.get('_route') != pathToShopping %}
+                    {% if app.session.get('items') is not empty and (app.request.get('_route') != pathToShopping or app.request.get('_route') != pathToShoppingEdit) %}
                         <li class="active">
-                            <a href="{{ path(pathToShopping) }}"> Solicitud pendiente!</a>
+                            <a href="{{ path(pathToShopping) }}"><i class="fa fa-shopping-cart"></i> Ver solicitud pendiente!</a>
+                        </li>
+                        <li class="active">
+                            <a href="{{ pathToDropCart }}"><i class="fa fa-cart-arrow-down"></i> Descartar solicitud pendiente</a>
                         </li>
                     {% endif %}
                 </ul>

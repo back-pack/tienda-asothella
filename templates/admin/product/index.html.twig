@@ -39,8 +39,8 @@
                         <p>{{ product.description }}</p>
                         <p>$ {{ product.price }}</p>
                         <p>Color: {{ product.isColor ? 'Yes' : 'No' }}</p>
-                        <a href="{{ path('superadmin_product_edit', {'id': product.id}) }}"><button type="button" class="btn btn-sm btn-warning" data-toggle="tooltip" data-placement="bottom" ><i class="fa fa-fw fa-pencil"></i></button></a>
-                        <a href="{{ path('superadmin_product_delete', {'id': product.id}) }}"><button type="button" class="btn btn-sm btn-danger" data-toggle="tooltip" data-placement="bottom" ><i class="fa fa-fw fa-remove"></i></button></a>
+                        <a href="{{ path('superadmin_product_edit', {'id': product.id}) }}"><button type="button" class="btn btn-sm btn-warning" data-toggle="tooltip" data-placement="bottom" title="Modificar"><i class="fa fa-fw fa-pencil"></i></button></a>
+                        <a href="{{ path('superadmin_product_delete', {'id': product.id}) }}"><button type="button" class="btn btn-sm btn-danger" data-toggle="tooltip" data-placement="bottom" title="Borrar"><i class="fa fa-fw fa-remove"></i></button></a>
                     </div>
                 </div>
             </div>

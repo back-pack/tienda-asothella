@@ -49,7 +49,7 @@ class AdminController extends Controller
     public function index()
     {   
         $this->denyAccessUnlessGranted('ROLE_ADMIN', null, 'Unable to access this page!');
-        $requirements = $this->getDoctrine()->getRepository(Requirement::class)->findAll();
+        $requirements = $this->getDoctrine()->getRepository(Requirement::class)->findAll([], ['id' => 'DESC']);
         return $this->render('admin/index.html.twig', [
             'requirements' => $requirements
         ]);

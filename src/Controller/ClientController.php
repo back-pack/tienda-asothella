@@ -82,7 +82,7 @@ class ClientController extends Controller
     {
         $user = $this->getUser();
         //TODO SORTING ASCENDENT
-        $requirements = $this->getDoctrine()->getRepository(Requirement::class)->findBy(['company' => $user->getId()]);
+        $requirements = $this->getDoctrine()->getRepository(Requirement::class)->findBy(['company' => $user->getId()], ['id' => 'DESC']);
         
         return $this->render('client/index.html.twig', [
             'user' => $user->getContactName(),

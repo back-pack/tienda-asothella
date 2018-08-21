@@ -388,7 +388,7 @@ class ClientController extends Controller
     /**
      * @Route("/client/requirement/delete/{reqId}", name="client_requirement_delete")
      */
-    public function deleteRequirement($reqId, Session $cart)
+    public function deleteRequirement($reqId)
     {
         $em = $this->getDoctrine()->getManager();
         $requirement = $em->getRepository(Requirement::class)->findOneBy(['requirementNumber' => $reqId]);
@@ -397,7 +397,7 @@ class ClientController extends Controller
         }
         $em->remove($requirement);
         $em->flush();
-        $cart->invalidate();
+
         return $this->redirectToRoute('client_index');
     }
 }

@@ -417,7 +417,7 @@ class AdminController extends Controller
      * @Route("/admin/requirement/delete/{reqId}", name="admin_requirement_delete")
      * @Route("/superadmin/requirement/delete/{reqId}", name="superadmin_requirement_delete")
      */
-    public function deleteRequirement($reqId, AuthorizationCheckerInterface $authChecker, Session $cart)
+    public function deleteRequirement($reqId, AuthorizationCheckerInterface $authChecker)
     {
         $em = $this->getDoctrine()->getManager();
         $requirement = $em->getRepository(Requirement::class)->findOneBy(['requirementNumber' => $reqId]);
@@ -426,7 +426,7 @@ class AdminController extends Controller
         }
         $em->remove($requirement);
         $em->flush();
-        $cart->invalidate();
+
         if($authChecker->isGranted('ROLE_SUPERADMIN')) {
             return $this->redirectToRoute('superadmin_index');
         } else {

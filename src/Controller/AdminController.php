@@ -611,6 +611,7 @@ class AdminController extends Controller
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $product->setUid(md5(uniqid()));
             $em = $this->getDoctrine()->getManager();
             $em->persist($product);
             $em->flush();

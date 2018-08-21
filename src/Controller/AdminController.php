@@ -512,6 +512,10 @@ class AdminController extends Controller
             }
         }
 
+        if($cart->get('cart') !== $requirement->getRequirementNumber()) {
+            $cart->set('items', null);
+        }
+
         $items = $requirement->getProductRequests();
         if(null === $cart->get('items')) {
             $cart->set('cart', $requirement->getRequirementNumber());

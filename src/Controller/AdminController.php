@@ -331,6 +331,7 @@ class AdminController extends Controller
         if(null === $cart->get('cart')) {
             $cart->set('cart', md5(uniqid()));
         }
+        $cart->set('edit', null);
         $items = $cart->get('items');
         $products = $productRepository->findAll();
         $requirement = new Requirement();

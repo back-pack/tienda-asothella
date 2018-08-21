@@ -8,6 +8,7 @@ use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
+use App\Repository\RequirementRepository;
 use App\Repository\ProductRepository;
 use App\Form\RequirementType;
 use App\Form\ProductRequestType;
@@ -98,6 +99,7 @@ class ClientController extends Controller
         if(null === $cart->get('cart')) {
             $cart->set('cart', md5(uniqid()));
         }
+        $cart->set('edit', null);
         $items = $cart->get('items');
         $products = $productRepository->findAll();
         $requirement = new Requirement();
@@ -286,26 +288,91 @@ class ClientController extends Controller
     }
 
     /**
-     * @Route("/client/requirement/edit", name="client_requirement_edit")
+     * @Route("/client/requirement/edit/{reqId}", name="client_requirement_edit")
      */
-    public function editRequirement($reqId)
+    public function editRequirement($reqId, Request $request, RequirementRepository $requirementRepository, Session $cart, ProductRepository $productRepository)
     {
-        //Terminar esta parte
-        $em = $this->getDoctrine()->getManager();
-        $requirement = $em->getRepository(Requirement::class)->findOneBy(['requirementNumber' => $reqId]);
-
+        $requirement = $requirementRepository->findOneBy(['requirementNumber' => $reqId]);
         if(!$requirement) {
-            $this->addFlash('danger', 'El requerimiento ya no existe');
+            return $this->redirectToRoute('client_index');
+        }
+
+        if($cart->get('cart') !== $requirement->getRequirementNumber()) {
+            $cart->set('items', null);
+        }
+
+        $items = $requirement->getProductRequests();
+        dump($items);
+        if(null === $cart->get('items')) {
+            $cart->set('cart', $requirement->getRequirementNumber());
+            $cart->set('items', $items);
+        } else {
+            $items = $cart->get('items');
+        }
+        if(null === $cart->get('edit')) {
+            $cart->set('edit', true);
+        }
+        $products = $productRepository->findAll();
+
+        $form = $this->createForm(RequirementType::class, $requirement);
+        $form->handleRequest($request);
+        if($form->isSubmitted() && $form->isValid()) {
+            $em = $this->getDoctrine()->getManager();
+            $finalCost = 0;
+            foreach($items as $cp) {
+                $finalCost += $cp->getProduct()->getPrice() * $cp->getQuantity();
+            }
+
+            $originalProducts = new ArrayCollection();
+            $editProducts = new ArrayCollection();
+
+            foreach($requirement->getProductRequests() as $pr) {
+                $originalProducts->add($pr);
+            }
+            foreach($items as $item) {
+                $editProducts->add($item);
+            }
+            dump($requirement->getProductRequests());
+            dump($items);
+            $productRequestsToAdd = array_udiff($editProducts->toArray(), $originalProducts->toArray(),
+                function ($obj_a, $obj_b) {
+                    return $obj_a->getId() - $obj_b->getId();
+                }
+            );
+            foreach($productRequestsToAdd as $pr) {
+                $index = array_search($cp->getProduct(), $products);
+                $pr->setProduct($products[$index]);
+                $requirement->addProductRequest($pr);
+                $em->persist($pr);
+            }
+
+            $productRequestsToRemove = array_udiff($originalProducts->toArray(), $editProducts->toArray(),
+            function ($obj_a, $obj_b) {
+                    return $obj_a->getId() - $obj_b->getId();
+                }
+            );
+
+            foreach($productRequestsToRemove as $pr) {
+                $requirement->removeProductRequest($pr);
+            }
+
+            $requirement->setFinalCost($finalCost);
+            $em->persist($requirement);
+            // die();
+            $em->flush();
+            $cart->invalidate();
+            $this->addFlash('success', 'Su solicitud ha sido actualizada.');
+
             return $this->redirectToRoute('client_index');
         }
         
-        $cart = new Session();
-        $cart->setId($requirement->getId());
-        $cart->set('items', $requirement->getProductRequest());
-        return $this->render('admin/shopping/viewCart.html.twig', [
-            'cartProducts' => $cartProducts,
-            'company' => $company->getName()
-        ]);
+        return $this->render('shopping/index.html.twig', [
+            'form' => $form->createView(),
+            'items' => $items,
+            'companies' => false,
+            'products' => $products, 
+            'id' => $requirement->getId()
+            ]);
 
     }
 

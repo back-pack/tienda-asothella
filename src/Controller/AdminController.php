@@ -206,7 +206,7 @@ class AdminController extends Controller
                 if ($authChecker->isGranted('ROLE_SUPERADMIN')) {
                     return $this->redirectToRoute('superadmin_requirement_edit', ['reqId' => $cart->get('cart')]);
                 }
-                return $this->redirectToRoute('admin_shopping', ['reqId' => $cart->get('cart')]);
+                return $this->redirectToRoute('superadmin_requirement_edit', ['reqId' => $cart->get('cart')]);
             } 
             if ($authChecker->isGranted('ROLE_SUPERADMIN')) {
                 return $this->redirectToRoute('superadmin_shopping');
@@ -354,7 +354,7 @@ class AdminController extends Controller
             $requirement
                 ->setFinalCost($finalCost)
                 ->setCreationDate(new \DateTime('today'))
-                ->setRequirementNumber($cart->get('cart'))
+                ->setRequirementNumber(md5(uniqid()))
                 ->setStatus(Constant::TO_BE_APPROVED)
                 ;
             
@@ -547,8 +547,6 @@ class AdminController extends Controller
             foreach($items as $item) {
                 $editProducts->add($item);
             }
-            dump($requirement->getProductRequests());
-            dump($items);
             $productRequestsToAdd = array_udiff($editProducts->toArray(), $originalProducts->toArray(),
                 function ($obj_a, $obj_b) {
                     return $obj_a->getId() - $obj_b->getId();
@@ -573,7 +571,6 @@ class AdminController extends Controller
 
             $requirement->setFinalCost($finalCost);
             $em->persist($requirement);
-            // die();
             $em->flush();
             $cart->invalidate();
             $this->addFlash('success', 'Su solicitud ha sido actualizada.');

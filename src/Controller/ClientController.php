@@ -18,6 +18,7 @@ use App\Entity\ProductRequest;
 use App\Entity\Company;
 use App\Entity\Product;
 use App\Helper\Constant;
+use Doctrine\Common\Collections\ArrayCollection;
 
 class ClientController extends Controller
 {
@@ -103,7 +104,7 @@ class ClientController extends Controller
         $items = $cart->get('items');
         $products = $productRepository->findAll();
         $requirement = new Requirement();
-        // $requirement->setCompany($this->getUser());
+        $requirement->setCompany($this->getUser());
         $form = $this->createForm(RequirementType::class, $requirement);
         $form->handleRequest($request);
         if($form->isSubmitted() && $form->isValid()) {
@@ -123,7 +124,7 @@ class ClientController extends Controller
             $requirement
                 ->setFinalCost($finalCost)
                 ->setCreationDate(new \DateTime('today'))
-                ->setRequirementNumber($cart->get('cart'))
+                ->setRequirementNumber(md5(uniqid()))
                 ->setStatus(Constant::TO_BE_APPROVED)
                 ->setCompany($this->getUser());
                 ;
@@ -149,12 +150,15 @@ class ClientController extends Controller
      */
     public function addItem(Request $request, $uid, Session $cart)
     {
-        if(null === ($cart->getId())) {
-            return $this->redirectToRoute('client_shopping');
+        if(null === $cart->get('cart')) {
+            return $this->redirectToRoute('client_index');
         }
         $product = $this->getDoctrine()->getRepository(Product::class)->findOneBy(['uid' => $uid]);
         if(!$product) {
             $this->addFlash('danger', 'El producto no existe en la tienda.');
+            if($cart->get('edit') === true) {
+                return $this->redirectToRoute('client_requirement_edit', ['reqId' => $cart->get('cart')]);
+            } 
             return $this->redirectToRoute('client_shopping');
         }
         $productRequest = new ProductRequest();
@@ -163,17 +167,26 @@ class ClientController extends Controller
         if($form->isSubmitted() && $form->isValid()) {
             $productRequest->setProduct($product);
             
-            if(null !== $cart->get('items')) {
-                foreach($cart->get('items') as $item) {
-                    $cartProducts[md5(uniqid())] = $item;
+            if(null === $cart->get('edit')) {
+                if(null !== $cart->get('items')) {
+                    foreach($cart->get('items') as $item) {
+                        $cartProducts[md5(uniqid())] = $item;
+                    }
                 }
+            } else {
+                $cartProducts = $cart->get('items');
             }
             
             $cartProducts[md5(uniqid())] = $productRequest;
             $cart->set('items', $cartProducts);
             
             $this->addFlash('success', 'El producto fue agregado al carrito.');
+
+            if($cart->get('edit') === true) {
+                return $this->redirectToRoute('client_requirement_edit', ['reqId' => $cart->get('cart')]);
+            } 
             return $this->redirectToRoute('client_shopping');
+
         }
         return $this->render('shopping/addItem.html.twig', [
             'form' => $form->createView(),
@@ -237,11 +250,11 @@ class ClientController extends Controller
     public function dropCart(Session $cart)
     {
         if(null === ($cart->getId())) {
-            return $this->redirectToRoute('client_shopping');
+            return $this->redirectToRoute('client_index');
         }
         $cart->invalidate();
 
-        return $this->redirectToRoute('client_shopping');
+        return $this->redirectToRoute('client_index');
         
     }
 
@@ -302,7 +315,7 @@ class ClientController extends Controller
         }
 
         $items = $requirement->getProductRequests();
-        dump($items);
+
         if(null === $cart->get('items')) {
             $cart->set('cart', $requirement->getRequirementNumber());
             $cart->set('items', $items);
@@ -332,8 +345,6 @@ class ClientController extends Controller
             foreach($items as $item) {
                 $editProducts->add($item);
             }
-            dump($requirement->getProductRequests());
-            dump($items);
             $productRequestsToAdd = array_udiff($editProducts->toArray(), $originalProducts->toArray(),
                 function ($obj_a, $obj_b) {
                     return $obj_a->getId() - $obj_b->getId();
@@ -358,7 +369,6 @@ class ClientController extends Controller
 
             $requirement->setFinalCost($finalCost);
             $em->persist($requirement);
-            // die();
             $em->flush();
             $cart->invalidate();
             $this->addFlash('success', 'Su solicitud ha sido actualizada.');
@@ -369,7 +379,6 @@ class ClientController extends Controller
         return $this->render('shopping/index.html.twig', [
             'form' => $form->createView(),
             'items' => $items,
-            'companies' => false,
             'products' => $products, 
             'id' => $requirement->getId()
             ]);

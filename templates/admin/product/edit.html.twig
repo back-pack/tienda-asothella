@@ -3,16 +3,53 @@
 {% block title %}Editar Producto{% endblock %}
 
 {% block body %}
-    <h1>Editar producto</h1>
+<div class="row">
+        <div class="col-lg-12">
+            <h1 class="page-header">
+                Editar producto
+            </h1>
+        </div>
+    </div>
+    <ol class="breadcrumb">
+        <li>Tablero</li>
+            <li>Productos</li>
+            <li class="active">Editar</li>
+    </ol>
 
-    {{ form_start(form) }}
-    <label>Nombre: </label>{{ form_widget(form.name) }}
-    <label>Descripcion: </label>{{ form_widget(form.description) }}
-    <label>Precio: </label>{{ form_widget(form.price) }}
-    <label>¿Colores seleccionables?</label> {{ form_widget(form.isColor) }}
-    <button class="btn">{{ button_label|default('Guardar') }}</button>
-    {{ form_end(form) }}
-
-    <a href="{{ path('superadmin_product_index') }}">Volver a la lista</a>
-
+    <div class="row">
+        {{ form_start(form, { 'attr' : { 'class':'form-horizontal' }}) }}
+            <div class="form-group">
+                <label class="col-xs-2 control-label">Nombre</label>
+                <div class="col-xs-10 col-sm-7">
+                        {{ form_widget(form.name, { 'attr' : { 'class':'form-control' }}) }}
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-2 control-label">Descripción</label>
+                <div class="col-xs-10 col-sm-7">
+                        {{ form_widget(form.description, { 'attr' : { 'class':'form-control' }}) }}
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-2 control-label">Precio</label>
+                <div class="col-xs-10 col-sm-7">
+                        {{ form_widget(form.price, { 'attr' : { 'class':'form-control' }}) }}
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-2 control-label">¿Dispone de color?</label>
+                <div class="col-xs-10 col-sm-7">
+                        {{ form_widget(form.isColor, { 'attr' : { 'class':'checkbox' }}) }}
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-xs-2 control-label">
+                </div>
+                <div class="col-xs-10 col-sm-7">
+                    <button class="btn btn-success"><i class="fa fa-fw fa-check"></i>{{ button_label|default('Guardar') }}</button>
+                    <a href="{{ path('superadmin_product_index') }}"><button type="button" class="btn btn-danger"><i class="fa fa-fw fa-remove"></i></button></a>
+                </div>
+            </div>
+        {{ form_end(form) }}
+    </div>
 {% endblock %}

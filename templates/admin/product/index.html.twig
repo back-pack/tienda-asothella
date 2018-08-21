@@ -12,38 +12,41 @@
         {{ message }}
     </div>
     {% endfor %}
-    <h1>Lista de productos</h1>
-
-    <a class="btn btn-success" href="{{ path('superadmin_product_new') }}">Crear nuevo producto</a>
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Description</th>
-                <th>Price</th>
-                <th>IsColor</th>
-                <th>actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for product in products %}
-            <tr>
-                <td>{{ product.name }}</td>
-                <td>{{ product.description }}</td>
-                <td>{{ product.price }}</td>
-                <td>{{ product.isColor ? 'Yes' : 'No' }}</td>
-                <td>
-                    <a class="btn btn-warning" href="{{ path('superadmin_product_edit', {'id': product.id}) }}">Editar</a>
-                    <a class="btn btn-danger" href="{{ path('superadmin_product_delete', {'id': product.id}) }}">Elimina</a>
-                </td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="6">No hay registros aún!</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
-
+    <div class="row">
+        <div class="col-lg-12">
+            <h1 class="page-header">
+                Productos
+            </h1>
+        </div>
+    </div>
+    <ol class="breadcrumb">
+        <li><a href="admin_tablero.html">Tablero</a></li>
+            <li class="active">Productos</li>
+            <li><a href="{{ path('superadmin_product_new') }}"><button type="button" class="btn btn-xs btn-success"><i class="fa fa-fw fa-plus"></i> Agregar</button></a></li>
+    </ol>
     
+
+    {# Listado de productos #}
+
+    <div class="row">   
+        {% for product in products %}
+
+            <div class="col-sm-6 col-md-4"> 
+                <div class="thumbnail item_tienda">
+                    <img src="{{ asset('img/default_store.png') }}" alt="...">  {# Esta es la img DEFAULT en caso de no tener img el prod. #}
+                    <div class="caption">
+                        <h3>{{ product.name }}</h3>
+                        <p>{{ product.description }}</p>
+                        <p>$ {{ product.price }}</p>
+                        <p>Color: {{ product.isColor ? 'Yes' : 'No' }}</p>
+                        <a href="{{ path('superadmin_product_edit', {'id': product.id}) }}"><button type="button" class="btn btn-sm btn-warning" data-toggle="tooltip" data-placement="bottom" ><i class="fa fa-fw fa-pencil"></i></button></a>
+                        <a href="{{ path('superadmin_product_delete', {'id': product.id}) }}"><button type="button" class="btn btn-sm btn-danger" data-toggle="tooltip" data-placement="bottom" ><i class="fa fa-fw fa-remove"></i></button></a>
+                    </div>
+                </div>
+            </div>
+        
+        {% else %}
+            <div class="carro_vacio"><h5>No hay registros aún!</h5></div>
+        {% endfor %}
+    </div>    
 {% endblock %}

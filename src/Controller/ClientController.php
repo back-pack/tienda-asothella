@@ -248,7 +248,7 @@ class ClientController extends Controller
      */
     public function newRequirement(Session $cart)
     {
-        if(null === ($cart->getId())) {
+        if(null === ($cart->get('cart'))) {
             return $this->redirectToRoute('client_shopping');
         }
         
@@ -306,8 +306,22 @@ class ClientController extends Controller
             'cartProducts' => $cartProducts,
             'company' => $company->getName()
         ]);
-        
 
+    }
 
+    /**
+     * @Route("/client/requirement/delete/{reqId}", name="client_requirement_delete")
+     */
+    public function deleteRequirement($reqId, Session $cart)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $requirement = $em->getRepository(Requirement::class)->findOneBy(['requirementNumber' => $reqId]);
+        if (!$requirement) {
+            throw $this->createNotFoundException('No existe tal requerimiento: '.$reqId);
+        }
+        $em->remove($requirement);
+        $em->flush();
+        $cart->invalidate();
+        return $this->redirectToRoute('client_index');
     }
 }

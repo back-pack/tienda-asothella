@@ -15,59 +15,44 @@
             <li>Productos</li>
             <li class="active">Agregar</li>
     </ol>
-    <div class="row">
     
-        <form class="form-horizontal">
+
+    
+    <div class="row">
+        {{ form_start(form, { 'attr' : { 'class':'form-horizontal' }}) }}
             <div class="form-group">
                 <label class="col-xs-2 control-label">Nombre</label>
                 <div class="col-xs-10 col-sm-7">
-                    <div class="input-group">   
-                        {{ form_widget(form.name) }}
-                    </div>    
+                        {{ form_widget(form.name, { 'attr' : { 'class':'form-control' }}) }}
                 </div>
             </div>
             <div class="form-group">
                 <label class="col-xs-2 control-label">Descripción</label>
                 <div class="col-xs-10 col-sm-7">
-                    <div class="input-group">
-                        {{ form_widget(form.description) }}
-                    </div>    
+                        {{ form_widget(form.description, { 'attr' : { 'class':'form-control' }}) }}
                 </div>
             </div>
             <div class="form-group">
                 <label class="col-xs-2 control-label">Precio</label>
                 <div class="col-xs-10 col-sm-7">
-                    <div class="input-group">
-                        {{ form_widget(form.price) }}
-                    </div>    
+                        {{ form_widget(form.price, { 'attr' : { 'class':'form-control' }}) }}
                 </div>
             </div>
             <div class="form-group">
                 <label class="col-xs-2 control-label">¿Dispone de color?</label>
                 <div class="col-xs-10 col-sm-7">
-                    <div class="input-group">
-                        {{ form_widget(form.isColor) }}
-                    </div>    
+                        {{ form_widget(form.isColor, { 'attr' : { 'class':'checkbox' }}) }}
                 </div>
             </div>
             <div class="form-group">
+                <div class="col-xs-2 control-label">
+                </div>
                 <div class="col-xs-10 col-sm-7">
-                    <button type="button" class="btn btn-success"><i class="fa fa-fw fa-check"></i>{{ button_label|default('Guardar') }}</button>
+                    <button class="btn btn-success"><i class="fa fa-fw fa-check"></i>{{ button_label|default('Guardar') }}</button>
                     <a href="{{ path('superadmin_product_index') }}"><button type="button" class="btn btn-danger"><i class="fa fa-fw fa-remove"></i></button></a>
                 </div>
             </div>
-        </form>
+        {{ form_end(form) }}
     </div>
-
-
-    
-    {{ form_start(form) }}
-    <label>Nombre: </label>{{ form_widget(form.name) }}
-    <label>Descripcion: </label>{{ form_widget(form.description) }}
-    <label>Precio: </label>{{ form_widget(form.price) }}
-    <label>¿Colores seleccionables?</label> {{ form_widget(form.isColor) }}
-    <button class="btn">{{ button_label|default('Guardar') }}</button>
-    {{ form_end(form) }}
-
-   
 {% endblock %}
+

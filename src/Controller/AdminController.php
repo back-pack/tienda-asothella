@@ -21,6 +21,7 @@ use App\Form\RequirementType;
 use App\Repository\ProductRepository;
 use App\Repository\CompanyRepository;
 use App\Repository\RequirementRepository;
+use App\Repository\UserRepository;
 use App\Helper\Constant;
 use Doctrine\Common\Collections\ArrayCollection;
 
@@ -70,7 +71,7 @@ class AdminController extends Controller
     /**
      * @Route("/superadmin/user/new", name="superadmin_user_new")
      */
-    public function newUser(Request $request, UserPasswordEncoderInterface $passwordEncoder)
+    public function newUser(Request $request, UserPasswordEncoderInterface $passwordEncoder, UserRepository $userRepository)
     {
         $this->denyAccessUnlessGranted('ROLE_SUPERADMIN', null, 'Unable to access this page!');
         $user = new User();
@@ -78,6 +79,11 @@ class AdminController extends Controller
         $form->handleRequest($request);
         if($form->isSubmitted() && $form->isValid())
         {
+            $userExists = $userRepository->findBy(['username' => $user->getUsername()]);
+            if($userExists) {
+                $this->addFlash('danger', "El nombre de usuario ya existe.");
+                return $this->redirectToRoute('superadmin_user_new');
+            }
             $password = $passwordEncoder->encodePassword($user, $user->getPlainPassword());
             $user
                 ->setIsActive(true)

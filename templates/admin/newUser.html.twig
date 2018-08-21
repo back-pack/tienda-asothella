@@ -3,23 +3,80 @@
 {% block title %}Nuevo usuario{% endblock %}
 
 {% block body %}
-
-<div class="container">
-    {{ form_start(form) }}
-    <label for="">Nombre:</label>{{ form_widget(form.firstName) }}
-    <label for="">Apellido:</label>{{ form_widget(form.lastName) }}
-    <label for="">email:</label>{{ form_widget(form.email) }}
-    <label for="">Telefono:</label>{{ form_widget(form.phone) }}
-    <label for="">Nombre de usuario</label>{{ form_widget(form.username) }}
-    <label for="">Rol:</label>{{ form_widget(form.role) }}
-    {% if edit is defined %}
-        {{ form_widget(form.plainPassword.first, { 'attr' : { 'value' : '****'} }) }}
-        {{ form_widget(form.plainPassword.second, { 'attr' : { 'value' : '****'} }) }}
-    {% else %}
-        {{ form_widget(form.plainPassword.first) }}
-        {{ form_widget(form.plainPassword.second) }}
-    {% endif %}
-    
-    {{ form_end(form) }}
+<div class="row">
+    <div class="col-lg-12">
+        <h1 class="page-header">
+            Agregar usuario
+        </h1>
+    </div>
 </div>
+<ol class="breadcrumb">
+    <li>Tablero</li>
+        <li>usuario</li>
+        <li class="active">Agregar</li>
+</ol>
+
+    
+    <div class="row">
+        {{ form_start(form, { 'attr' : { 'class':'form-horizontal' }}) }}
+            <div class="form-group">
+                <label class="col-xs-2 control-label">Nombre</label>
+                <div class="col-xs-10 col-sm-7">
+                        {{ form_widget(form.firstName, { 'attr' : { 'class':'form-control' }}) }}
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-2 control-label">Apellido</label>
+                <div class="col-xs-10 col-sm-7">
+                        {{ form_widget(form.lastName, { 'attr' : { 'class':'form-control' }}) }}
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-2 control-label">Email</label>
+                <div class="col-xs-10 col-sm-7">
+                        {{ form_widget(form.email, { 'attr' : { 'class':'form-control' }}) }}
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-2 control-label">Telefono</label>
+                <div class="col-xs-10 col-sm-7">
+                        {{ form_widget(form.phone, { 'attr' : { 'class':'form-control' }}) }}
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-2 control-label">Nombre Usuario</label>
+                <div class="col-xs-10 col-sm-7">
+                        {{ form_widget(form.username, { 'attr' : { 'class':'form-control' }}) }}
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-2 control-label">Rol</label>
+                <div class="col-xs-10 col-sm-7">
+                        {{ form_widget(form.role, { 'attr' : { 'class':'form-control' }}) }}
+                </div>
+            </div>
+        {% if edit is defined %}
+            <div class="form-group">
+                <label class="col-xs-2 control-label">Contraseña</label>
+                <div class="col-xs-10 col-sm-7">
+                        {{ form_widget(form.plainPassword.first, { 'attr' : { 'value' : '****'} }) }}
+                        <p class="help-block">Ingrese de nuevo su contraseña.</p>
+                        {{ form_widget(form.plainPassword.second, { 'attr' : { 'value' : '****'} }) }}
+                </div>
+            </div>
+        {% else %}
+        <div class="form-group">
+                <label class="col-xs-2 control-label">Contraseña</label>
+                <div class="col-xs-10 col-sm-7">
+                        {{ form_widget(form.plainPassword.first, { 'attr' : { 'value' : '****'} }) }}
+                        <p class="help-block">Ingrese de nuevo su contraseña.</p>
+                        {{ form_widget(form.plainPassword.second, { 'attr' : { 'value' : '****'} }) }}
+                        <p>{{ form_end(form) }}</p>
+                </div>
+            </div>
+        {% endif %}
+        
+        
+    </div>
+
 {% endblock %}

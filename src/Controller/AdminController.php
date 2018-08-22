@@ -79,7 +79,7 @@ class AdminController extends Controller
         $form->handleRequest($request);
         if($form->isSubmitted() && $form->isValid())
         {
-            $userExists = $userRepository->findBy(['username' => $user->getUsername()]);
+            $userExists = $userRepository->findOneBy(['username' => $user->getUsername(), 'email' => $user->getEmail()]);
             if($userExists) {
                 $this->addFlash('danger', "El nombre de usuario ya existe.");
                 return $this->redirectToRoute('superadmin_user_new');
@@ -129,6 +129,19 @@ class AdminController extends Controller
         $form->handleRequest($request);
 
         if($form->isSubmitted() && $form->isValid()) {
+            
+            $userExists = $userRepository->findOneBy(['username' => $user->getUsername(), 'email' => $user->getEmail()]);
+            if($userExists) {
+                $this->addFlash('danger', "El nombre de usuario ya existe.");
+                if ($authChecker->isGranted('ROLE_SUPERADMIN')) {
+                    $redirectToRoute = $this->redirectToRoute('superadmin_user_edit');
+                } else {
+                    $redirectToRoute = $this->redirectToRoute('admin_user_edit');
+                }
+                return $redirectToRoute;
+                
+            }
+
             if($user->getPlainPassword() !== "****") {
                 $password = $passwordEncoder->encodePassword($user, $user->getPlainPassword());
                 $user->setPassword($password);
@@ -136,13 +149,14 @@ class AdminController extends Controller
                 $user->setPassword($dbPassword);
             }
             $em->flush();
-
+            
+            $this->addFlash('success', 'Usuario actualizado!');
             if ($authChecker->isGranted('ROLE_SUPERADMIN')) {
                 $redirectToIndex = $this->redirectToRoute('superadmin_user_list');
             } else {
                 $redirectToIndex = $this->redirectToRoute('admin_index');
             }
-            $this->addFlash('success', 'Usuario actualizado!');
+            
             return $redirectToIndex;
             
         }

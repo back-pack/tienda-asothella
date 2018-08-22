@@ -21,11 +21,6 @@
     {% block javascripts %}
     <script src="{{asset('js/jquery.js') }} "></script>
     <script src="{{asset('js/bootstrap.min.js') }}"></script>
-    <!-- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
-    crossorigin="anonymous"></script>
-    <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
-    crossorigin="anonymous">
-    </script>  -->
     {% endblock %}
 </head>
 
@@ -90,31 +85,31 @@
             <div class="collapse navbar-collapse navbar-ex1-collapse">
                 <ul class="nav navbar-nav side-nav">
                     {% if is_granted('ROLE_USER') %}
-                    <li class="active">
+                    <li>
                         <a href="{{ path('client_index') }}"><i class="fa fa-fw fa-shopping-cart"></i> Pedidos</a>
                     </li>
                     {% else %}
                         {% if is_granted('ROLE_SUPERADMIN') %}
-                        <li class="active">
+                        <li>
                             <a href="{{ path('superadmin_index') }}"><i class="fa fa-fw fa-shopping-cart"></i> Pedidos</a>
                         </li>
-                        <li class="active">
+                        <li>
                             <a href="{{ path('superadmin_user_list') }}"><i class="fa fa-users"></i> Usuarios</a>
                         </li>
-                        <li class="active">
+                        <li>
                                 <a href="{{ path('superadmin_product_index') }}"><i class="fa fa-square"></i> Productos</a>
                             </li>
                         {% else %}
-                        <li class="active">
+                        <li>
                             <a href="{{ path('admin_index') }}"><i class="fa fa-fw fa-shopping-cart"></i> Pedidos</a>
                         </li>
                         {% endif %}
                     {% endif %}
                     {% if app.session.get('items') is not empty and (app.request.get('_route') != pathToShopping or app.request.get('_route') != pathToShoppingEdit) %}
-                        <li class="active">
+                        <li>
                             <a href="{{ path(pathToShopping) }}"><i class="fa fa-shopping-cart"></i> Ver solicitud pendiente!</a>
                         </li>
-                        <li class="active">
+                        <li>
                             <a href="{{ pathToDropCart }}"><i class="fa fa-cart-arrow-down"></i> Descartar solicitud pendiente</a>
                         </li>
                     {% endif %}
@@ -137,6 +132,11 @@
             </div>
         </div>
 </footer>
-</body>
 
+<script>
+    $(document).ready(function(){
+        $('[data-toggle="tooltip"]').tooltip();
+    });
+</script>
+</body>
 </html>

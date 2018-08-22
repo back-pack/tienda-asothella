@@ -94,7 +94,7 @@ class AdminController extends Controller
             $em->flush();
 
             $this->addFlash('success', 'Usuario creado!');
-            return $this->redirectToRoute('superadmin_index', [
+            return $this->redirectToRoute('superadmin_user_list', [
             ]);
         }
 

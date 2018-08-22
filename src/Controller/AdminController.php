@@ -116,7 +116,12 @@ class AdminController extends Controller
             $user = $em->getRepository(User::class)->find($this->getUser()->getId());
         }
         if(!$user) {
-            throw $this->createNotFoundException('No existe tal usuario: '.$userId);
+            $this->addFlash('danger', 'No existe tal usuario.');
+            if ($authChecker->isGranted('ROLE_SUPERADMIN')) {
+                $redirectToIndex = $this->redirectToRoute('superadmin_user_list');
+            } else {
+                $redirectToIndex = $this->redirectToRoute('admin_index');
+            }
         }
         $dbPassword = $user->getPassword();
 

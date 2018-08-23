@@ -26,7 +26,6 @@ class CompanyType extends AbstractType
             'first_options' => ['label' => 'Contraseña', 'attr' => ['class' => 'form-control']],
             'second_options' => ['label' => 'Repetir contraseña', 'attr' => ['class' => 'form-control']],
             ])
-            ->add('save', SubmitType::class, ['label' => 'Registrar' ,'attr' => ['class' => 'btn btn-info']])
         ;
     }
 

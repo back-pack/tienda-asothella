@@ -30,13 +30,15 @@
     {% set pathToShoppingEdit = 'superadmin_requirement_edit' %}
     {% set pathToDropCart = path('superadmin_shopping_dropcart') %}
 {% else %}
-    {% set pathToEditProfile = 'admin_user_edit' %}
+    
     {% if is_granted('ROLE_SALES') or is_granted('ROLE_LOGISTIC') %}
+        {% set pathToEditProfile = 'admin_user_edit' %}
         {% set pathToShopping = 'admin_shopping' %}
         {% set pathToLogout = path('admin_logout') %}
         {% set pathToShoppingEdit = 'admin_requirement_edit' %}
         {% set pathToDropCart = path('admin_shopping_dropcart') %}
     {% else %}
+        {% set pathToEditProfile = path('client_user_edit') %}
         {% set pathToShopping = 'client_shopping' %}
         {% set pathToLogout = path('client_logout') %}
         {% set pathToShoppingEdit = 'client_requirement_edit' %}
@@ -68,9 +70,16 @@
                         <li>
                             <a href="{{ pathToLogout }}"><i class="fa fa-fw fa-power-off"></i>Salir</a>
                         </li>   
-                        {% else %}
+                        {% elseif is_granted('ROLE_SALES') or is_granted('ROLE_LOGISTIC') %}
                         <li>
                             <a href="{{ path(pathToEditProfile, { 'userId': '*' }) }}"><i class="fa fa-fw fa-gear"></i>Editar perfil</a>
+                        </li>
+                        <li>
+                            <a href="{{ pathToLogout }}"><i class="fa fa-fw fa-power-off"></i>Salir</a>
+                        </li>
+                        {% else %}
+                        <li>
+                            <a href="{{ pathToEditProfile }}"><i class="fa fa-fw fa-gear"></i>Editar perfil</a>
                         </li>
                         <li>
                             <a href="{{ pathToLogout }}"><i class="fa fa-fw fa-power-off"></i>Salir</a>

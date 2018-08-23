@@ -400,4 +400,45 @@ class ClientController extends Controller
 
         return $this->redirectToRoute('client_index');
     }
+
+     /**
+     * @Route("/client/user/edit", name="client_user_edit")
+     */
+    public function editUser(Request $request, UserPasswordEncoderInterface $passwordEncoder) 
+    {   
+        $em = $this->getDoctrine()->getManager();     
+        $user = $em->getRepository(Company::class)->find($this->getUser()->getId());
+        if(!$user) {
+            $this->addFlash('danger', 'No existe tal usuario.');
+        }
+        $dbPassword = $user->getPassword();
+
+        $form = $this->createForm(CompanyType::class, $user);
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid()) {
+
+            $userExists = $em->getRepository(Company::class)-findOneBy(['email' => $user->getEmail(), 'name' => $user->getName()]);
+            if($userExists) {
+                $this->addFlash('success', 'El usuario ya existe.');
+                return $this->redirectToRoute('client_user_edit');
+            }
+
+            if($user->getPlainPassword() !== "****") {
+                $password = $passwordEncoder->encodePassword($user, $user->getPlainPassword());
+                $user->setPassword($password);
+            } else {
+                $user->setPassword($dbPassword);
+            }
+            
+            $em->flush();
+
+            $this->addFlash('success', 'Usuario actualizado!');
+            return $this->redirectToRoute('client_index');
+            
+        }
+        return $this->render('client/editUser.html.twig', [
+            'form' => $form->createView(),
+        ]);
+    }
 }

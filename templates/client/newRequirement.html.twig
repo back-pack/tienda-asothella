@@ -4,7 +4,7 @@
 
 {% block body %}
 
-<div class="container">
+
     {{ form_start(form, {'attr': {'class': 'form-horizontal', 'novalidate': 'novalidate'}})}}
     <div id="products">
     {% if form.company is defined %}
@@ -35,7 +35,7 @@
     {{ form_end(form)}}
     
     
-</div>
+
 <div id="index" style="display:none">{{ form.productRequests|length -1 }}</div>
         <script src="{{ asset('js/jquery.colorPicker.js') }}" type="text/javascript"></script>
         <script>

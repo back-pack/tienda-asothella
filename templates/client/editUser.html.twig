@@ -4,7 +4,7 @@
 
 {% block body %}
 
-<div class="container">
+
     {{ form_start(form) }}
         <label for="">Nombre de la empresa:</label>{{ form_widget(form.name) }}
         <label for="">Dirección:</label>{{ form_widget(form.address) }}
@@ -15,5 +15,5 @@
         <label>Repetir Contraseña: </label>{{ form_widget(form.plainPassword.second, { 'attr' : { 'value' : '****'} }) }}
         <button class="btn btn-Info"><i class="fa fa-fw fa-check"></i>{{ button_label|default('Guardar') }}</button>
     {{ form_end(form) }}
-</div>
+
 {% endblock %}

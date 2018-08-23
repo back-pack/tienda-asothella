@@ -5,7 +5,6 @@
 
 {% block body %}
 
-<div class="container">
     {% for message in app.flashes('success') %}
         <div class="alert alert-success alert-dismissible" role="alert">
         <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
@@ -17,16 +16,143 @@
         {{ message }}
         </div>
     {% endfor %}
-    <h1>Lista de pedidos</h1>
 
-    {% if is_granted('ROLE_SUPERADMIN') %}
-        <a class="btn btn-success" href="{{ path('superadmin_shopping') }}">Crear nuevo pedido</a>
-    {% elseif is_granted('ROLE_SALES') %}
-        <a class="btn btn-success" href="{{ path('admin_shopping') }}">Crear nuevo pedido</a>
-    {% elseif is_granted('ROLE_USER') %}
-        <a class="btn btn-success" href="{{ path('client_shopping') }}">Crear nuevo pedido</a>
-    {% endif %}
+    <div class="row">
+        <div class="col-lg-12">
+            <h1 class="page-header">
+                Tablero
+            </h1>
+        </div>
+    </div>
+    <ol class="breadcrumb">
+        <li>Tablero</li>
+            <li>
+                {% if is_granted('ROLE_SUPERADMIN') %}
+                    <a class="active" href="{{ path('superadmin_shopping') }}"><button type="button" class="btn btn-xs btn-success"><i class="fa fa-fw fa-plus"></i> Agregar</button></a>
+                {% elseif is_granted('ROLE_SALES') %}
+                    <a class="active" href="{{ path('admin_shopping') }}"><button type="button" class="btn btn-xs btn-success"><i class="fa fa-fw fa-plus"></i> Agregar</button></a>
+                {% elseif is_granted('ROLE_USER') %}
+                    <a class="active" href="{{ path('client_shopping') }}"><button type="button" class="btn btn-xs btn-success"><i class="fa fa-fw fa-plus"></i> Agregar</button></a>
+                {% endif %}
+            </li>
+    </ol>
+
+    <div class="row">
+        <div class="col-lg-9">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title"><i class="fa fa-fire fa-fw"></i> Timeline pedidos</h3>
+                </div>
+                <div class="panel-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Cliente</th>
+                                    <th>Solicitud ID</th>
+                                    <th>Precio final</th>
+                                    <th>Fecha <a href="#"><i class="fa fa-caret-down"></i></a><!-- <a href="#"><i class="fa fa-caret-up"></i></a>  para orden inverso--></th>
+                                    <th>Estado</th>
+                                    <th width="110px"><i class="fa fa-cogs"></i></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for requirement in requirements %}
+                                <tr class="{% if requirement.status == 'To be approved' %}
+                                        danger
+                                        {% elseif requirement.status == 'To do' %}
+                                        danger
+                                        {% elseif requirement.status == 'In progress' %}
+                                        warning
+                                        {% elseif requirement.status == 'Delivered' %}
+                                        info
+                                        {% endif %}">
+                                    <td>{{ requirement.company.name }}</td>
+                                    <td><a href="{{ path('superadmin_requirement_show', {'reqId' : requirement.requirementNumber }) }}">RQ{{ requirement.id }}</a></td>
+                                    <td>{{ requirement.finalCost }}</td>
+                                    <td>{{ requirement.creationDate|date('d-m-Y') }}</td>
+                                    <td>
+                                        {% if requirement.status == 'To be approved' %}
+                                        Falta aprobación de administrador
+                                        {% elseif requirement.status == 'To do' %}
+                                        Aprobado para comenzar
+                                        {% elseif requirement.status == 'In progress' %}
+                                        En proceso
+                                        {% elseif requirement.status == 'Finished' %}
+                                        Finalizada sin entregar
+                                        {% elseif requirement.status == 'Delivered' %}
+                                        Entregada
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if is_granted('ROLE_SUPERADMIN') %}
+                                            {% if requirement.status == 'To be approved' %}
+                                                <a href="{{ path('superadmin_requirement_approve', {'reqId': requirement.requirementNumber }) }}"><button type="button" class="btn btn-xs btn-success"><i class="fa fa-fw fa-check"></i></button></a>
+                                                <a href="{{ path('superadmin_requirement_edit', {'reqId': requirement.requirementNumber }) }}"><button type="button" class="btn btn-xs btn-warning"><i class="fa fa-fw fa-pencil"></i></button></a>
+                                            {% elseif requirement.status == 'To do' %}
+                                                <a href="{{ path('superadmin_requirement_inprogress', {'reqId': requirement.requirementNumber }) }}"><button type="button" class="btn btn-xs btn-success"><i class="fa fa-fw fa-check"></i></button></a>
+                                            {% elseif requirement.status == 'In progress' %}
+                                                <a class="btn btn-success" href="{{ path('superadmin_requirement_finished', {'reqId': requirement.requirementNumber }) }}">Terminar</a>
+                                            {% elseif requirement.status == 'Finished' %}
+                                                <a class="btn btn-success" href="{{ path('superadmin_requirement_delivered', {'reqId': requirement.requirementNumber }) }}">Entregar</a>
+                                            {% endif %}
+                                            <a href="{{ path('superadmin_requirement_delete', {'reqId': requirement.requirementNumber }) }}"><button type="button" class="btn btn-xs btn-danger"><i class="fa fa-fw fa-remove"></i></button></a>
+                                        {% elseif is_granted('ROLE_LOGISTIC') %}
+                                            {% if requirement.status == 'To do' %}
+                                                <a class="btn btn-success" href="{{ path('admin_requirement_inprogress', {'reqId': requirement.requirementNumber }) }}">Comenzar</a>
+                                            {% elseif requirement.status == 'In progress' %}
+                                                <a class="btn btn-success" href="{{ path('admin_requirement_finished', {'reqId': requirement.requirementNumber }) }}">Terminar</a>
+                                            {% elseif requirement.status == 'Finished' %}
+                                                <a class="btn btn-success" href="{{ path('admin_requirement_delivered', {'reqId': requirement.requirementNumber }) }}">Entregar</a>
+                                            {% endif %}
+                                        {% elseif is_granted('ROLE_SALES') %}
+                                            {% if requirement.status == 'To be approved' %}
+                                                <a href="{{ path('admin_requirement_edit', {'reqId': requirement.requirementNumber }) }}"><button type="button" class="btn btn-xs btn-warning"><i class="fa fa-fw fa-pencil"></a>
+                                                <a href="{{ path('admin_requirement_delete', {'reqId': requirement.requirementNumber }) }}"><button type="button" class="btn btn-xs btn-danger"><i class="fa fa-fw fa-remove"></i></button></a>
+                                            {% endif %}
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        {# PANEL LOG #}
+        <div class="col-lg-3">    
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title"><i class="fa fa-pie-chart fa-fw"></i> Log del sistema</h3>
+                </div>
+                <div class="panel-body">
+                    <a href="#" class="list-group-item">
+                        <span class="badge">16:20</span>
+                        <i class="fa fa-fw fa-calendar"></i> <b>$usuario</b> cargo pedido nro <b>12993</b>.
+                    </a>
+                    <a href="#" class="list-group-item">
+                        <span class="badge">16:35</span>
+                        <i class="fa fa-fw fa-check"></i> <b>$usuario</b> despacho pedido pedido.
+                    </a>
+                    <a href="#" class="list-group-item">
+                        <span class="badge">16:58</span>
+                        <i class="fa fa-fw fa-truck"></i> <b>$usuario</b> aprobo pedido.
+                    </a>
+                    <a href="#" class="list-group-item">
+                        <span class="badge">17:04</span>
+                        <i class="fa fa-fw fa-money"></i> <b>$usuario</b> se saco un moco.
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>  
+    <!-- /.row -->
+                                        
+
     
+{#     
  
     <table class="table">
         <tr>
@@ -87,6 +213,6 @@
         </tr>
         {% endfor %}
     </table>
-    
-</div>
+     #}
+
 {% endblock %}

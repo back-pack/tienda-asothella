@@ -6,14 +6,14 @@
 
 <div class="container">
     {{ form_start(form) }}
-    <label for="">Nombre de la empresa:</label>{{ form_widget(form.name) }}
-    <label for="">Dirección:</label>{{ form_widget(form.address) }}
-    <label for="">Email:</label>{{ form_widget(form.email) }}
-    <label for="">Telefono:</label>{{ form_widget(form.phone) }}
-    <label for="">Nombre de contacto</label>{{ form_widget(form.contactName) }}
-    <label>Contraseña: </label>{{ form_widget(form.plainPassword.first, { 'attr' : { 'value' : '****'} }) }}
-    <label>Repetir Contraseña: </label>{{ form_widget(form.plainPassword.second, { 'attr' : { 'value' : '****'} }) }}
-    <button class="btn btn-Info"><i class="fa fa-fw fa-check"></i>{{ button_label|default('Guardar') }}</button>
+        <label for="">Nombre de la empresa:</label>{{ form_widget(form.name) }}
+        <label for="">Dirección:</label>{{ form_widget(form.address) }}
+        <label for="">Email:</label>{{ form_widget(form.email) }}
+        <label for="">Telefono:</label>{{ form_widget(form.phone) }}
+        <label for="">Nombre de contacto</label>{{ form_widget(form.contactName) }}
+        <label>Contraseña: </label>{{ form_widget(form.plainPassword.first, { 'attr' : { 'value' : '****'} }) }}
+        <label>Repetir Contraseña: </label>{{ form_widget(form.plainPassword.second, { 'attr' : { 'value' : '****'} }) }}
+        <button class="btn btn-Info"><i class="fa fa-fw fa-check"></i>{{ button_label|default('Guardar') }}</button>
     {{ form_end(form) }}
 </div>
 {% endblock %}

@@ -451,7 +451,7 @@ class AdminController extends Controller
         }
         $em->remove($requirement);
         $em->flush();
-
+        $this->addFlash('danger', 'La solicitud fue eliminada.');
         if($authChecker->isGranted('ROLE_SUPERADMIN')) {
             return $this->redirectToRoute('superadmin_index');
         } else {

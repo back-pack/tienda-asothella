@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\ProductRepository")
@@ -40,6 +41,14 @@ class Product
      * @ORM\Column(type="string", length=255)
      */
     private $uid;
+
+    /**
+     * @ORM\Column(type="string")
+     *
+     * @Assert\NotBlank(message="Por favor, subir imagen en .jpg, .jpeg, .png")
+     * @Assert\File(mimeTypes={ "image/jpg", "image/jpeg", "image/png" })
+     */
+    private $attachment;
 
     public function getId()
     {
@@ -102,6 +111,18 @@ class Product
     public function setUid(): self
     {
         $this->uid = md5(uniqid());
+
+        return $this;
+    }
+
+    public function getAttachment(): ?string
+    {
+        return $this->attachment;
+    }
+
+    public function setAttachment($attachment): self
+    {
+        $this->attachment = $attachment;
 
         return $this;
     }

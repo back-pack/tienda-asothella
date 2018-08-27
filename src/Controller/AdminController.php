@@ -24,6 +24,8 @@ use App\Repository\RequirementRepository;
 use App\Repository\UserRepository;
 use App\Helper\Constant;
 use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\HttpFoundation\File\File;
 
 class AdminController extends Controller
 {
@@ -625,7 +627,7 @@ class AdminController extends Controller
     }
 
     /**
-     * @Route("/superadmin/product/new", name="superadmin_product_new", methods="GET|POST")
+     * @Route("/superadmin/product/new", name="superadmin_product_new")
      */
     public function newProduct(Request $request)
     {
@@ -634,11 +636,21 @@ class AdminController extends Controller
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $product->setUid(md5(uniqid()));
+            $product->setUid();
+            
+            $file = new UploadedFile($product->getAttachment(), '');
+            $fileName = md5(uniqid()).'.'.$file->guessExtension();
+            $file->move(
+                $this->getParameter('productsImage_directory'),
+                $fileName
+            );
+            $product->setAttachment($fileName);
+
             $em = $this->getDoctrine()->getManager();
             $em->persist($product);
             $em->flush();
 
+            $this->addFlash('success', 'El producto fue creado.');
             return $this->redirectToRoute('superadmin_product_index');
         }
 
@@ -657,22 +669,22 @@ class AdminController extends Controller
     }
 
     /**
-     * @Route("/superadmin/product/edit/{id}", name="superadmin_product_edit", methods="GET|POST")
+     * @Route("/superadmin/product/edit/{id}", name="superadmin_product_edit")
      */
     public function editProduct(Request $request, $id)
     {
         $em = $this->getDoctrine()->getManager();
         $product = $em->getRepository(Product::class)->find($id);
-
         if(!$product) {
-            throw $this->createNotFoundException('No existe tal producto: '.$id);
+            $this->addFlash('danger', 'El producto no existe.');
+            return $this->redirectToRoute('superadmin_product_index');
         }
-        $form = $this->createForm(ProductType::class, $product);
+        $fileName = $product->getAttachment();
+
+        $form = $this->createForm(ProductType::class, $product, ['new' => false]);
         $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
+        if ($form->isSubmitted()) {
             $em->flush();
-
             $this->addFlash('success', 'El producto fue editado.');
 
             return $this->redirectToRoute('superadmin_product_index');
@@ -680,6 +692,7 @@ class AdminController extends Controller
 
         return $this->render('admin/product/edit.html.twig', [
             'form' => $form->createView(),
+            'attachment' => $fileName
         ]);
     }
 
@@ -691,11 +704,18 @@ class AdminController extends Controller
         $em = $this->getDoctrine()->getManager();
         $product = $em->getRepository(Product::class)->find($id);
         if(!$product) {
-            throw $this->createNotFoundException('No existe tal producto: '.$id);
+            $this->addFlash('danger', 'El producto no existe.');
+            return $this->redirectToRoute('superadmin_product_index');
         }
+        $fileName = $product->getAttachment();
+        
         $em->remove($product);
         $em->flush();
 
+        if(file_exists($this->getParameter('productsImage_directory').'/'.$fileName)) {
+            unlink($this->getParameter('productsImage_directory').'/'.$fileName);
+        }
+        
         $this->addFlash('success', 'El producto fue eliminado.');
 
         return $this->redirectToRoute('superadmin_product_index');

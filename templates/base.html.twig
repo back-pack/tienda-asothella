@@ -114,7 +114,7 @@
                         </li>
                         {% endif %}
                     {% endif %}
-                    {% if app.session.get('items') is not empty and app.request.get('_route') != pathToShopping %}
+                    {% if app.session.get('items') is not empty and app.request.get('_route') != pathToShopping or app.request.get('_route') != pathToShoppingEdit %}
                         <li>
                             <a href="{{ path(pathToShopping) }}"><i class="fa fa-shopping-cart"></i> Ver solicitud pendiente!</a>
                         </li>

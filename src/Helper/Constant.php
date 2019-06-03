@@ -2,7 +2,7 @@
 
 namespace App\Helper;
 
-class Constant {
+class Status {
     //Solicitudes
     const TO_BE_APPROVED = "To be approved";
     const TO_DO = "To do";

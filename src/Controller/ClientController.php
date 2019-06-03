@@ -17,7 +17,7 @@ use App\Entity\Requirement;
 use App\Entity\ProductRequest;
 use App\Entity\Company;
 use App\Entity\Product;
-use App\Helper\Constant;
+use App\Helper\Status;
 use Doctrine\Common\Collections\ArrayCollection;
 
 class ClientController extends Controller
@@ -34,7 +34,7 @@ class ClientController extends Controller
         if ($form->isSubmitted() && $form->isValid()) {
             $company
                 ->setCreationDate(new \DateTime('today'))
-                ->setStatus(Constant::PENDING_FOR_APPROVAL)
+                ->setStatus(Status::PENDING_FOR_APPROVAL)
                 ->setActive(false);
             $password = $passwordEncoder->encodePassword($company, $company->getPlainPassword());
             $company->setPassword($password);
@@ -125,7 +125,7 @@ class ClientController extends Controller
                 ->setFinalCost($finalCost)
                 ->setCreationDate(new \DateTime('today'))
                 ->setRequirementNumber(md5(uniqid()))
-                ->setStatus(Constant::TO_BE_APPROVED)
+                ->setStatus(Status::TO_BE_APPROVED)
                 ->setCompany($this->getUser());
                 ;
             
@@ -286,7 +286,7 @@ class ClientController extends Controller
             ->setFinalCost($finalCost)
             ->setCreationDate(new \DateTime('today'))
             ->setRequirementNumber(md5(uniqid()))
-            ->setStatus(Constant::TO_BE_APPROVED)
+            ->setStatus(Status::TO_BE_APPROVED)
             ->setCompany($this->getUser())
             ;
         

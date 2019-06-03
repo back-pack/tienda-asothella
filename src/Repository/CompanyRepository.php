@@ -5,7 +5,8 @@ namespace App\Repository;
 use App\Entity\Company;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Symfony\Bridge\Doctrine\RegistryInterface;
-
+use Doctrine\ORM\EntityManagerInterface;
+use App\Helper\Status;
 /**
  * @method Company|null find($id, $lockMode = null, $lockVersion = null)
  * @method Company|null findOneBy(array $criteria, array $orderBy = null)
@@ -17,6 +18,17 @@ class CompanyRepository extends ServiceEntityRepository
     public function __construct(RegistryInterface $registry)
     {
         parent::__construct($registry, Company::class);
+    }
+
+    public function save(Company $company, $passwordEncoder) {
+        $company
+            ->setCreationDate(new \DateTime('today'))
+            ->setStatus(Status::PENDING_FOR_APPROVAL)
+            ->setActive(false);
+        $password = $passwordEncoder->encodePassword($company, $company->getPlainPassword());
+        $company->setPassword($password);
+        $this->_em->persist($company);
+        $this->_em->flush();
     }
 
 //    /**

@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
 use App\Repository\RequirementRepository;
 use App\Repository\ProductRepository;
+use App\Repository\CompanyRepository;
 use App\Form\RequirementType;
 use App\Form\ProductRequestType;
 use App\Form\CompanyType;
@@ -25,22 +26,14 @@ class ClientController extends Controller
     /**
      * @Route("/register", name="register")
      */
-    public function register(Request $request, UserPasswordEncoderInterface $passwordEncoder, \Swift_Mailer $mailer)
+    public function register(Request $request, UserPasswordEncoderInterface $passwordEncoder, \Swift_Mailer $mailer, CompanyRepository $companyRepository)
     {
         $company = new Company();
         $form = $this->createForm(CompanyType::class, $company);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $company
-                ->setCreationDate(new \DateTime('today'))
-                ->setStatus(Status::PENDING_FOR_APPROVAL)
-                ->setActive(false);
-            $password = $passwordEncoder->encodePassword($company, $company->getPlainPassword());
-            $company->setPassword($password);
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->persist($company);
-            $entityManager->flush();
+            $companyRepository->save($company, $passwordEncoder);
 
             // $message = (new \Swift_Message('Bienvenido a Asothella'))
             // ->setFrom('info@asothella.com')

@@ -20,13 +20,16 @@ use App\Entity\Company;
 use App\Entity\Product;
 use App\Helper\Status;
 use Doctrine\Common\Collections\ArrayCollection;
+use App\Models\Messenger;
+use App\NotificationTypes\RegistrationNotification;
+use App\NotificationPlatforms\EmailNotificationPlatform;
 
 class ClientController extends Controller
 {
     /**
      * @Route("/register", name="register")
      */
-    public function register(Request $request, UserPasswordEncoderInterface $passwordEncoder, \Swift_Mailer $mailer, CompanyRepository $companyRepository)
+    public function register(Request $request, UserPasswordEncoderInterface $passwordEncoder, CompanyRepository $companyRepository)
     {
         $company = new Company();
         $form = $this->createForm(CompanyType::class, $company);
@@ -35,17 +38,11 @@ class ClientController extends Controller
         if ($form->isSubmitted() && $form->isValid()) {
             $companyRepository->save($company, $passwordEncoder);
 
-            // $message = (new \Swift_Message('Bienvenido a Asothella'))
-            // ->setFrom('info@asothella.com')
-            // ->setTo($company->getEmail())
-            // ->setBody(
-            //     $this->renderView(
-            //         'emails\registration.html.twig',
-            //         ['contactName' => $company->getContactName()]
-            //     ), 'text/html'
-            // );
-
-            // $mailer->send($message);
+            $messenger = new Messenger([new EmailNotificationPlatform()]);
+            $messenger->send(new RegistrationNotification(), [
+                'to' => $company->getEmail(),
+                'data' => ['contactName' => $company->getContactName()]
+            ]);
 
             return $this->redirectToRoute('client_login', [
             ]);

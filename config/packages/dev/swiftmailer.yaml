@@ -1,6 +1,6 @@
 # See https://symfony.com/doc/current/email/dev_environment.html
 swiftmailer:
+    delivery_addresses: ['oscar.eber@gmail.com']
     # send all emails to a specific address
     #delivery_addresses: ['me@example.com']
-    # url: gmail://oscar.eber@gmail.com:Argentina13!@localhost
     # spool: { type: 'memory' }

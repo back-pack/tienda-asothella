@@ -38,11 +38,11 @@ class ClientController extends Controller
         if ($form->isSubmitted() && $form->isValid()) {
             $companyRepository->save($company, $passwordEncoder);
 
-            $messenger = new Messenger([new EmailNotificationPlatform()]);
-            $messenger->send(new RegistrationNotification(), [
-                'to' => $company->getEmail(),
-                'data' => ['contactName' => $company->getContactName()]
-            ]);
+            // $messenger = new Messenger([new EmailNotificationPlatform()]);
+            // $messenger->send(new RegistrationNotification(), [
+            //     'to' => $company->getEmail(),
+            //     'data' => ['contactName' => $company->getContactName()]
+            // ]);
 
             return $this->redirectToRoute('client_login', [
             ]);

@@ -6,18 +6,18 @@ use App\Interfaces\NotificationTypeInterface;
 class RegistrationNotification implements NotificationTypeInterface {
 
     private $from = 'info@asothella.com.ar';
-    private $body = 'templates/emails/registration.html.twig';
+    private $body_template = 'emails/registration.html.twig';
     private $subject = 'Bienvenido a Asothella';
 
-    public function getFrom() {
+    public function getFrom() : string {
         return $this->from;
     }
 
-    public function getBody() {
-        return $this->body;
+    public function getBodyTemplate() : string {
+        return $this->body_template;
     }
 
-    public function getSubject() {
+    public function getSubject() : string {
         return $this->subject;
     }
 }

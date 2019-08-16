@@ -18,6 +18,7 @@ use App\Entity\Requirement;
 use App\Entity\ProductRequest;
 use App\Entity\Company;
 use App\Entity\Product;
+use App\Entity\User;
 use App\Helper\Status;
 use Doctrine\Common\Collections\ArrayCollection;
 use App\Models\Messenger;
@@ -70,11 +71,11 @@ class ClientController extends Controller
     /**
      * @Route("/client", name="client_index")
      */
-    public function client()
+    public function client(RequirementRepository $requirementRepository)
     {
         $user = $this->getUser();
         //TODO SORTING ASCENDENT
-        $requirements = $this->getDoctrine()->getRepository(Requirement::class)->findBy(['company' => $user->getId()], ['id' => 'DESC']);
+        $requirements = $requirementRepository->findBy(['company' => $user->getId()], ['id' => 'DESC']);
         
         return $this->render('client/index.html.twig', [
             'user' => $user->getContactName(),

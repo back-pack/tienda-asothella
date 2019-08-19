@@ -5,7 +5,7 @@ namespace App\Repository;
 use App\Entity\Requirement;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Symfony\Bridge\Doctrine\RegistryInterface;
-
+use App\Helper\Status;
 /**
  * @method Requirement|null find($id, $lockMode = null, $lockVersion = null)
  * @method Requirement|null findOneBy(array $criteria, array $orderBy = null)
@@ -17,6 +17,21 @@ class RequirementRepository extends ServiceEntityRepository
     public function __construct(RegistryInterface $registry)
     {
         parent::__construct($registry, Requirement::class);
+    }
+
+    public function save(Requirement $requirement, $finalCost, $user_session)
+    {
+        $requirement
+            ->setFinalCost($finalCost)
+            ->setCreationDate(new \DateTime('today'))
+            ->setRequirementNumber(md5(uniqid()))
+            ->setStatus(Status::TO_BE_APPROVED)
+            ->setCompany($user_session);
+            ;
+        $this->_em->persist($requirement);
+        $this->_em->flush();
+
+        return $requirement->getId();
     }
 
 //    /**

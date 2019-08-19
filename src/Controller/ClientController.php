@@ -86,46 +86,36 @@ class ClientController extends Controller
     /**
      * @Route("/client/shopping", name="client_shopping")
      */
-    public function shopping(ProductRepository $productRepository, Session $cart, Request $request)
+    public function shopping(ProductRepository $productRepository, Session $cart, Request $request, RequirementRepository $requirement_repository)
     {
         if(null === $cart->get('cart')) {
             $cart->set('cart', md5(uniqid()));
         }
         $cart->set('edit', null);
         $items = $cart->get('items');
-        $products = $productRepository->findAll();
+
         $requirement = new Requirement();
         $requirement->setCompany($this->getUser());
+
+        $products = $productRepository->findAll();
+
         $form = $this->createForm(RequirementType::class, $requirement);
         $form->handleRequest($request);
         if($form->isSubmitted() && $form->isValid()) {
-            
-            $em = $this->getDoctrine()->getManager();
-            
-            $finalCost = null;
+            $final_cost = null;
             foreach($items as $item) {
                 $index = array_search($item->getProduct(), $products);
                 $item->setProduct($products[$index]);
                 
-                $finalCost += $item->getProduct()->getPrice() * $item->getQuantity();
+                $final_cost += $item->getProduct()->getPrice() * $item->getQuantity();
                 $requirement->addProductRequest($item);
-                $em->persist($item);
             }
 
-            $requirement
-                ->setFinalCost($finalCost)
-                ->setCreationDate(new \DateTime('today'))
-                ->setRequirementNumber(md5(uniqid()))
-                ->setStatus(Status::TO_BE_APPROVED)
-                ->setCompany($this->getUser());
-                ;
-            
-            $em->persist($requirement);
-            $em->flush();
+            $requirement_id = $requirement_repository->save($requirement, $final_cost, $this->getUser());
 
             $cart->invalidate();
 
-            $this->addFlash('success', 'Su solicitud es la numero: RQ'.$requirement->getId().'. En breve procesaremos su solicitud!');
+            $this->addFlash('success', 'Su solicitud es la numero: RQ'.$requirement_id.'. En breve procesaremos su solicitud!');
 
             return $this->redirectToRoute('client_index');
         }
@@ -263,18 +253,18 @@ class ClientController extends Controller
         $products = $em->getRepository(Product::class)->findAll();
         
         $requirement = new Requirement();
-        $finalCost = null;
+        $final_cost = null;
         foreach($cartItems as $item) {
             $index = array_search($item->getProduct(), $products);
             $item->setProduct($products[$index]);
             
-            $finalCost += $item->getProduct()->getPrice() * $item->getQuantity();
+            $final_cost += $item->getProduct()->getPrice() * $item->getQuantity();
             $requirement->addProductRequest($item);
             $em->persist($item);
         }
 
         $requirement
-            ->setFinalCost($finalCost)
+            ->setFinalCost($final_cost)
             ->setCreationDate(new \DateTime('today'))
             ->setRequirementNumber(md5(uniqid()))
             ->setStatus(Status::TO_BE_APPROVED)
@@ -322,9 +312,9 @@ class ClientController extends Controller
         $form->handleRequest($request);
         if($form->isSubmitted() && $form->isValid()) {
             $em = $this->getDoctrine()->getManager();
-            $finalCost = 0;
+            $final_cost = 0;
             foreach($items as $cp) {
-                $finalCost += $cp->getProduct()->getPrice() * $cp->getQuantity();
+                $final_cost += $cp->getProduct()->getPrice() * $cp->getQuantity();
             }
 
             $originalProducts = new ArrayCollection();
@@ -358,7 +348,7 @@ class ClientController extends Controller
                 $requirement->removeProductRequest($pr);
             }
 
-            $requirement->setFinalCost($finalCost);
+            $requirement->setFinalCost($final_cost);
             $em->persist($requirement);
             $em->flush();
             $cart->invalidate();
